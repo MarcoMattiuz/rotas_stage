@@ -1,0 +1,44 @@
+body {
+    background: rgb(218, 255, 240);
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+.header {
+    background: #555;
+}
+
+.header__logo {
+    color: #fff;
+    float: left;
+    text-decoration: none;
+    display: block;
+    padding: 20px;
+}
+
+.header__menu {
+    float: right;
+    margin: 0;
+    padding: 0.4em;
+}
+
+.header__menu__item {
+    color: #fff;
+    background-color: #444;
+    display: inline-table;
+    vertical-align: middle;
+    text-decoration: none;
+    padding: 0.9em;
+    border: 0px solid black;
+    border-radius: 1em;
+}
+
+.header__menu__item:hover {
+    background: #222;
+    cursor: pointer;
+}
+
+.clearfix::after {
+    content: "";
+    clear: both;
+    display: table;
+}
