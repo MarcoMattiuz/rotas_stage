@@ -3,7 +3,7 @@ import paho.mqtt.client as mqtt
 # # # # # # # # # # # # # # # #   MQTT DATA   # # # # # # # # # # # # # # # # 
 username = input("Insert your username: ")
 client_id = f'UserRotas{username}_rover'
-topic = "rotas/rover"
+topic = "rotas.stage/rover/cam"
 broker = 'broker.emqx.io'
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 

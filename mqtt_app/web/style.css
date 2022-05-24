@@ -1,18 +1,86 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+.cameraSlider[type="range"][orient="vertical"],
+.speedSlider[type="range"][orient="vertical"] {
+    writing-mode: bt-lr; /* IE */
+    -webkit-appearance: slider-vertical; /* Chromium */
+    width: 8px;
+    height: 175px;
+    padding: 0 5px;
+}
+
+html,
 body {
-    background: rgb(218, 255, 240);
-    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    background: rgba(4, 81, 4, 0.698);
+    font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande", "Lucida Sans Unicode", Geneva, Verdana,
+        sans-serif;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+}
+
+main {
+    width: 100%;
+    height: 100%;
+}
+.top {
+    height: 60%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.bottom {
+    height: 40%;
+    position: relative;
+    display: flex;
+    justify-content: center;
+}
+
+.sliderContainer {
+    position: relative;
+    margin: 1rem;
+    padding: 1rem;
+}
+.cameraSlider {
+    margin: 1.5rem;
+}
+.cameraSlider::before {
+    content: "-CAMERA-";
+    position: absolute;
+    bottom: 0;
+    left: 15%;
+}
+
+.speedSlider {
+    margin: 1.5rem;
+}
+.speedSlider::before {
+    content: "-SPEED-";
+    position: absolute;
+    bottom: 0;
+    left: 20%;
+}
+
+.bottomSlider {
+    height: 3rem;
+}
+.rotationSlider::before {
+    content: "-ANGOLO STERZATA-";
+    position: absolute;
+    bottom: 0;
+    left: 23%;
 }
 
 .header {
-    background: #555;
+    background: rgba(4, 81, 4, 0.343);
 }
 
 .header__logo {
-    color: #fff;
-    float: left;
-    text-decoration: none;
-    display: block;
-    padding: 20px;
+    width: 15%;
 }
 
 .header__menu {

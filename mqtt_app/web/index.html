@@ -16,12 +16,57 @@
 
   <body>
     <header class="header clearfix">
-      <a href="" class="header__logo">Rover Control</a>
+      <img src="assets/logo.png" alt="logo" class="header__logo" />
       <ul class="header__menu">
-        <a class="header__menu__item" id="start-mqtt">Start MQTT</a>
+        <!-- ---------------------- -->
       </ul>
     </header>
-    <embed src="http://192.168.8.40:9000" style="width: 500px; height: 300px" />
+    <main>
+      <div class="top">
+        <div class="sliderContainer">
+          <input
+            type="range"
+            min="-5"
+            max="5"
+            value="0"
+            class="speedSlider"
+            id="speedRange"
+            orient="vertical"
+          />
+        </div>
+
+        <embed
+          src="http://192.168.8.40:9000"
+          style="width: 500px; height: 300px"
+          class="videofeed"
+        />
+        <div class="sliderContainer">
+          <input
+            type="range"
+            min="0"
+            max="5"
+            value="0"
+            class="cameraSlider"
+            id="cameraRange"
+            orient="vertical"
+          />
+        </div>
+      </div>
+      <div class="bottom">
+        <div class="sliderContainer bottomSlider">
+          <input
+            type="range"
+            min="-5"
+            max="5"
+            value="0"
+            class="rotationSlider"
+            id="rotationRange"
+            orient="vertical"
+          />
+        </div>
+      </div>
+    </main>
+
     <script src="main.js"></script>
   </body>
 </html>
