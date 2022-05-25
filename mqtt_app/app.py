@@ -8,6 +8,7 @@ from time import sleep
 
 # # # # # # # # # # # # # # # #   ROVER TRACTION   # # # # # # # # # # # # # # # #
 
+
 def change_speed(speed):
     print(speed)
 
@@ -23,7 +24,7 @@ def change_camera(camera):
 
 
 # # # # # # # # # # # # # # # #   MQTT DATA   # # # # # # # # # # # # # # # #
-client_id = 'RoverRotas_rover'
+client_id = 'RoverUser_rover'
 topic = "rotas.stage/rover"
 broker = 'broker.emqx.io'
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
