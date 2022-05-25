@@ -1,33 +1,54 @@
+from cv2 import stereoCalibrate
 import paho.mqtt.client as mqtt
-# import RPi.GPIO as GPIO   # Import the GPIO library.
-
+import RPi.GPIO as GPIO
+import pwmraspberry as pwm
 # # # # # # # # # # # # # # # #   ROVER TRACTION   # # # # # # # # # # # # # # # #
+pwm.setup_pwm()
+
+_speed = 0 
+_steering = 0
+_camera = 0
+
+
 def change_speed(speed):
-    print(speed)
+    global _speed
+    _speed = int(speed)
+    pwm.traz(_speed,_steering)
+    print(f"speed: {_speed} steering: {_steering}")
+
 
 def change_steering(steering):
-    print(steering)
+    global _steering
+    _steering = int(steering)
+    pwm.traz(_speed, _steering)
+    print(f"speed: {_speed} steering: {_steering}")
+
 
 def change_camera(camera):
     print(camera)
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
+
 # # # # # # # # # # # # # # # #   MQTT DATA   # # # # # # # # # # # # # # # #
 client_id = 'RoverRotas_rover'
-topic = "rotas.stage/rover"
+topic = 'rotas.stage/rover'
 broker = 'broker.emqx.io'
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 # # # # # # # # # # # # # # # #   MQTT SETUP   # # # # # # # # # # # # # # # #
 
+
 def on_message(client, userdata, message):
     string = str(message.payload.decode("utf-8"))  # stringa ricevuta dall'mqtt
-    if string.find("speed"):
+    if string.find("speed")!=-1:
         change_speed(string[-2:])
-    elif string.find("steering"):
+        print(f"speed: {_speed} steering: {_steering}")
+    elif string.find("steering")!=-1:
         change_steering(string[-2:])
-    elif string.find("camera"):
+        print(f"speed: {_speed} steering: {_steering}")
+    elif string.find("camera")!=-1:
         change_camera(string[-2:])
+
 
 client = mqtt.Client(client_id)
 client.connect(broker)
@@ -44,5 +65,6 @@ try:
 
 except KeyboardInterrupt:
     client.loop_stop()
+    pwm.stop_pwm()
     print("\nMQTT closed")
     exit()

@@ -6,22 +6,6 @@ import paho.mqtt.client as mqtt
 from time import sleep
 # non funziona su linux o mac
 
-# # # # # # # # # # # # # # # #   ROVER TRACTION   # # # # # # # # # # # # # # # #
-
-
-def change_speed(speed):
-    print(speed)
-
-
-def change_steering(steering):
-    print(steering)
-
-
-def change_camera(camera):
-    print(camera)
-
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-
 
 # # # # # # # # # # # # # # # #   MQTT DATA   # # # # # # # # # # # # # # # #
 client_id = 'RoverUser_rover'
@@ -34,12 +18,7 @@ broker = 'broker.emqx.io'
 
 def on_message(client, userdata, message):
     string = str(message.payload.decode("utf-8"))  # stringa ricevuta dall'mqtt
-    if string.find("speed"):
-        change_speed(string[-2:])
-    elif string.find("steering"):
-        change_steering(string[-2:])
-    elif string.find("camera"):
-        change_camera(string[-2:])
+    print(string)
 
 
 client = mqtt.Client(client_id)
