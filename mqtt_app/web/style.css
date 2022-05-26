@@ -41,7 +41,16 @@ main {
     height: 40%;
     position: relative;
     display: flex;
+    align-items: center;
     justify-content: center;
+}
+
+.stop_button {
+    background: red;
+    color: whitesmoke;
+    margin: 1rem;
+    padding: 1rem 1.5rem;
+    border-radius: 0.5rem;
 }
 
 .sliderContainer {
