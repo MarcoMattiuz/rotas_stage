@@ -42,6 +42,7 @@ def traz(velocita, sterzo):
         v_sx = map(sterzo, 0, 5, velocita, -velocita)
     else:
         v_dx = map(sterzo, 0, 5, velocita, -velocita)
+        print(v_dx)
         v_sx = velocita
 
     if v_dx < 0:
