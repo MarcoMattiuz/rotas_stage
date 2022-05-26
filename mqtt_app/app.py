@@ -7,17 +7,16 @@ from time import sleep
 # non funziona su linux o mac
 
 # # # # # # # # # # # # # # # #   MQTT DATA   # # # # # # # # # # # # # # # #
-client_id = 'UserRotas_rover'
+client_id = 'RoverUser_rover'
 topic = "rotas.stage/rover"
 broker = 'broker.emqx.io'
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
+
 # # # # # # # # # # # # # # # #   MQTT SETUP   # # # # # # # # # # # # # # # #
-
-
 def on_message(client, userdata, message):
-    print("Message received: ", str(message.payload.decode("utf-8")))
-    print("From topic: ", str(message.topic) + "\n")
+    string = str(message.payload.decode("utf-8"))  # stringa ricevuta dall'mqtt
+    print(string)
 
 
 client = mqtt.Client(client_id)
@@ -32,7 +31,6 @@ absolutepath = absolutepath[0:-6] + "web"
 eel.init(absolutepath)
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-
 client.loop_start()  # start the loop
 client.subscribe(topic)
 
@@ -42,7 +40,15 @@ def changeSpeed(speed):
     speed = int(speed)
     if speed > 0:
         speed = f"0{speed}"
-    client.publish(topic, f"Speed: {speed}")
+    client.publish(topic, f"speed: {speed}")
+
+
+@eel.expose
+def changeSteering(steering):
+    steering = int(steering)
+    if steering > 0:
+        steering = f"0{steering}"
+    client.publish(topic, f"steering: {steering}")
 
 
 @eel.expose
@@ -50,15 +56,7 @@ def changeCamera(camera):
     camera = int(camera)
     if camera > 0:
         camera = f"0{camera}"
-    client.publish(topic, f"Camera: {camera}")
-
-
-@eel.expose
-def changeRotation(rotation):
-    rotation = int(rotation)
-    if rotation > 0:
-        rotation = f"0{rotation}"
-    client.publish(topic, f"Rotation: {rotation}")
+    client.publish(topic, f"camera: {camera}")
 
 
 eel.start('index.html',
