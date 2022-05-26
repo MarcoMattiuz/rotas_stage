@@ -6,16 +6,14 @@ import paho.mqtt.client as mqtt
 from time import sleep
 # non funziona su linux o mac
 
-
 # # # # # # # # # # # # # # # #   MQTT DATA   # # # # # # # # # # # # # # # #
 client_id = 'RoverUser_rover'
 topic = "rotas.stage/rover"
 broker = 'broker.emqx.io'
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
+
 # # # # # # # # # # # # # # # #   MQTT SETUP   # # # # # # # # # # # # # # # #
-
-
 def on_message(client, userdata, message):
     string = str(message.payload.decode("utf-8"))  # stringa ricevuta dall'mqtt
     print(string)
@@ -33,7 +31,6 @@ absolutepath = absolutepath[0:-6] + "web"
 eel.init(absolutepath)
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-
 client.loop_start()  # start the loop
 client.subscribe(topic)
 
@@ -47,19 +44,19 @@ def changeSpeed(speed):
 
 
 @eel.expose
-def changeCamera(camera):
-    camera = int(camera)
-    if camera > 0:
-        camera = f"0{camera}"
-    client.publish(topic, f"camera: {camera}")
-
-
-@eel.expose
 def changeSteering(steering):
     steering = int(steering)
     if steering > 0:
         steering = f"0{steering}"
     client.publish(topic, f"steering: {steering}")
+
+
+@eel.expose
+def changeCamera(camera):
+    camera = int(camera)
+    if camera > 0:
+        camera = f"0{camera}"
+    client.publish(topic, f"camera: {camera}")
 
 
 eel.start('index.html',

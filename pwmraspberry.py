@@ -67,13 +67,6 @@ def traz(velocita, sterzo):
 
 # # # # # # # # # # # # # # # # # # MAIN # # # # # # # # # # # # # # # # # #
 # setup_pwm()
-# for x in range(6):
-#     traz(x,0)
-#     sleep(2)
-# for x in range(0, -6, -1):
-#     print(x)
-#     traz(x,0)
-#     sleep(2)
 
 # traz(5,0)
 # sleep(5)

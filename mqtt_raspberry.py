@@ -2,6 +2,7 @@ from cv2 import stereoCalibrate
 import paho.mqtt.client as mqtt
 import RPi.GPIO as GPIO
 import pwmraspberry as pwm
+
 # # # # # # # # # # # # # # # #   ROVER TRACTION   # # # # # # # # # # # # # # # #
 pwm.setup_pwm()
 
@@ -9,15 +10,16 @@ _speed = 0
 _steering = 0
 _camera = 0
 
-
 def change_speed(speed):
     global _speed
+    global _steering
     _speed = int(speed)
     pwm.traz(_speed,_steering)
     print(f"speed: {_speed} steering: {_steering}")
 
 
 def change_steering(steering):
+    global _speed
     global _steering
     _steering = int(steering)
     pwm.traz(_speed, _steering)
@@ -25,7 +27,8 @@ def change_steering(steering):
 
 
 def change_camera(camera):
-    print(camera)
+    global _camera
+    _camera = camera
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 
