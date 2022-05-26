@@ -63,8 +63,10 @@ document.addEventListener('keydown', (event) => {
 
   }
   else if (event.code === 'Space') {
-    console.log("ciao")
-    stopEverything()
+    // console.log("ciao")
+    // stopEverything()
+    steeringR.value = 0
+    eel.changeSteering(steering = steeringR.value)
   }
 
   outSpeed.innerText = speedR.value
