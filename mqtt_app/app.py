@@ -1,13 +1,13 @@
 import os
 import eel
-from win32api import GetSystemMetrics
+#from win32api import GetSystemMetrics
 
 import paho.mqtt.client as mqtt
 from time import sleep
 # non funziona su linux o mac
 
 # # # # # # # # # # # # # # # #   MQTT DATA   # # # # # # # # # # # # # # # #
-client_id = 'RoverRotas_rover'
+client_id = 'UserRotas_rover'
 topic = "rotas.stage/rover"
 broker = 'broker.emqx.io'
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -62,5 +62,7 @@ def changeRotation(rotation):
 
 
 eel.start('index.html',
-          size=(GetSystemMetrics(0)-200, GetSystemMetrics(1)-200),
+          size=(800, 800),
           position=(100, 100))
+
+eel.start("index.html",)
