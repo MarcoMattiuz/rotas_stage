@@ -1,10 +1,10 @@
 #include <WiFi.h>
 #include <PubSubClient.h>
 
-const char* ssid = "Linkem_FCD881_EXT";
-const char* password = "d29vust7";
+const char* ssid = "WirelessPoint-Guest";
+const char* password = "SNVZTKVZMKB";
 const char* mqttServer = "broker.emqx.io";
-const char* topic = "rotas.stage/rover";
+const char* topic = "rotas.stage/prova";
 
 const int mqttPort = 1883;
 const char* mqttUser = "giaco";
@@ -21,11 +21,9 @@ void setup() {
     delay(500);
     Serial.println("Connecting to WiFi..");
   }
-
   Serial.println("Connected to the WiFi network");
 
   client.setServer(mqttServer, mqttPort);
-
   while (!client.connected()) {
     Serial.println("Connecting to MQTT...");
 
@@ -44,7 +42,7 @@ void loop() {
   client.loop();
 
   delay(1000);
-  client.publish(topic, "Hello");
-  Serial.println("hello");
+  // client.publish(topic, "Hello");
+  // Serial.println("hello");
 }
 
