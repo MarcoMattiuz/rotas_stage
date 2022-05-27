@@ -94,38 +94,77 @@ document.addEventListener('keydown', (event) => {
 var gamePad;
 var start;
 console.log("ciao")
-window.addEventListener("gamepadconnected", e => {
 
+window.addEventListener("gamepadconnected", function(e) {
   console.log("Gamepad connected at index %d: %s. %d buttons, %d axes.",
     e.gamepad.index, e.gamepad.id,
     e.gamepad.buttons.length, e.gamepad.axes.length);
-  gamePad = navigator.getGamepads()[e.gamepad.index]
-});
+    gameLoop();
+  });
 window.addEventListener("gamepaddisconnected", e => {
   console.log("Gamepad disconnected from index %d: %s",
     e.gamepad.index, e.gamepad.id);
-  cancelRequestAnimationFrame(start);
-  gamePad = null;
+  window.cancelRequestAnimationFrame(start);
+
 });
-while (true) {
-  console.log("-" + gamePad.buttons)
+var interval;
+
+/*if (!('ongamepadconnected' in window)) {
+  // No gamepad events available, poll instead.
+  interval = setInterval(pollGamepads, 500);
 }
-console.log("CASDASD  ")
+function pollGamepads() {
+  var gamepads = navigator.getGamepads ? navigator.getGamepads() : (navigator.webkitGetGamepads ? navigator.webkitGetGamepads : []);
+  for (var i = 0; i < gamepads.length; i++) {
+    var gp = gamepads[i];
+    if (gp) {
+      gamepadInfo.innerHTML = "Gamepad connected at index " + gp.index + ": " + gp.id +
+        ". It has " + gp.buttons.length + " buttons and " + gp.axes.length + " axes.";
+      gameLoop();
+      clearInterval(interval);
+    }
+  }
+}*/
+
 function gameLoop() {
-  console.log("asdasdasdasdasd")
-  if (!gamepad) {
+ // console.log(gamePad);
+ // console.log("asdasdasdasdasd");
+
+  var gamepads = navigator.getGamepads ? navigator.getGamepads() : (navigator.webkitGetGamepads ? navigator.webkitGetGamepads() : []);
+  if (!gamepads) {
     return;
   }
-  if (gamePad.buttons[0] == 1) {
-    console.log("ADADAS")
+  gamePad = gamepads[0];
+  //console.log(gamePad);
+  //testVibration(gamePad);
+
+  if (gamePad.buttons[0].value==1) {
+    console.log(gamePad.buttons[0])
     changeValue_Text(2, 0) //--> STEERING
     changeValue_Text(1, 0) //--> SPEED
   }
 
-  console.log(gamePad.buttons.axes[2] * 5)
-
-  changeValue_Text(2, gamePad.buttons.axes[2] * 5) //--> STEERING
+  if(gamePad.axes[2]>0.5){
+    console.log(gamePad.axes[2]);
+  }
+  if(gamePad.axes[3]>-0.5){
+    console.log("3",
+    gamePad.axes[3]);
+  }
+ /* changeValue_Text(2, gamePad.buttons.axes[2] * 5) //--> STEERING
   changeValue_Text(1, gamePad.buttons.axes[3] * 5) //--> SPEED
-  changeValue_Text(3, gamePad.buttons.axes[0] * 5) //--> CAMERA
-  start = requestAnimationFrame(gameLoop);
+  changeValue_Text(3, gamePad.buttons.axes[0] * 5) //--> CAMERA*/
+  start = window.requestAnimationFrame(gameLoop);
+
+}
+
+function testVibration(gamepad) {
+  if (gamepad && gamepad.vibrationActuator) {
+    gamepad.vibrationActuator.playEffect("dual-rumble", {
+      startDelay: 0,
+      duration: 1000,
+      weakMagnitude: 1.0,
+      strongMagnitude: 1.0,
+    });
+  }
 }
