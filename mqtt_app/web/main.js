@@ -130,10 +130,20 @@ function gameLoop() {
   if (gamePad.buttons[0].value==1) {
     console.log(gamePad.buttons[0])
   }
- speedR.value= gamePad.axes[3]*-5;
- steeringR.value= gamePad.axes[2]*5;
- eel.changeSteering(steering = steeringR.value);
- eel.changeSpeed(speed = speedR.value);
+  var valSpeed =Math.round(gamePad.axes[1]*-5);
+  if(speedR.value!=valSpeed){
+    speedR.value= valSpeed;
+    console.log(valSpeed);
+    eel.changeSpeed(speed = speedR.value);
+  
+  }
+  var valSterring = Math.round(gamePad.axes[2]*5);
+  if(steeringR.value != valSterring){
+    steeringR.value = valSterring;
+    eel.changeSteering(steering = steeringR.value);
+  }
+
+
 
 
  /* changeValue_Text(2, gamePad.buttons.axes[2] * 5) //--> STEERING
