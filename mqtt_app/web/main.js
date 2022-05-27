@@ -1,56 +1,41 @@
-export const speedR = document.getElementById("speedRange");
-export const cameraR = document.getElementById("cameraRange");
-export const steeringR = document.getElementById("steeringRange");
+const speedR = document.getElementById("speedRange");
+const cameraR = document.getElementById("cameraRange");
+const steeringR = document.getElementById("steeringRange");
 const stop = document.getElementById("stop");
 let outSpeed = document.getElementById("outSpeed");
 let outCamera = document.getElementById("outCamera");
 let outSteering = document.getElementById("outSteering");
 
 
-//1 --> speed
-//2 --> steering
-//3 --> camera
-export function changeValue_Text(choice, value) {
-  switch (choice) {
-    case 1:
-      // --- SPEED ---
-      eel.changeSpeed(speed = speedR.value)
-      outSpeed.innerText = speedR.value
-      break;
-    case 2:
-      // --- STEERING ---
-      eel.changeSteering(steering = steeringR.value)
-      outSteering.innerText = steeringR.value
-      break;
-    default:
-      // --- CAMERA ---
-      eel.changeCamera(camera = cameraR.value)
-      outCamera.innerText = cameraR.value
-      break;
-  }
-}
 
 function stopEverything() {
   speedR.value = 0;
   steeringR.value = 0;
   cameraR.value = 0;
-  changeValue_Text(1, speedR.value)
-  changeValue_Text(2, steeringR.value)
-  changeValue_Text(3, cameraR.value)
+  eel.changeSpeed(speed = speedR.value)
+  outSpeed.innerText = speedR.value
+  eel.changeSteering(steering = steeringR.value)
+  outSteering.innerText = steeringR.value
+  eel.changeCamera(camera = cameraR.value)
+  outCamera.innerText = cameraR.value
 }
 speedR.addEventListener("change", () => {
-  changeValue_Text(1, speedR.value)
+  console.log("ciao")
+  eel.changeSpeed(speed = speedR.value)
+  outSpeed.innerText = speedR.value
 });
 cameraR.addEventListener("change", () => {
-  changeValue_Text(2, steeringR.value)
+  eel.changeCamera(camera = cameraR.value)
+  outCamera.innerText = cameraR.value
 });
 steeringR.addEventListener("change", () => {
-  changeValue_Text(3, cameraR.value)
+  eel.changeSteering(steering = steeringR.value)
+  outSteering.innerText = steeringR.value
 });
 
-stop.addEventListener("click", () => {
-  stopEverything()
-})
+// stop.addEventListener("click", () => {
+//   stopEverything()
+// })
 
 eel.expose(prompt_alerts);
 function prompt_alerts(description) {
@@ -61,29 +46,33 @@ function prompt_alerts(description) {
 document.addEventListener('keydown', (event) => {
   let speed_val = parseInt(speedR.value)
   let steering_val = parseInt(steeringR.value)
-
-  if (event.key === 'ArrowUp') {
+  if (event.key === 'ArrowUp' || event.key == 'w') {
     speedR.value = speed_val + 1
-    changeValue_Text(1, speedR.value)
+    eel.changeSpeed(speed = speedR.value)
+    outSpeed.innerText = speedR.value
   }
-  else if (event.key === 'ArrowDown') {
+  else if (event.key === 'ArrowDown' || event.key == 's') {
     speedR.value = speed_val - 1
-    changeValue_Text(1, speedR.value)
+    eel.changeSpeed(speed = speedR.value)
+    outSpeed.innerText = speedR.value
   }
-  else if (event.key === 'ArrowLeft') {
+  else if (event.key === 'ArrowLeft' || event.key == 'a') {
     steeringR.value = steering_val - 1
-    changeValue_Text(2, steeringR.value)
+    eel.changeSteering(steering = steeringR.value)
+    outSteering.innerText = steeringR.value
   }
-  else if (event.key === 'ArrowRight') {
+  else if (event.key === 'ArrowRight' || event.key == 'd') {
     steeringR.value = steering_val + 1
-    changeValue_Text(2, steeringR.value)
+    eel.changeSteering(steering = steeringR.value)
+    outSteering.innerText = steeringR.value
 
   }
   else if (event.code === 'Space') {
-    // console.log("ciao")
-    // stopEverything()
     steeringR.value = 0
-    changeValue_Text(2, steeringR.value)
+    eel.changeSteering(steering = steeringR.value)
+    outSteering.innerText = steeringR.value
+  } else if (event.key === 'Enter') {
+    stopEverything()
   }
 
   outSpeed.innerText = speedR.value
@@ -140,17 +129,13 @@ function gameLoop() {
 
   if (gamePad.buttons[0].value==1) {
     console.log(gamePad.buttons[0])
-    changeValue_Text(2, 0) //--> STEERING
-    changeValue_Text(1, 0) //--> SPEED
   }
+ speedR.value= gamePad.axes[3]*-5;
+ steeringR.value= gamePad.axes[2]*5;
+ eel.changeSteering(steering = steeringR.value);
+ eel.changeSpeed(speed = speedR.value);
 
-  if(gamePad.axes[2]>0.5){
-    console.log(gamePad.axes[2]);
-  }
-  if(gamePad.axes[3]>-0.5){
-    console.log("3",
-    gamePad.axes[3]);
-  }
+
  /* changeValue_Text(2, gamePad.buttons.axes[2] * 5) //--> STEERING
   changeValue_Text(1, gamePad.buttons.axes[3] * 5) //--> SPEED
   changeValue_Text(3, gamePad.buttons.axes[0] * 5) //--> CAMERA*/

@@ -7,7 +7,7 @@ from time import sleep
 # non funziona su linux o mac
 
 # # # # # # # # # # # # # # # #   MQTT DATA   # # # # # # # # # # # # # # # #
-client_id = 'RoverUser1_rover'
+client_id = 'RoverUser0_rover'
 topic = "rotas.stage/rover"
 broker = 'broker.emqx.io'
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
