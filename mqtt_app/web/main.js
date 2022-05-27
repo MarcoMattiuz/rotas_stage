@@ -14,8 +14,10 @@ function stopEverything() {
   cameraR.value = 0;
   eel.changeSpeed(speed = speedR.value)
   outSpeed.innerText = speedR.value
-  changeValue_Text(2, steeringR.value)
-  changeValue_Text(3, cameraR.value)
+  eel.changeSteering(steering = steeringR.value)
+  outSteering.innerText = steeringR.value
+  eel.changeCamera(camera = cameraR.value)
+  outCamera.innerText = cameraR.value
 }
 speedR.addEventListener("change", () => {
   console.log("ciao")
@@ -44,34 +46,33 @@ function prompt_alerts(description) {
 document.addEventListener('keydown', (event) => {
   let speed_val = parseInt(speedR.value)
   let steering_val = parseInt(steeringR.value)
-
-  if (event.key === 'ArrowUp') {
+  if (event.key === 'ArrowUp' || event.key == 'w') {
     speedR.value = speed_val + 1
     eel.changeSpeed(speed = speedR.value)
     outSpeed.innerText = speedR.value
   }
-  else if (event.key === 'ArrowDown') {
+  else if (event.key === 'ArrowDown' || event.key == 's') {
     speedR.value = speed_val - 1
     eel.changeSpeed(speed = speedR.value)
     outSpeed.innerText = speedR.value
   }
-  else if (event.key === 'ArrowLeft') {
+  else if (event.key === 'ArrowLeft' || event.key == 'a') {
     steeringR.value = steering_val - 1
     eel.changeSteering(steering = steeringR.value)
     outSteering.innerText = steeringR.value
   }
-  else if (event.key === 'ArrowRight') {
+  else if (event.key === 'ArrowRight' || event.key == 'd') {
     steeringR.value = steering_val + 1
     eel.changeSteering(steering = steeringR.value)
     outSteering.innerText = steeringR.value
 
   }
   else if (event.code === 'Space') {
-    // console.log("ciao")
-    // stopEverything()
     steeringR.value = 0
     eel.changeSteering(steering = steeringR.value)
     outSteering.innerText = steeringR.value
+  } else if (event.key === 'Enter') {
+    stopEverything()
   }
 
   outSpeed.innerText = speedR.value
