@@ -1,10 +1,7 @@
 import os
 import eel
-#from win32api import GetSystemMetrics
-
 import paho.mqtt.client as mqtt
 from time import sleep
-# non funziona su linux o mac
 
 # # # # # # # # # # # # # # # #   MQTT DATA   # # # # # # # # # # # # # # # #
 client_id = 'RoverUser0_rover'
