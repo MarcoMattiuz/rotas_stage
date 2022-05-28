@@ -6,7 +6,10 @@ let outSpeed = document.getElementById("outSpeed");
 let outCamera = document.getElementById("outCamera");
 let outSteering = document.getElementById("outSteering");
 
-
+eel.expose(prompt_alerts);
+function prompt_alerts(description) {
+  alert(description);
+}
 
 function stopEverything() {
   speedR.value = 0;
@@ -19,8 +22,8 @@ function stopEverything() {
   eel.changeCamera(camera = cameraR.value)
   outCamera.innerText = cameraR.value
 }
+
 speedR.addEventListener("change", () => {
-  console.log("ciao")
   eel.changeSpeed(speed = speedR.value)
   outSpeed.innerText = speedR.value
 });
@@ -37,41 +40,37 @@ steeringR.addEventListener("change", () => {
 //   stopEverything()
 // })
 
-eel.expose(prompt_alerts);
-function prompt_alerts(description) {
-  alert(description);
-}
-
-// comandi da tastiera
+// COMANDI DA TASTIERA
 document.addEventListener('keydown', (event) => {
   let speed_val = parseInt(speedR.value)
   let steering_val = parseInt(steeringR.value)
-  if (event.key === 'ArrowUp' || event.key == 'w') {
+
+  if (event.key == 'ArrowUp' || event.key == 'w') {
     speedR.value = speed_val + 1
     eel.changeSpeed(speed = speedR.value)
     outSpeed.innerText = speedR.value
   }
-  else if (event.key === 'ArrowDown' || event.key == 's') {
+  else if (event.key == 'ArrowDown' || event.key == 's') {
     speedR.value = speed_val - 1
     eel.changeSpeed(speed = speedR.value)
     outSpeed.innerText = speedR.value
   }
-  else if (event.key === 'ArrowLeft' || event.key == 'a') {
+  else if (event.key == 'ArrowLeft' || event.key == 'a') {
     steeringR.value = steering_val - 1
     eel.changeSteering(steering = steeringR.value)
     outSteering.innerText = steeringR.value
   }
-  else if (event.key === 'ArrowRight' || event.key == 'd') {
+  else if (event.key == 'ArrowRight' || event.key == 'd') {
     steeringR.value = steering_val + 1
     eel.changeSteering(steering = steeringR.value)
     outSteering.innerText = steeringR.value
-
   }
-  else if (event.code === 'Space') {
+  else if (event.code == 'Space') {
     steeringR.value = 0
     eel.changeSteering(steering = steeringR.value)
     outSteering.innerText = steeringR.value
-  } else if (event.key === 'Enter') {
+  }
+  else if (event.key === 'Enter') {
     stopEverything()
   }
 
@@ -80,9 +79,9 @@ document.addEventListener('keydown', (event) => {
 }, false);
 
 
+// COMANDI DA GAMEPAD
 var gamePad;
 var start;
-console.log("ciao")
 
 window.addEventListener("gamepadconnected", function(e) {
   console.log("Gamepad connected at index %d: %s. %d buttons, %d axes.",
