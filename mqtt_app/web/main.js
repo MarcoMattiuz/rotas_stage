@@ -70,7 +70,7 @@ document.addEventListener('keydown', (event) => {
     eel.changeSteering(steering = steeringR.value)
     outSteering.innerText = steeringR.value
   }
-  else if (event.key === 'Enter') {
+  else if (event.key == 'Enter') {
     stopEverything()
   }
 
@@ -83,12 +83,12 @@ document.addEventListener('keydown', (event) => {
 var gamePad;
 var start;
 
-window.addEventListener("gamepadconnected", function(e) {
+window.addEventListener("gamepadconnected", function (e) {
   console.log("Gamepad connected at index %d: %s. %d buttons, %d axes.",
     e.gamepad.index, e.gamepad.id,
     e.gamepad.buttons.length, e.gamepad.axes.length);
-    gameLoop();
-  });
+  gameLoop();
+});
 window.addEventListener("gamepaddisconnected", e => {
   console.log("Gamepad disconnected from index %d: %s",
     e.gamepad.index, e.gamepad.id);
@@ -115,8 +115,8 @@ function pollGamepads() {
 }*/
 
 function gameLoop() {
- // console.log(gamePad);
- // console.log("asdasdasdasdasd");
+  // console.log(gamePad);
+  // console.log("asdasdasdasdasd");
 
   var gamepads = navigator.getGamepads ? navigator.getGamepads() : (navigator.webkitGetGamepads ? navigator.webkitGetGamepads() : []);
   if (!gamepads) {
@@ -126,18 +126,18 @@ function gameLoop() {
   //console.log(gamePad);
   //testVibration(gamePad);
 
-  if (gamePad.buttons[0].value==1) {
+  if (gamePad.buttons[0].value == 1) {
     console.log(gamePad.buttons[0])
   }
-  var valSpeed =Math.round(gamePad.axes[1]*-5);
-  if(speedR.value!=valSpeed){
-    speedR.value= valSpeed;
+  var valSpeed = Math.round(gamePad.axes[1] * -5);
+  if (speedR.value != valSpeed) {
+    speedR.value = valSpeed;
     console.log(valSpeed);
     eel.changeSpeed(speed = speedR.value);
-  
+
   }
-  var valSterring = Math.round(gamePad.axes[2]*5);
-  if(steeringR.value != valSterring){
+  var valSterring = Math.round(gamePad.axes[2] * 5);
+  if (steeringR.value != valSterring) {
     steeringR.value = valSterring;
     eel.changeSteering(steering = steeringR.value);
   }
@@ -145,9 +145,9 @@ function gameLoop() {
 
 
 
- /* changeValue_Text(2, gamePad.buttons.axes[2] * 5) //--> STEERING
-  changeValue_Text(1, gamePad.buttons.axes[3] * 5) //--> SPEED
-  changeValue_Text(3, gamePad.buttons.axes[0] * 5) //--> CAMERA*/
+  /* changeValue_Text(2, gamePad.buttons.axes[2] * 5) //--> STEERING
+   changeValue_Text(1, gamePad.buttons.axes[3] * 5) //--> SPEED
+   changeValue_Text(3, gamePad.buttons.axes[0] * 5) //--> CAMERA*/
   start = window.requestAnimationFrame(gameLoop);
 
 }

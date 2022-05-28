@@ -59,8 +59,4 @@ def changeCamera(camera):
     client.publish(topic, f"camera: {camera}")
 
 
-eel.start('index.html',
-          size=(800, 800),
-          position=(100, 100))
-
-eel.start("index.html",)
+eel.start('index.html', mode='chrome', cmdline_args=['--start-fullscreen'])
