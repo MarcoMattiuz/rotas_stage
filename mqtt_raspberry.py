@@ -15,7 +15,6 @@ def change_speed(speed):
     global _steering
     _speed = int(speed)
     pwm.traz(_speed, _steering)
-    print(f"speed: {_speed} steering: {_steering}")
 
 
 def change_steering(steering):
@@ -23,7 +22,6 @@ def change_steering(steering):
     global _steering
     _steering = int(steering)
     pwm.traz(_speed, _steering)
-    print(f"speed: {_speed} steering: {_steering}")
 
 
 def change_camera(camera):
@@ -51,6 +49,7 @@ def on_message(client, userdata, message):
         print(f"speed: {_speed} steering: {_steering}")
     elif string.find("camera") != -1:
         change_camera(string[-2:])
+        print(f"camera: {_camera}")
 
 
 client = mqtt.Client(client_id)
