@@ -4,7 +4,7 @@ import paho.mqtt.client as mqtt
 from time import sleep
 
 # # # # # # # # # # # # # # # #   MQTT DATA   # # # # # # # # # # # # # # # #
-client_id = 'RoverUser_rover'
+client_id = 'RoverUser0_rover'
 topic = "rotas.stage/rover"
 broker = 'broker.emqx.io'
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
