@@ -1,15 +1,13 @@
 const speedR = document.getElementById("speedRange");
 const cameraR = document.getElementById("cameraRange");
 const steeringR = document.getElementById("steeringRange");
-const stop = document.getElementById("stop");
+const stopAll = document.getElementById("stopAll");
+const stopSteering = document.getElementById("stopSteering");
+const dangerButtons = document.getElementsByClassName("stop_button");
+const resetCamera = document.getElementById("resetCamera")
 let outSpeed = document.getElementById("outSpeed");
 let outCamera = document.getElementById("outCamera");
 let outSteering = document.getElementById("outSteering");
-
-eel.expose(prompt_alerts);
-function prompt_alerts(description) {
-  alert(description);
-}
 
 function stopEverything() {
   speedR.value = 0;
@@ -36,16 +34,30 @@ steeringR.addEventListener("change", () => {
   outSteering.innerText = steeringR.value
 });
 
-// stop.addEventListener("click", () => {
-//   stopEverything()
-// })
+stopAll.addEventListener("click", () => {
+  stopEverything()
+})
+stopSteering.addEventListener("click", () => {
+  steeringR.value = 0
+  eel.changeSteering(steering = steeringR.value)
+  outSteering.innerText = steeringR.value
+})
+resetCamera.addEventListener("click", () => {
+  cameraR.value = 0;
+  eel.changeCamera(camera = cameraR.value)
+  outCamera.innerText = cameraR.value
+})
+eel.expose(prompt_alerts);
+function prompt_alerts(description) {
+  alert(description);
+}
 
-// COMANDI DA TASTIERA
+// comandi da tastiera
 document.addEventListener('keydown', (event) => {
   let speed_val = parseInt(speedR.value)
   let steering_val = parseInt(steeringR.value)
+  if (event.key === 'ArrowUp' || event.key == 'w') {
 
-  if (event.key == 'ArrowUp' || event.key == 'w') {
     speedR.value = speed_val + 1
     eel.changeSpeed(speed = speedR.value)
     outSpeed.innerText = speedR.value
@@ -69,9 +81,14 @@ document.addEventListener('keydown', (event) => {
     steeringR.value = 0
     eel.changeSteering(steering = steeringR.value)
     outSteering.innerText = steeringR.value
-  }
-  else if (event.key == 'Enter') {
+    stopSteering.style.background = "red"
+  } else if (event.key === 'Enter') {
     stopEverything()
+    stopAll.style.background = "red"
+  } else if (event.key === '0') {
+    cameraR.value = 0;
+    eel.changeCamera(camera = cameraR.value)
+    outCamera.innerText = cameraR.value
   }
 
   outSpeed.innerText = speedR.value
@@ -94,37 +111,27 @@ window.addEventListener("gamepaddisconnected", e => {
     e.gamepad.index, e.gamepad.id);
   window.cancelRequestAnimationFrame(start);
 
-});
-var interval;
+// window.addEventListener("gamepadconnected", function (e) {
+//   console.log("Gamepad connected at index %d: %s. %d buttons, %d axes.",
+//     e.gamepad.index, e.gamepad.id,
+//     e.gamepad.buttons.length, e.gamepad.axes.length);
+//   gameLoop();
+// });
+// window.addEventListener("gamepaddisconnected", e => {
+//   console.log("Gamepad disconnected from index %d: %s",
+//     e.gamepad.index, e.gamepad.id);
+//   window.cancelRequestAnimationFrame(start);
 
-/*if (!('ongamepadconnected' in window)) {
-  // No gamepad events available, poll instead.
-  interval = setInterval(pollGamepads, 500);
-}
-function pollGamepads() {
-  var gamepads = navigator.getGamepads ? navigator.getGamepads() : (navigator.webkitGetGamepads ? navigator.webkitGetGamepads : []);
-  for (var i = 0; i < gamepads.length; i++) {
-    var gp = gamepads[i];
-    if (gp) {
-      gamepadInfo.innerHTML = "Gamepad connected at index " + gp.index + ": " + gp.id +
-        ". It has " + gp.buttons.length + " buttons and " + gp.axes.length + " axes.";
-      gameLoop();
-      clearInterval(interval);
-    }
-  }
-}*/
+// });
+// var interval;
 
 function gameLoop() {
   // console.log(gamePad);
   // console.log("asdasdasdasdasd");
 
-  var gamepads = navigator.getGamepads ? navigator.getGamepads() : (navigator.webkitGetGamepads ? navigator.webkitGetGamepads() : []);
-  if (!gamepads) {
-    return;
-  }
-  gamePad = gamepads[0];
-  //console.log(gamePad);
-  //testVibration(gamePad);
+// function gameLoop() {
+//   // console.log(gamePad);
+//   // console.log("asdasdasdasdasd");
 
   if (gamePad.buttons[0].value == 1) {
     console.log(gamePad.buttons[0])
@@ -149,16 +156,3 @@ function gameLoop() {
    changeValue_Text(1, gamePad.buttons.axes[3] * 5) //--> SPEED
    changeValue_Text(3, gamePad.buttons.axes[0] * 5) //--> CAMERA*/
   start = window.requestAnimationFrame(gameLoop);
-
-}
-
-function testVibration(gamepad) {
-  if (gamepad && gamepad.vibrationActuator) {
-    gamepad.vibrationActuator.playEffect("dual-rumble", {
-      startDelay: 0,
-      duration: 1000,
-      weakMagnitude: 1.0,
-      strongMagnitude: 1.0,
-    });
-  }
-}

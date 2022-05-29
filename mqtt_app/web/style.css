@@ -8,89 +8,81 @@
 }
 
 .cameraSlider[type="range"][orient="vertical"],
-.speedSlider[type="range"][orient="vertical"] {
+.speedSlider[type="range"][orient="vertical"],
+.steeringSlider[type="range"][orient="vertical"] {
     writing-mode: bt-lr; /* IE */
     -webkit-appearance: slider-vertical; /* Chromium */
-    width: 8px;
-    height: 175px;
+    width: 10px;
+    height: 275px;
     padding: 0 5px;
 }
 
 html,
 body {
-    background: whitesmoke;
-    font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande", "Lucida Sans Unicode", Geneva, Verdana,
-        sans-serif;
+    background: rgb(34, 193, 195);
+    background: linear-gradient(0deg, rgba(34, 193, 195, 1) 0%, rgba(253, 187, 45, 1) 100%);
+
     width: 100vw;
     height: 100vh;
     overflow: hidden;
 }
 
 main {
+    position: relative;
     width: 100%;
     height: 100%;
 }
-.top {
-    height: 60%;
-    position: relative;
+
+.video_container {
+    margin: 0 auto;
+    width: 60%;
+    height: 50%;
     display: flex;
-    align-items: center;
     justify-content: center;
 }
-.bottom {
-    height: 40%;
+
+.videofeed {
+    width: 100%;
+}
+
+.controls {
     position: relative;
+    margin: 0 auto;
+    width: 80%;
+    height: 50%;
+    padding: 3rem;
     display: flex;
-    align-items: center;
     justify-content: center;
 }
 
 .stop_button {
-    background: red;
+    width: 60%;
+    background: rgba(199, 13, 13, 0.978);
     color: whitesmoke;
+    height: 2rem;
     margin: 1rem;
     padding: 1rem 1.5rem;
-    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.sliderContainer {
-    position: relative;
-    margin: 1rem;
-    padding: 2.5rem;
-}
-.cameraSlider {
-    margin: 1.5rem;
-}
-.cameraSlider::before {
-    content: "-CAMERA-";
-    position: absolute;
-    bottom: 0;
-    left: 15%;
-}
-
-.speedSlider {
-    margin: 1.5rem;
-}
-.speedSlider::before {
-    content: "-SPEED-";
-    position: absolute;
-    bottom: 0;
-    left: 20%;
-}
-
-.bottomSlider {
-    height: 3rem;
-}
-.steeringSlider::after {
-    content: "-ANGOLO STERZATA-";
-    position: absolute;
-    bottom: 0;
-    left: 23%;
+.button_container {
+    height: 60%;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
 }
 .out {
     font-size: 1.5rem;
-    color: blue;
     font-weight: bold;
+}
+
+.r-cont {
+    width: 7rem;
+    margin: 1rem 2rem;
+    display: flex;
+    justify-content: center;
 }
 .video {
     width: 55%;
@@ -106,28 +98,6 @@ main {
 
 .header__logo {
     width: 15%;
-}
-
-.header__menu {
-    float: right;
-    margin: 0;
-    padding: 0.4em;
-}
-
-.header__menu__item {
-    color: #fff;
-    background-color: #444;
-    display: inline-table;
-    vertical-align: middle;
-    text-decoration: none;
-    padding: 0.9em;
-    border: 0px solid black;
-    border-radius: 1em;
-}
-
-.header__menu__item:hover {
-    background: #222;
-    cursor: pointer;
 }
 
 .clearfix::after {

@@ -3,14 +3,14 @@ from time import sleep
 
 GPIO.setmode(GPIO.BOARD)
 
-GPIO.setup(32, GPIO.OUT)
-GPIO.setup(33, GPIO.OUT)
+GPIO.setup(38, GPIO.OUT)
+GPIO.setup(37, GPIO.OUT)
 GPIO.setup(12, GPIO.OUT)
 GPIO.setup(35, GPIO.OUT)
 
 freq = 500
-left1 = GPIO.PWM(32, freq)
-left2 = GPIO.PWM(33, freq)
+left1 = GPIO.PWM(38, freq)
+left2 = GPIO.PWM(37, freq)
 right1 = GPIO.PWM(12, freq)
 right2 = GPIO.PWM(35, freq)
 
