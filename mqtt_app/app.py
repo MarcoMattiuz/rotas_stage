@@ -35,7 +35,7 @@ client.subscribe(topic)
 @eel.expose
 def changeSpeed(speed):
     speed = int(speed)
-    if speed > 0:
+    if speed >= 0:
         speed = f"0{speed}"
     client.publish(topic, f"speed: {speed}")
 
@@ -43,7 +43,7 @@ def changeSpeed(speed):
 @eel.expose
 def changeSteering(steering):
     steering = int(steering)
-    if steering > 0:
+    if steering >= 0:
         steering = f"0{steering}"
     client.publish(topic, f"steering: {steering}")
 
@@ -51,7 +51,7 @@ def changeSteering(steering):
 @eel.expose
 def changeCamera(camera):
     camera = int(camera)
-    if camera > 0:
+    if camera >= 0:
         camera = f"0{camera}"
     client.publish(topic, f"camera: {camera}")
 
