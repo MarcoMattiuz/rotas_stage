@@ -7,21 +7,27 @@
     padding: 0;
 }
 
+input {
+    width: 20rem;
+}
 .cameraSlider[type="range"][orient="vertical"],
-.speedSlider[type="range"][orient="vertical"],
-.steeringSlider[type="range"][orient="vertical"] {
+.speedSlider[type="range"][orient="vertical"] {
     writing-mode: bt-lr; /* IE */
     -webkit-appearance: slider-vertical; /* Chromium */
-    width: 10px;
-    height: 275px;
-    padding: 0 5px;
+    width: 10px !important;
+    height: 100% !important;
+    padding: 0 5px !important;
+    margin: 0 auto !important;
 }
 
-html,
+html {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+}
 body {
-    background-color: #08aeea;
-    background-image: linear-gradient(0deg, #08aeea 0%, #2af598 100%);
-
+    background-image: url(./assets/bgPattern.svg);
+    opacity: 0.95;
     width: 100vw;
     height: 100vh;
     overflow: hidden;
@@ -34,6 +40,8 @@ main {
 }
 
 .video_container {
+    background-color: #087172;
+    opacity: 0.6;
     margin: 0 auto;
     width: 60%;
     height: 50%;
@@ -49,15 +57,36 @@ main {
     position: relative;
     margin: 0 auto;
     width: 80%;
-    height: 50%;
+    height: 20rem;
     padding: 3rem;
     display: flex;
     justify-content: center;
 }
+.sliders_wrap {
+    position: relative;
+    width: 35rem;
+    height: 100%;
+    display: grid;
+    grid-template-columns: 50% 50%;
+    grid-template-rows: 70% 30%;
+    grid-template-areas: "speed camera" "steer steer";
+}
 
+.speedContainer {
+    grid-area: speed;
+    padding: 1rem;
+}
+.cameraContainer {
+    grid-area: camera;
+    padding: 1rem;
+}
+.steeringContainer {
+    grid-area: steer;
+    padding: 1rem;
+}
 .stop_button {
     width: 60%;
-    background: rgba(199, 13, 13, 0.978);
+    background: #cf0303;
     color: whitesmoke;
     height: 2rem;
     margin: 1rem;
@@ -65,24 +94,25 @@ main {
     display: flex;
     align-items: center;
     justify-content: center;
+    border-radius: 0.7rem;
 }
 
 .button_container {
-    height: 60%;
+    position: relative;
+    height: 100%;
     display: flex;
     justify-content: space-between;
     flex-direction: column;
 }
 .out {
-    font-size: 1.5rem;
+    color: whitesmoke;
+    font-size: 1.4rem;
     font-weight: bold;
 }
 
 .r-cont {
-    width: 7rem;
-    margin: 1rem 2rem;
-    display: flex;
-    justify-content: center;
+    display: grid;
+    place-items: center;
 }
 .video {
     width: 55%;
@@ -92,8 +122,18 @@ main {
     text-align: center;
     font-weight: bold;
 }
+
+.range_label {
+    color: whitesmoke;
+    font-size: 1.4rem;
+    font-weight: bold;
+}
 .header {
-    background: rgba(11, 11, 186, 0.605);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #087172;
+    opacity: 0.6;
 }
 
 .header__logo {

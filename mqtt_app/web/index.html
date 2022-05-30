@@ -7,8 +7,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.css" />
   <link rel="stylesheet" href="style.css" />
-  <script type="text/javascript" src="../eel.js"></script> <!-- NON CANCELLARE QUESTA RIGA -->
-
+  <script type="text/javascript" src="../eel.js"></script>
+</head>
   <body>
     <header class="header clearfix">
       <img src="assets/logo.png" alt="logo" class="header__logo" />
@@ -18,46 +18,48 @@
         <embed src="http://192.168.8.40:8000" class="videofeed" class="video" />
       </div>
       <div class="controls">
-        <div class="speedContainer r-cont">
-          <div id="outSpeed" class="out">0</div>
-          <input
-            type="range"
-            min="-5"
-            max="5"
-            value="0"
-            class="speedSlider"
-            id="speedRange"
-            orient="vertical"
-          />
-          <div class="speedlabel">SPEED</div>
+        <div class="sliders_wrap">
+          <div class="speedContainer r-cont">
+            <div id="outSpeed" class="out">0</div>
+            <input
+              type="range"
+              min="-5"
+              max="5"
+              value="0"
+              class="speedSlider"
+              id="speedRange"
+              orient="vertical"
+            />
+            <div class="range_label">SPEED</div>
+          </div>
+          <div class="cameraContainer r-cont">
+            <div id="outCamera" class="out">0</div>
+            <input
+              type="range"
+              min="0"
+              max="5"
+              value="0"
+              class="cameraSlider"
+              id="cameraRange"
+              orient="vertical"
+            />
+            <div class="range_label">CAMERA</div>
+          </div>
+          <div class="steeringContainer r-cont">
+            <div id="outSteering" class="out">0</div>
+            <input
+              type="range"
+              min="-5"
+              max="5"
+              value="0"
+              class="steeringSlider"
+              id="steeringRange"
+              orient="vertical"
+            />
+            <div class="range_label">STEERING</div>
+          </div>       
+          
         </div>
-        <div class="steeringContainer r-cont">
-          <div id="outSteering" class="out">0</div>
-          <input
-            type="range"
-            min="-5"
-            max="5"
-            value="0"
-            class="steeringSlider"
-            id="steeringRange"
-            orient="vertical"
-          />
-          <div class="steeringLabel">STEERING</div>
-        </div>
-        <div class="cameraContainer r-cont">
-          <div id="outCamera" class="out">0</div>
-          <input
-            type="range"
-            min="0"
-            max="5"
-            value="0"
-            class="cameraSlider"
-            id="cameraRange"
-            orient="vertical"
-          />
-          <div class="cameraLabel">CAMERA</div>
-        </div>
-        <!-- <button class="stop_button" id="stopAll">!STOP ALL!</button> -->
         <div class="button_container">
           <div class="stop_button" id="stopAll">!STOP!</div>
           <div class="stop_button" id="stopSteering">!RESET STEERING!</div>
