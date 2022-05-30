@@ -1,7 +1,6 @@
 import os
 import eel
 import paho.mqtt.client as mqtt
-from time import sleep
 
 # # # # # # # # # # # # # # # #   MQTT DATA   # # # # # # # # # # # # # # # #
 client_id = 'RoverUser_rover'

@@ -7,11 +7,11 @@
 const char* ssid = "WirelessPoint-Guest";
 const char* password = "SNVZTKVZMKB";
 /**/
-/*
-const char* ssid = "Iphone di Giaco";
+/**/
+const char* ssid = "iPhone di Giaco";
 const char* password = "12345678";
 /**/
-/**/
+/*
 const char* ssid = "Linkem_FCD881_EXT";
 const char* password = "d29vust7";
 /**/
@@ -26,7 +26,8 @@ PubSubClient client = PubSubClient(espClient);
 
 
 int speed = 0, steering = 0;
-String speed_old = "avanti", steering_old = "dritto";
+String speed_old = "", steering_old = "";
+String speed_sent = "", steering_sent = "";
 bool stop = false;
 
 void setup() {
@@ -112,6 +113,7 @@ void loop() {
 
   if (speed_old == "fermo" && steering_old == "dritto" && stop == false) {
     Serial.println("- STOP -");
+    if(speed_sent
     client.publish(topic, "speed: 00");
     client.publish(topic, "steering: 00");
     stop = true;
