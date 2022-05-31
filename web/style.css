@@ -26,7 +26,7 @@ html {
     overflow: hidden;
 }
 body {
-    background-image: url(./assets/bgPattern.svg);
+    background-image: whitesmoke;
     opacity: 0.95;
     width: 100vw;
     height: 100vh;
@@ -40,6 +40,7 @@ main {
 }
 
 .video_container {
+    background-color: red;
     margin: 0 auto;
     width: 60%;
     height: 50%;
@@ -48,6 +49,7 @@ main {
 }
 
 .videofeed {
+    opacity: 1 !importan;
     width: 100%;
 }
 

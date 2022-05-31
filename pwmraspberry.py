@@ -2,24 +2,23 @@ import RPi.GPIO as GPIO
 from time import sleep
 
 GPIO.setmode(GPIO.BOARD)
+GPIO.setwarnings(False)
 
-GPIO.setup(38, GPIO.OUT)
-GPIO.setup(37, GPIO.OUT)
+GPIO.setup(31, GPIO.OUT)
+GPIO.setup(32, GPIO.OUT)
 GPIO.setup(12, GPIO.OUT)
 GPIO.setup(35, GPIO.OUT)
 
 freq = 500
-left1 = GPIO.PWM(38, freq)
-left2 = GPIO.PWM(37, freq)
+left1 = GPIO.PWM(31, freq)
+left2 = GPIO.PWM(32, freq)
 right1 = GPIO.PWM(12, freq)
 right2 = GPIO.PWM(35, freq)
 
-
-def setup_pwm():
-    left1.start(0)
-    left2.start(0)
-    right1.start(0)
-    right2.start(0)
+left1.start(0)
+left2.start(0)
+right1.start(0)
+right2.start(0)
 
 
 def stop_pwm():
@@ -42,7 +41,6 @@ def traz(velocita, sterzo):
         v_sx = map(sterzo, 0, 5, velocita, -velocita)
     else:
         v_dx = map(sterzo, 0, 5, velocita, -velocita)
-        print(v_dx)
         v_sx = velocita
 
     if v_dx < 0:
