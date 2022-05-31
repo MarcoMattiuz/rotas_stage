@@ -26,7 +26,7 @@ main {
 .video_container {
     margin: 0 auto;
     width: 60%;
-    height: 40%;
+    height: 50%;
     display: flex;
     justify-content: center;
 }
@@ -41,7 +41,7 @@ main {
     margin: 0 auto;
     width: 80%;
     height: 40%;
-    padding: 3rem;
+    padding: 1rem;
     display: flex;
     justify-content: center;
 }
@@ -69,7 +69,7 @@ main {
     background-color: $box-color;
     border-radius: $border-radius;
     margin: 0.8rem;
-    padding: 0.5rem;
+    padding: 0.3rem;
 }
 .button_container {
     position: relative;
@@ -103,7 +103,7 @@ main {
 }
 
 .header {
-    margin: 0.8rem;
+    margin: 0.2rem;
     padding: 0.5rem;
     border-radius: $border-radius;
     display: flex;

@@ -79,14 +79,14 @@ ws.addEventListener("open", () => {
     else if (event.code == 'Space') {
       steeringR.value = 0
       ws.send("steering:0" + 0);
-      stopSteering.style.background = "red"
+      stopSteering.style.opacity = "0.7"
     } else if (event.key === 'Enter') {
       stopEverything()
-      stopAll.style.background = "red"
+      stopAll.style.opacity = "0.7"
     } else if (event.key === '0') {
       cameraR.value = 0;
       ws.send("steering:0" + 0);
-      resetCamera.style.background = "red"
+      resetCamera.style.opacity = "0.7"
     }
     outSpeed.innerText = speedR.value
     outSteering.innerText = steeringR.value
@@ -95,11 +95,11 @@ ws.addEventListener("open", () => {
 
   document.addEventListener("keyup", (event) => {
     if (event.code == 'Space') {
-      stopSteering.style.background = "#cf0303"
+      stopSteering.style.opacity = "1"
     } else if (event.key === 'Enter') {
-      stopAll.style.background = "#cf0303"
+      stopAll.style.opacity = "1"
     } else if (event.key === '0') {
-      resetCamera.style.background = "#cf0303"
+      resetCamera.style.opacity = "1"
     }
   })
 
@@ -114,7 +114,6 @@ function prompt_alerts(description) {
   alert(description);
 }
 
-// comandi da tastiera
 
 
 // // COMANDI DA GAMEPAD
