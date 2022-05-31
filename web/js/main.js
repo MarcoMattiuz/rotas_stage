@@ -1,12 +1,13 @@
-const speedR = document.getElementById("speedRange");
-const cameraR = document.getElementById("cameraRange");
-const steeringR = document.getElementById("steeringRange");
+const speedR = document.getElementById("speedRange"); //
+const cameraR = document.getElementById("cameraRange"); //
+const steeringR = document.getElementById("steeringRange"); //
 const stopAll = document.getElementById("stopAll");
 const stopSteering = document.getElementById("stopSteering");
 const resetCamera = document.getElementById("resetCamera")
 let outSpeed = document.getElementById("outSpeed");
 let outCamera = document.getElementById("outCamera");
 let outSteering = document.getElementById("outSteering");
+
 
 
 function stopEverything() {

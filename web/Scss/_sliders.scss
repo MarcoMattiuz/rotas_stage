@@ -1,0 +1,210 @@
+$thumb-radius: 7px; // Actual size is $thumb-radius*$thumb-radius-scale
+$thumb-radius-scale: 3; // We do this to make the thumb overlay the sides of the track
+$theme-color: #009fdf;
+$theme-color-dark: #545454;
+$track-height: 5px;
+$border-radius: 3px;
+$bottom-border: 4px;
+$slider-padding: 15px;
+$rule-height: 6px;
+$rule-color: #cccccc;
+$side-control-height: 35px;
+
+@mixin thumb {
+    position: relative;
+    height: $thumb-radius;
+    width: $thumb-radius;
+    // Trick to make it overflow on the sides
+    transform: scale($thumb-radius-scale);
+    margin-top: -$thumb-radius/2 + $track-height/2;
+    border-radius: 500px;
+    background: $theme-color;
+    border: 0;
+    cursor: pointer;
+    z-index: 2;
+}
+@mixin track {
+    background-color: $theme-color-dark;
+    height: $track-height;
+    border-radius: $border-radius;
+}
+
+input[type="range"] {
+    width: 100%;
+    box-sizing: border-box;
+    -webkit-appearance: none;
+    height: $slider-padding * 2 + $track-height; // IE's thumb gets cut
+    background: transparent;
+    position: relative;
+    cursor: pointer;
+    background: linear-gradient(90deg, $rule-color 1px, rgba(238, 238, 238, 0) 1px) repeat-x content-box,
+        linear-gradient(90deg, $rule-color 1px, rgba(238, 238, 238, 0) 1px) repeat-x content-box;
+    background-size: 25% $rule-height, calc(100% - 5px) $rule-height * 2;
+    background-position: 1px 30%, 1px 20%;
+    padding: 0 $slider-padding;
+    overflow: visible;
+
+    /*******    The Thumb    *******/
+    &::-webkit-slider-thumb {
+        @include thumb();
+        -webkit-appearance: none;
+    }
+    &::-moz-range-thumb {
+        @include thumb();
+    }
+    &::-ms-thumb {
+        @include thumb();
+        // BUG: In IE the scale*3 gets hidden under the padding (facepalm)
+        transform: none;
+        margin-top: -2px;
+        height: $thumb-radius * $thumb-radius-scale;
+        width: $thumb-radius * $thumb-radius-scale;
+        border-radius: $thumb-radius * $thumb-radius-scale;
+    }
+
+    /*******    The Track    *******/
+    &::-webkit-slider-runnable-track {
+        @include track();
+        // transform: scaleX(0.9);
+    }
+    &::-moz-range-track {
+        @include track();
+    }
+    &::-ms-track {
+        background: transparent;
+        border-color: transparent;
+        color: transparent;
+    }
+    &::-ms-fill-lower {
+        @include track();
+        background-color: $theme-color;
+    }
+    &::-ms-fill-upper {
+        @include track();
+    }
+
+    &:focus {
+        outline: none;
+    }
+}
+
+@mixin legend-text() {
+    font-family: Helvetica, Arial, sans-serif;
+    font-weight: bold;
+    font-size: 11px;
+    color: $rule-color;
+    margin-top: -$slider-padding - $bottom-border + 1px;
+}
+
+/*******    The wrapper for the range input    *******/
+.range-box {
+    position: relative;
+    background-color: #f4f4f4;
+    padding: 0;
+    margin: 0.5rem $side-control-height;
+    overflow: visible;
+    height: 2.5rem;
+    &:after {
+        display: block;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        content: "";
+        width: 100%;
+        background-color: #b3b3b3;
+        height: $bottom-border;
+    }
+
+    .legend-min {
+        @include legend-text();
+        float: left;
+        margin-left: $slider-padding - 2px;
+    }
+    .legend-max {
+        @include legend-text();
+        float: right;
+        margin-right: $slider-padding - 4px;
+    }
+}
+
+/*******    Extra controls on the side    *******/
+@mixin side-control() {
+    // box-sizing: border-box;
+    position: absolute;
+    top: 0;
+    background-color: #009fdf;
+    color: white;
+    width: $side-control-height;
+    text-align: center;
+    cursor: pointer;
+    height: $side-control-height;
+    border-bottom: $bottom-border solid #0073a1;
+    z-index: 1;
+    font-weight: bold;
+    font-size: $side-control-height;
+    line-height: $side-control-height;
+    &:hover {
+        top: 1px;
+        background-color: #00adf2;
+        border-bottom-width: $bottom-border - 1px;
+    }
+    &:active {
+        top: 3px;
+        background-color: #009fdf;
+        border-bottom-width: 2px;
+    }
+}
+
+.no-selection {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+.control-minus {
+    // display: inline-block;
+    @include side-control();
+    left: -$side-control-height;
+    line-height: $side-control-height - $bottom-border;
+    border-top-left-radius: $border-radius;
+    border-bottom-left-radius: $border-radius;
+    @extend .no-selection;
+}
+.control-plus {
+    @include side-control();
+    right: -$side-control-height;
+    border-top-right-radius: $border-radius;
+    border-bottom-right-radius: $border-radius;
+    @extend .no-selection;
+}
+
+/*******    Value tooltip    *******/
+.current-value {
+    visibility: hidden;
+    background: $theme-color;
+    border-radius: $border-radius;
+    position: absolute;
+    top: -48px;
+    padding: 12px 18px;
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 20px;
+    font-weight: bold;
+    color: white;
+    line-height: 22px;
+    white-space: nowrap;
+    transition: left 0.045s linear;
+    &:after {
+        content: "";
+        width: 0;
+        height: 0;
+        position: absolute;
+        left: 50%;
+        border-left: 6px solid transparent;
+        border-right: 6px solid transparent;
+        border-top: 6px solid $theme-color;
+        margin-top: -6px;
+        margin-left: -6px;
+        bottom: -5px;
+    }
+}
