@@ -40,8 +40,6 @@ main {
 }
 
 .video_container {
-    background-color: #087172;
-    opacity: 0.6;
     margin: 0 auto;
     width: 60%;
     height: 50%;
