@@ -7,29 +7,38 @@ var mSteering = document.getElementById("mSteering");
 var pSteering = document.getElementById("pSteering");
 var mCamera = document.getElementById("mCamera");
 var pCamera = document.getElementById("pCamera");
+// let outSpeed = document.getElementById("outSpeed");
+// let outCamera = document.getElementById("outCamera");
+// let outSteering = document.getElementById("outSteering");
 
 mSpeed.addEventListener("click", function () {
-    speedRange.stepDown();
+    speedRange.value -= 1;
+    outSpeed.innerText = speedRange.value
 }, false);
 
 pSpeed.addEventListener("click", function () {
-    speedRange.stepUp();
+    speedRange.value += 1;
+    outSpeed.innerText = speedRange.value
 }, false);
 
 
 mSteering.addEventListener("click", function () {
-    steeringRange.stepDown();
+    steeringRange.value -= 1;
+    outSteering.innerText = steeringRange.value
 }, false);
 
 pSteering.addEventListener("click", function () {
-    steeringRange.stepUp();
+    steeringRange.value += 1;
+    outSteering.innerText = steeringRange.value
 }, false);
 
 
 mCamera.addEventListener("click", function () {
-    cameraRange.stepDown();
+    cameraRange.value -= 1;
+    outCamera.innerText = cameraRange.value
 }, false);
 
 pCamera.addEventListener("click", function () {
-    cameraRange.stepUp();
+    cameraRange.value += 1;
+    outCamera.innerText = cameraRange.value
 }, false);
