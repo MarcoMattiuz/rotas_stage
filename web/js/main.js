@@ -113,68 +113,47 @@ ws.addEventListener("message", ({ data }) => {
 function prompt_alerts(description) {
   alert(description);
 }
+ // COMANDI DA GAMEPAD
+ var gamePad;
+ var start
+ window.addEventListener("gamepadconnected", function (e) {
+   console.log("Gamepad connected at index %d: %s. %d buttons, %d axes.",
+     e.gamepad.index, e.gamepad.id,
+     e.gamepad.buttons.length, e.gamepad.axes.length);
+   gameLoop();
+ });
+ window.addEventListener("gamepaddisconnected", e => {
+   console.log("Gamepad disconnected from index %d: %s",
+     e.gamepad.index, e.gamepad.id);
+   window.cancelRequestAnimationFrame(start)
+
+ });
+   // var interval
+function gameLoop() {
+     // console.log(gamePad);
+     // console.log("asdasdasdasdasd")
+     // function gameLoop() {
+     //   // console.log(gamePad);
+     //   // console.log("asdasdasdasdasd")
+     if (gamePad.buttons[0].value == 1) {
+       console.log(gamePad.buttons[0])
+     }
+     var valSpeed = Math.round(gamePad.axes[1] * -5);
+     if (speedR.value != valSpeed) {
+       speedR.value = valSpeed;
+       ws.send("speed:0" + speedR.value);
+       outSpeed.innerText = speedR.value
+     }
+     var valSterring = Math.round(gamePad.axes[2] * 5);
+     if (steeringR.value != valSterring) {
+      ws.send("steering:0" + steeringR.value);
+      outSteering.innerText = steeringR.value
+     }
+     /* changeValue_Text(2, gamePad.buttons.axes[2] * 5) //--> STEERING
+      changeValue_Text(1, gamePad.buttons.axes[3] * 5) //--> SPEED
+      changeValue_Text(3, gamePad.buttons.axes[0] * 5) //--> CAMERA*/
+     start = window.requestAnimationFrame(gameLoop);
+   
+}
 
 
-
-// // COMANDI DA GAMEPAD
-// var gamePad;
-// var start;
-
-// window.addEventListener("gamepadconnected", function (e) {
-//   console.log("Gamepad connected at index %d: %s. %d buttons, %d axes.",
-//     e.gamepad.index, e.gamepad.id,
-//     e.gamepad.buttons.length, e.gamepad.axes.length);
-//   gameLoop();
-// });
-// window.addEventListener("gamepaddisconnected", e => {
-//   console.log("Gamepad disconnected from index %d: %s",
-//     e.gamepad.index, e.gamepad.id);
-//   window.cancelRequestAnimationFrame(start);
-
-//   // window.addEventListener("gamepadconnected", function (e) {
-//   //   console.log("Gamepad connected at index %d: %s. %d buttons, %d axes.",
-//   //     e.gamepad.index, e.gamepad.id,
-//   //     e.gamepad.buttons.length, e.gamepad.axes.length);
-//   //   gameLoop();
-//   // });
-//   // window.addEventListener("gamepaddisconnected", e => {
-//   //   console.log("Gamepad disconnected from index %d: %s",
-//   //     e.gamepad.index, e.gamepad.id);
-//   //   window.cancelRequestAnimationFrame(start);
-
-//   // });
-//   // var interval;
-
-//   function gameLoop() {
-//     // console.log(gamePad);
-//     // console.log("asdasdasdasdasd");
-
-//     // function gameLoop() {
-//     //   // console.log(gamePad);
-//     //   // console.log("asdasdasdasdasd");
-
-//     if (gamePad.buttons[0].value == 1) {
-//       console.log(gamePad.buttons[0])
-//     }
-//     var valSpeed = Math.round(gamePad.axes[1] * -5);
-//     if (speedR.value != valSpeed) {
-//       speedR.value = valSpeed;
-//       console.log(valSpeed);
-//       eel.changeSpeed(speed = speedR.value);
-
-//     }
-//     var valSterring = Math.round(gamePad.axes[2] * 5);
-//     if (steeringR.value != valSterring) {
-//       steeringR.value = valSterring;
-//       eel.changeSteering(steering = steeringR.value);
-//     }
-
-
-
-
-//     /* changeValue_Text(2, gamePad.buttons.axes[2] * 5) //--> STEERING
-//      changeValue_Text(1, gamePad.buttons.axes[3] * 5) //--> SPEED
-//      changeValue_Text(3, gamePad.buttons.axes[0] * 5) //--> CAMERA*/
-//     start = window.requestAnimationFrame(gameLoop);
-//   }
-// })
