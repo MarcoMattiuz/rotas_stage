@@ -131,7 +131,7 @@ function prompt_alerts(description) {
  });
    // var interval
 function gameLoop() {
-
+  var valSpeed;
   var gamepads = navigator.getGamepads ? navigator.getGamepads() : (navigator.webkitGetGamepads ? navigator.webkitGetGamepads() : []);
   if (!gamepads) {
     return;
@@ -139,16 +139,23 @@ function gameLoop() {
 
     gamePad = gamepads[0];
      if (gamePad.buttons[0].value == 1) {
-       console.log(gamePad.buttons[0])
+     
+       console.log(valSpeed);
      }
-     var valSpeed = Math.round(gamePad.axes[1] * -5);
+     
+     valSpeedBack =  Math.round(gamePad.buttons[6].value * -8);
+     valSpeedBack <-5 ? -5 : valSpeedBack;
+     valSpeedFront =  Math.round(gamePad.buttons[7].value * 8); 
+     valSpeedFront > 5 ? 5 : valSpeedFront;
+    valSpeed =  valSpeedBack+valSpeedFront;
      if (speedR.value != valSpeed) {
-       speedR.value = valSpeed;
+      speedR.value = valSpeed;
        ws.send("speed:0" + speedR.value);
        outSpeed.innerText = speedR.value
      }
      var valSterring = Math.round(gamePad.axes[2] * 5);
      if (steeringR.value != valSterring) {
+      steeringR.value = valSterring;
       ws.send("steering:0" + steeringR.value);
       outSteering.innerText = steeringR.value
      }
