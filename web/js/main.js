@@ -117,7 +117,7 @@ function prompt_alerts(description) {
  var gamePad;
  var start
  window.addEventListener("gamepadconnected", function (e) {
-  gamePad = navigator.getGamepads()[e.gamepad.index];
+
    console.log("Gamepad connected at index %d: %s. %d buttons, %d axes.",
      e.gamepad.index, e.gamepad.id,
      e.gamepad.buttons.length, e.gamepad.axes.length);
@@ -132,11 +132,12 @@ function prompt_alerts(description) {
    // var interval
 function gameLoop() {
 
-     // console.log(gamePad);
-     // console.log("asdasdasdasdasd")
-     // function gameLoop() {
-     //   // console.log(gamePad);
-     //   // console.log("asdasdasdasdasd")
+  var gamepads = navigator.getGamepads ? navigator.getGamepads() : (navigator.webkitGetGamepads ? navigator.webkitGetGamepads() : []);
+  if (!gamepads) {
+    return;
+  }
+
+    gamePad = gamepads[0];
      if (gamePad.buttons[0].value == 1) {
        console.log(gamePad.buttons[0])
      }
