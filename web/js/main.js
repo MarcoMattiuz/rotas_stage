@@ -21,7 +21,7 @@ function stopEverything() {
   ws.send("camera:0" + 0);
   outCamera.innerText = cameraR.value
 }
-const ws = new WebSocket("ws://pi.local:8000");
+const ws = new WebSocket("ws://192.168.8.40:8000");
 ws.addEventListener("open", () => {
   console.log("we are connected");
 
