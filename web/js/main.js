@@ -1,12 +1,15 @@
-const speedR = document.getElementById("speedRange");
-const cameraR = document.getElementById("cameraRange");
-const steeringR = document.getElementById("steeringRange");
+const speedR = document.getElementById("speedRange"); //
+const cameraR = document.getElementById("cameraRange"); //
+const steeringR = document.getElementById("steeringRange"); //
 const stopAll = document.getElementById("stopAll");
 const stopSteering = document.getElementById("stopSteering");
 const resetCamera = document.getElementById("resetCamera")
 let outSpeed = document.getElementById("outSpeed");
 let outCamera = document.getElementById("outCamera");
 let outSteering = document.getElementById("outSteering");
+console.log("CIAO")
+console.log(speedR)
+
 
 
 function stopEverything() {
@@ -21,91 +24,91 @@ function stopEverything() {
   outCamera.innerText = cameraR.value
 }
 const ws = new WebSocket("ws://pi.local:8000");
-ws.addEventListener("open", () => {
-  console.log("we are connected");
+// ws.addEventListener("open", () => {
+console.log("we are connected");
 
-  speedR.addEventListener("change", () => {
-    console.log(speedR.value);
-    ws.send("speed:0" + speedR.value);
-    outSpeed.innerText = speedR.value
-  });
-  cameraR.addEventListener("change", () => {
-    ws.send("camera:0" + cameraR.value);
-    outCamera.innerText = cameraR.value
-  });
-  steeringR.addEventListener("change", () => {
-    ws.send("steering:0" + steeringR.value);
-    outSteering.innerText = steeringR.value
-  });
-
-  stopAll.addEventListener("click", () => {
-    stopEverything()
-  })
-  stopSteering.addEventListener("click", () => {
-    steeringR.value = 0
-
-    outSteering.innerText = steeringR.value
-  })
-  resetCamera.addEventListener("click", () => {
-    cameraR.value = 0;
-
-    outCamera.innerText = cameraR.value
-  })
-  document.addEventListener('keydown', (event) => {
-    let speed_val = parseInt(speedR.value)
-    let steering_val = parseInt(steeringR.value)
-
-    if (event.key === 'ArrowUp' || event.key == 'w') {
-      speedR.value = speed_val + 1
-      ws.send("speed:0" + speedR.value);
-      console.log(speedR.value);
-
-    }
-    else if (event.key == 'ArrowDown' || event.key == 's') {
-      speedR.value = speed_val - 1
-      ws.send("speed:0" + speedR.value);
-
-    }
-    else if (event.key == 'ArrowLeft' || event.key == 'a') {
-      steeringR.value = steering_val - 1
-      ws.send("steering:0" + steeringR.value);
-
-    }
-    else if (event.key == 'ArrowRight' || event.key == 'd') {
-      steeringR.value = steering_val + 1
-      ws.send("steering:0" + steeringR.value);
-    }
-    else if (event.code == 'Space') {
-      steeringR.value = 0
-      ws.send("steering:0" + 0);
-      stopSteering.style.background = "red"
-    } else if (event.key === 'Enter') {
-      stopEverything()
-      stopAll.style.background = "red"
-    } else if (event.key === '0') {
-      cameraR.value = 0;
-      ws.send("steering:0" + 0);
-      resetCamera.style.background = "red"
-    }
-    outSpeed.innerText = speedR.value
-    outSteering.innerText = steeringR.value
-    outCamera.innerText = cameraR.value
-  }, false);
-
-  document.addEventListener("keyup", (event) => {
-    if (event.code == 'Space') {
-      stopSteering.style.background = "#cf0303"
-    } else if (event.key === 'Enter') {
-      stopAll.style.background = "#cf0303"
-    } else if (event.key === '0') {
-      resetCamera.style.background = "#cf0303"
-    }
-  })
-
+speedR.addEventListener("change", () => {
+  console.log(speedR.value);
+  ws.send("speed:0" + speedR.value);
+  outSpeed.innerText = speedR.value
 });
-ws.addEventListener("message", ({ data }) => {
-  console.log("received-client: ", data);
+cameraR.addEventListener("change", () => {
+  ws.send("camera:0" + cameraR.value);
+  outCamera.innerText = cameraR.value
+});
+steeringR.addEventListener("change", () => {
+  ws.send("steering:0" + steeringR.value);
+  outSteering.innerText = steeringR.value
+});
+
+stopAll.addEventListener("click", () => {
+  stopEverything()
 })
+stopSteering.addEventListener("click", () => {
+  steeringR.value = 0
+
+  outSteering.innerText = steeringR.value
+})
+resetCamera.addEventListener("click", () => {
+  cameraR.value = 0;
+
+  outCamera.innerText = cameraR.value
+})
+document.addEventListener('keydown', (event) => {
+  let speed_val = parseInt(speedR.value)
+  let steering_val = parseInt(steeringR.value)
+
+  if (event.key === 'ArrowUp' || event.key == 'w') {
+    speedR.value = speed_val + 1
+    ws.send("speed:0" + speedR.value);
+    console.log(speedR.value);
+
+  }
+  else if (event.key == 'ArrowDown' || event.key == 's') {
+    speedR.value = speed_val - 1
+    ws.send("speed:0" + speedR.value);
+
+  }
+  else if (event.key == 'ArrowLeft' || event.key == 'a') {
+    steeringR.value = steering_val - 1
+    ws.send("steering:0" + steeringR.value);
+
+  }
+  else if (event.key == 'ArrowRight' || event.key == 'd') {
+    steeringR.value = steering_val + 1
+    ws.send("steering:0" + steeringR.value);
+  }
+  else if (event.code == 'Space') {
+    steeringR.value = 0
+    ws.send("steering:0" + 0);
+    stopSteering.style.background = "red"
+  } else if (event.key === 'Enter') {
+    stopEverything()
+    stopAll.style.background = "red"
+  } else if (event.key === '0') {
+    cameraR.value = 0;
+    ws.send("steering:0" + 0);
+    resetCamera.style.background = "red"
+  }
+  outSpeed.innerText = speedR.value
+  outSteering.innerText = steeringR.value
+  outCamera.innerText = cameraR.value
+}, false);
+
+document.addEventListener("keyup", (event) => {
+  if (event.code == 'Space') {
+    stopSteering.style.background = "#cf0303"
+  } else if (event.key === 'Enter') {
+    stopAll.style.background = "#cf0303"
+  } else if (event.key === '0') {
+    resetCamera.style.background = "#cf0303"
+  }
+})
+
+// });
+// ws.addEventListener("message", ({ data }) => {
+//   console.log("received-client: ", data);
+// })
 
 
 
