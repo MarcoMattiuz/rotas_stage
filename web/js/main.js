@@ -161,9 +161,15 @@ window.addEventListener("gamepaddisconnected", e => {
   window.cancelRequestAnimationFrame(start)
 
 });
+var valSpeed;
+var valCamera = 0;
+var valCameraUp = 0;
+var pressedDown = false;
+var pressedUp = false;
+var valCameraDown = 0;
 // var interval
 function gameLoop() {
-  var valSpeed;
+
   var gamepads = navigator.getGamepads ? navigator.getGamepads() : (navigator.webkitGetGamepads ? navigator.webkitGetGamepads() : []);
   if (!gamepads) {
     return;
@@ -171,14 +177,16 @@ function gameLoop() {
 
   gamePad = gamepads[0];
   if (gamePad.buttons[0].value == 1) {
+    cameraR.value = 0;
+    valCamera = 0;
+    outCamera.innerText = 0;
 
-    console.log(valSpeed);
   }
 
   valSpeedBack = Math.round(gamePad.buttons[6].value * -8);
-  valSpeedBack < -5 ? -5 : valSpeedBack;
+  valSpeedBack = valSpeedBack < -5 ? -5 : valSpeedBack;
   valSpeedFront = Math.round(gamePad.buttons[7].value * 8);
-  valSpeedFront > 5 ? 5 : valSpeedFront;
+  valSpeedFront = valSpeedFront > 5 ? 5 : valSpeedFront;
   valSpeed = valSpeedBack + valSpeedFront;
   if (speedR.value != valSpeed) {
     speedR.value = valSpeed;
@@ -190,6 +198,27 @@ function gameLoop() {
     steeringR.value = valSterring;
     ws.send("steering:0" + steeringR.value);
     outSteering.innerText = steeringR.value
+  }
+  if (gamePad.buttons[12].pressed) {
+    if (pressedUp != true) {
+      valCamera += 1;
+    }
+    pressedUp = true;
+  } else { pressedUp = false; }
+
+  if (gamePad.buttons[13].pressed) {
+    if (pressedDown != true) {
+      valCamera -= 1;
+    }
+    pressedDown = true;
+  } else { pressedDown = false; }
+
+  valCamera = valCamera > 5 ? 5 : valCamera;
+  valCamera = valCamera < 0 ? 0 : valCamera;
+  if (cameraR.value != valCamera) {
+    cameraR.value = valCamera;
+    ws.send("camera:0" + cameraR.value);
+    outCamera.innerText = cameraR.value;
   }
   /* changeValue_Text(2, gamePad.buttons.axes[2] * 5) //--> STEERING
    changeValue_Text(1, gamePad.buttons.axes[3] * 5) //--> SPEED
