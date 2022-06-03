@@ -5,18 +5,29 @@
   <meta charset="UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="./web/assets/roundSlider-1.6.1/src/roundslider.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.css" />
   <link rel="stylesheet" href="web/src_CSS/main.css" />
 </head>
   <body>
-    <header class="header clearfix">
-      <img src="web/assets/logo.png" alt="logo" class="header__logo" />
-    </header>
     <main>
+      <div class="info">
+        <img  src="./web/assets/Logo_rotas.png" alt="logo rotas">
+        <div class="gamepad-connection">
+          <h2>Gamepad <br> connection </h2>
+          <div class="connection_indicator on" id="on_gp"></div>
+          <div class="connection_indicator off" id="off_gp"></div>
+        </div>
+        <div class="server-connection">
+          <h2>Server <br> connection</h2>
+          <div class="connection_indicator on" id="on_sr"></div>
+          <div class="connection_indicator off" id="off_sr"></div>
+        </div>
+      </div>
       <div class="video_container">
         <embed src="http://192.168.8.40:8080" class="videofeed" class="video" />
       </div>
-      <div class="controls">
+      <div class="controls"> 
         <div class="sliders_wrap box">
           <div class="title-slider out"> SPEED <div id="outSpeed">0</div> </div>
             <div class="range-box vertical">        
@@ -42,7 +53,8 @@
               <span class="legend-max">5</span>
               <div title="increase" class="control-plus" id="pCamera">+</div>
             </div>
-         </div>        
+            
+         </div> 
          <div class="button_container box"> 
           <div class="stop_button" id="stopAll">STOP</div>
           <div class="stop_button" id="stopSteering">RESET STEERING</div>
@@ -50,16 +62,9 @@
         </div>
       </div>
     </main>
-    <!-- <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
-    <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js" integrity="sha256-6XMVI0zB8cRzfZjqKcD01PBsAy3FlDASrlC8SxCpInY=" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jQuery-ui-Slider-Pips/1.11.4/jquery-ui-slider-pips.js"></script> -->
-
     <script src="web/assets/jquery-3.6.0.min.js"></script>
-    <!-- <script src="./web/assets/jquery-ui-1.13.1.custom/jquery-ui.js"></script>
-    <script src="./web/assets/jquery-ui-1.13.1.custom/jquery-ui.css"></script> -->
     <script src="web/js/main.js"></script>
     <script src="web/js/sliders.js"></script>
-    
     
   </body>
   <script>

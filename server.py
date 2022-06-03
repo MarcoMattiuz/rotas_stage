@@ -17,7 +17,7 @@ def change_speed(speed):
 
 
 def change_steering(steering):
-    global _speed
+    global _speedte
     global _steering
     _steering = int(steering)
     pwm.traz(_speed, _steering)
