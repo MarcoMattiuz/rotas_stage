@@ -9,7 +9,7 @@ import socketserver
 from threading import Condition
 from http import server
 
-PAGE="""
+PAGE="""\
 <html>
 <head>
 <title>piCamera</title>
