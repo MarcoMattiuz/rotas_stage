@@ -3,11 +3,14 @@ import sys
 import serial
 from time import time, sleep
 
-esp = serial.Serial(port='COM11', baudrate=115200)
-
+try:
+    esp = serial.Serial(port='COM11', baudrate=115200)
+    SERIAL = True
+except (OSError, serial.SerialException):
+    SERIAL = False
+    pass
 
 (major_ver, minor_ver, subminor_ver) = (cv2.__version__).split('.')
-
 tracker_types = ['BOOSTING', 'MIL', 'KCF',
                  'TLD', 'MEDIANFLOW', 'CSRT', 'MOSSE']
 tracker_type = tracker_types[5]
@@ -90,10 +93,12 @@ while True:
     cv2.putText(frame, "Position: " + position, (30, 60),
                 cv2.FONT_HERSHEY_SIMPLEX, 0.75, (255, 0, 0), 2)
 
-    if time() > timer_:
-        timer_ = time() + 0.1
-        esp.write(position.encode('utf-8'))
-        # print(esp.read_all().decode())
+    # Transmit x position via serial
+    if SERIAL:
+        if time() > timer_:
+            timer_ = time() + 0.1
+            esp.write(position.encode('utf-8'))
+            # print(esp.read_all().decode())
 
     # Display result
     cv2.imshow("Tracking", frame)
@@ -101,4 +106,6 @@ while True:
     # Exit if ESC pressed
     k = cv2.waitKey(1) & 0xff
     if k == 27:
-        break
+        if SERIAL:
+            esp.close()
+        exit("Tracker closed")

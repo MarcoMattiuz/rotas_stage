@@ -28,7 +28,7 @@ while capture.isOpened():
     # to draw the bounding box when the motion is detected
     for contour in contours:
         x, y, w, h = cv2.boundingRect(contour)
-        if cv2.contourArea(contour) > 300:
+        if cv2.contourArea(contour) > 500:
             cv2.rectangle(img_1, (x, y), (x+w, y+h), (0, 255, 0), 2)
     # cv2.drawContours(img_1, contours, -1, (0, 255, 0), 2)
 
