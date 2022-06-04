@@ -10,11 +10,11 @@ except (OSError, serial.SerialException):
     SERIAL = False
     pass
 
-(major_ver, minor_ver, subminor_ver) = (cv2.__version__).split('.')
 tracker_types = ['BOOSTING', 'MIL', 'KCF',
                  'TLD', 'MEDIANFLOW', 'CSRT', 'MOSSE']
 tracker_type = tracker_types[5]
 
+(major_ver, minor_ver, subminor_ver) = (cv2.__version__).split('.')
 if int(minor_ver) < 3:
     tracker = cv2.Tracker_create(tracker_type)
 else:
