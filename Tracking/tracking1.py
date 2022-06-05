@@ -3,6 +3,7 @@ import sys
 import serial
 from time import time, sleep
 
+# Check if the serial is enabled
 try:
     esp = serial.Serial(port='COM11', baudrate=115200)
     SERIAL = True
@@ -10,6 +11,7 @@ except (OSError, serial.SerialException):
     SERIAL = False
     pass
 
+# Select the type of tracker
 tracker_types = ['BOOSTING', 'MIL', 'KCF',
                  'TLD', 'MEDIANFLOW', 'CSRT', 'MOSSE']
 tracker_type = tracker_types[5]
@@ -61,7 +63,6 @@ while True:
     ok, frame = video.read()
     if not ok:
         break
-
     # Start timer
     timer = cv2.getTickCount()
 
