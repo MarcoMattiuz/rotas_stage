@@ -1,13 +1,14 @@
 import pwmraspberry as pwm
 import asyncio
 import websockets
-#192.168.9.245
-
+# 192.168.9.245
+subprocess.Popen(["python", 'camera.py'])
 # # # # # # # # # # # # # # # #   ROVER TRACTION   # # # # # # # # # # # # # # # #
 
 _speed = 0
 _steering = 0
 _camera = 0
+
 
 def change_speed(speed):
     global _speed
