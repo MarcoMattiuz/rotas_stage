@@ -7,9 +7,35 @@ const resetCamera = document.getElementById("resetCamera")
 let outSpeed = document.getElementById("outSpeed");
 let outCamera = document.getElementById("outCamera");
 let outSteering = document.getElementById("outSteering");
+let on_sr = document.getElementById("on_sr");
+let off_sr = document.getElementById("off_sr");
+let on_gp = document.getElementById("on_gp");
+let off_gp = document.getElementById("off_gp");
 
-
-
+function gpON() {
+  on_gp.style.background = "#33a532"
+  on_gp.style.boxShadow = "0 0 15px #33a532"
+  off_gp.style.background = "#cccccc"
+  off_gp.style.boxShadow = "none"
+}
+function gpOFF() {
+  off_gp.style.background = "#bb1e10"
+  off_gp.style.boxShadow = "0 0 15px  #bb1e10"
+  on_gp.style.background = "#cccccc"
+  on_gp.style.boxShadow = "none"
+}
+function srON() {
+  on_sr.style.background = "#33a532"
+  on_sr.style.boxShadow = "0 0 15px #33a532"
+  off_sr.style.background = "#cccccc"
+  off_sr.style.boxShadow = "none"
+}
+function srOFF() {
+  off_sr.style.background = "#bb1e10"
+  off_sr.style.boxShadow = "0 0 15px  #bb1e10"
+  on_sr.style.background = "#cccccc"
+  on_sr.style.boxShadow = "none"
+}
 function stopEverything() {
   speedR.value = 0;
   steeringR.value = 0;
@@ -21,10 +47,15 @@ function stopEverything() {
   ws.send("camera:0" + 0);
   outCamera.innerText = cameraR.value
 }
+
+
+/* *************** */
+gpOFF()
+srOFF()
 const ws = new WebSocket("ws://192.168.8.40:8000");
 ws.addEventListener("open", () => {
   console.log("we are connected");
-
+  srON()
   speedR.addEventListener("change", () => {
     console.log(speedR.value);
     ws.send("speed:0" + speedR.value);
@@ -107,29 +138,39 @@ ws.addEventListener("open", () => {
 ws.addEventListener("message", ({ data }) => {
   console.log("received-client: ", data);
 })
+ws.addEventListener("close", () => {
+  srOFF();
+})
 
 
 
 function prompt_alerts(description) {
   alert(description);
 }
- // COMANDI DA GAMEPAD
- var gamePad;
- var start
- window.addEventListener("gamepadconnected", function (e) {
+// COMANDI DA GAMEPAD
+var gamePad;
+var start
+window.addEventListener("gamepadconnected", function (e) {
+  gpON()
+  console.log("Gamepad connected at index %d: %s. %d buttons, %d axes.",
+    e.gamepad.index, e.gamepad.id,
+    e.gamepad.buttons.length, e.gamepad.axes.length);
+  gameLoop();
+});
+window.addEventListener("gamepaddisconnected", e => {
+  gpOFF()
+  console.log("Gamepad disconnected from index %d: %s",
+    e.gamepad.index, e.gamepad.id);
+  window.cancelRequestAnimationFrame(start)
 
-   console.log("Gamepad connected at index %d: %s. %d buttons, %d axes.",
-     e.gamepad.index, e.gamepad.id,
-     e.gamepad.buttons.length, e.gamepad.axes.length);
-   gameLoop();
- });
- window.addEventListener("gamepaddisconnected", e => {
-   console.log("Gamepad disconnected from index %d: %s",
-     e.gamepad.index, e.gamepad.id);
-   window.cancelRequestAnimationFrame(start)
-
- });
-   // var interval
+});
+var valSpeed;
+var valCamera = 0;
+var valCameraUp = 0;
+var pressedDown = false;
+var pressedUp = false;
+var valCameraDown = 0;
+// var interval
 function gameLoop() {
 
   var gamepads = navigator.getGamepads ? navigator.getGamepads() : (navigator.webkitGetGamepads ? navigator.webkitGetGamepads() : []);
@@ -137,26 +178,56 @@ function gameLoop() {
     return;
   }
 
-    gamePad = gamepads[0];
-     if (gamePad.buttons[0].value == 1) {
-       console.log(gamePad.buttons[0])
-     }
-     var valSpeed = Math.round(gamePad.axes[1] * -5);
-     if (speedR.value != valSpeed) {
-       speedR.value = valSpeed;
-       ws.send("speed:0" + speedR.value);
-       outSpeed.innerText = speedR.value
-     }
-     var valSterring = Math.round(gamePad.axes[2] * 5);
-     if (steeringR.value != valSterring) {
-      ws.send("steering:0" + steeringR.value);
-      outSteering.innerText = steeringR.value
-     }
-     /* changeValue_Text(2, gamePad.buttons.axes[2] * 5) //--> STEERING
-      changeValue_Text(1, gamePad.buttons.axes[3] * 5) //--> SPEED
-      changeValue_Text(3, gamePad.buttons.axes[0] * 5) //--> CAMERA*/
-     start = window.requestAnimationFrame(gameLoop);
-   
+  gamePad = gamepads[0];
+  if (gamePad.buttons[0].value == 1) {
+    cameraR.value = 0;
+    valCamera = 0;
+    outCamera.innerText = 0;
+
+  }
+
+  valSpeedBack = Math.round(gamePad.buttons[6].value * -8);
+  valSpeedBack = valSpeedBack < -5 ? -5 : valSpeedBack;
+  valSpeedFront = Math.round(gamePad.buttons[7].value * 8);
+  valSpeedFront = valSpeedFront > 5 ? 5 : valSpeedFront;
+  valSpeed = valSpeedBack + valSpeedFront;
+  if (speedR.value != valSpeed) {
+    speedR.value = valSpeed;
+    ws.send("speed:0" + speedR.value);
+    outSpeed.innerText = speedR.value
+  }
+  var valSterring = Math.round(gamePad.axes[2] * 5);
+  if (steeringR.value != valSterring) {
+    steeringR.value = valSterring;
+    ws.send("steering:0" + steeringR.value);
+    outSteering.innerText = steeringR.value
+  }
+  if (gamePad.buttons[12].pressed) {
+    if (pressedUp != true) {
+      valCamera += 1;
+    }
+    pressedUp = true;
+  } else { pressedUp = false; }
+
+  if (gamePad.buttons[13].pressed) {
+    if (pressedDown != true) {
+      valCamera -= 1;
+    }
+    pressedDown = true;
+  } else { pressedDown = false; }
+
+  valCamera = valCamera > 5 ? 5 : valCamera;
+  valCamera = valCamera < 0 ? 0 : valCamera;
+  if (cameraR.value != valCamera) {
+    cameraR.value = valCamera;
+    ws.send("camera:0" + cameraR.value);
+    outCamera.innerText = cameraR.value;
+  }
+  /* changeValue_Text(2, gamePad.buttons.axes[2] * 5) //--> STEERING
+   changeValue_Text(1, gamePad.buttons.axes[3] * 5) //--> SPEED
+   changeValue_Text(3, gamePad.buttons.axes[0] * 5) //--> CAMERA*/
+  start = window.requestAnimationFrame(gameLoop);
+
 }
 
 
