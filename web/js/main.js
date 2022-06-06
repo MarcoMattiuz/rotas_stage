@@ -100,7 +100,6 @@ ws.addEventListener("open", () => {
     } else if (event.key == 's') {
       speedR.value = speed_val - 1
       ws.send("speed:0" + speedR.value);
-
     } else if (event.key == 'a') {
       steeringR.value = steering_val - 1
       ws.send("steering:0" + steeringR.value);
@@ -113,8 +112,7 @@ ws.addEventListener("open", () => {
     } else if (event.key == 'd') {
       steeringR.value = steering_val + 1
       ws.send("steering:0" + steeringR.value);
-    }
-    else if (event.code == 'Space') {
+    } else if (event.code == 'Space') {
       steeringR.value = 0
       ws.send("steering:0" + 0);
       stopSteering.style.opacity = "0.7"
