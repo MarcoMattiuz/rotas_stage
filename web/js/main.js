@@ -138,6 +138,9 @@ ws.addEventListener("open", () => {
 ws.addEventListener("message", ({ data }) => {
   console.log("received-client: ", data);
 })
+ws.addEventListener("close", () => {
+  srOFF();
+})
 
 
 
