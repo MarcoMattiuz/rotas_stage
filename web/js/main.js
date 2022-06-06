@@ -11,6 +11,12 @@ let on_sr = document.getElementById("on_sr");
 let off_sr = document.getElementById("off_sr");
 let on_gp = document.getElementById("on_gp");
 let off_gp = document.getElementById("off_gp");
+var mSpeed = document.getElementById("mSpeed");
+var pSpeed = document.getElementById("pSpeed");
+var mSteering = document.getElementById("mSteering");
+var pSteering = document.getElementById("pSteering");
+var mCamera = document.getElementById("mCamera");
+var pCamera = document.getElementById("pCamera");
 
 function gpON() {
   on_gp.style.background = "#33a532"
@@ -133,6 +139,44 @@ ws.addEventListener("open", () => {
       resetCamera.style.opacity = "1"
     }
   })
+
+  mSpeed.addEventListener("click", function () {
+    speedRange.value -= 1;
+    outSpeed.innerText = speedRange.value
+    ws.send("speed:0" + speedR.value);
+  }, false);
+
+  pSpeed.addEventListener("click", function () {
+    speedRange.value += 1;
+    outSpeed.innerText = speedRange.value
+    ws.send("speed:0" + speedR.value);
+  }, false);
+
+
+  mSteering.addEventListener("click", function () {
+    steeringRange.value -= 1;
+    outSteering.innerText = steeringRange.value
+    ws.send("steering:0" + steeringR.value);
+  }, false);
+
+  pSteering.addEventListener("click", function () {
+    steeringRange.value += 1;
+    outSteering.innerText = steeringRange.value
+    ws.send("steering:0" + steeringR.value);
+  }, false);
+
+
+  mCamera.addEventListener("click", function () {
+    cameraRange.value -= 1;
+    outCamera.innerText = cameraRange.value
+    ws.send("camera:0" + cameraR.value);
+  }, false);
+
+  pCamera.addEventListener("click", function () {
+    cameraRange.value += 1;
+    outCamera.innerText = cameraRange.value
+    ws.send("camera:0" + cameraR.value);
+  }, false);
 
 });
 ws.addEventListener("message", ({ data }) => {
