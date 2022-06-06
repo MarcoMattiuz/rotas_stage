@@ -135,6 +135,12 @@ ws.addEventListener("open", () => {
   })
 
 });
+
+function prompt_alerts(description) {
+  alert(description);
+
+}
+////////////////////////server websockets /////////////////////
 ws.addEventListener("message", ({ data }) => {
   console.log("received-client: ", data);
 })
@@ -143,11 +149,7 @@ ws.addEventListener("close", () => {
 })
 
 
-
-function prompt_alerts(description) {
-  alert(description);
-}
-// COMANDI DA GAMEPAD
+///////////////////////////////GAMEPAD COMMANDS/////////////////////////////////
 var gamePad;
 var start
 window.addEventListener("gamepadconnected", function (e) {
@@ -229,5 +231,16 @@ function gameLoop() {
   start = window.requestAnimationFrame(gameLoop);
 
 }
+function handleOrientation(event) {
+  var absolute = event.absolute;
+  var alpha    = event.alpha;
+  var beta     = event.beta;
+  var gamma    = event.gamma;
+  for(var prop in event){
+    console.log(prop);
+  }
+  // Do stuff with the new orientation data
+}
+window.addEventListener("deviceorientation", handleOrientation, true);
 
 
