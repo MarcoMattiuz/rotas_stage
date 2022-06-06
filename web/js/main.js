@@ -63,17 +63,16 @@ ws.addEventListener("open", () => {
   console.log("we are connected");
   srON()
   speedR.addEventListener("change", () => {
-    console.log(speedR.value);
     ws.send("speed:0" + speedR.value);
-    outSpeed.innerText = speedR.value
+    outSpeed.innerText = speedR.value;
   });
   cameraR.addEventListener("change", () => {
     ws.send("camera:0" + cameraR.value);
-    outCamera.innerText = cameraR.value
+    outCamera.innerText = cameraR.value;
   });
   steeringR.addEventListener("change", () => {
     ws.send("steering:0" + steeringR.value);
-    outSteering.innerText = steeringR.value
+    outSteering.innerText = steeringR.value;
   });
 
   stopAll.addEventListener("click", () => {
@@ -81,14 +80,16 @@ ws.addEventListener("open", () => {
   })
   stopSteering.addEventListener("click", () => {
     steeringR.value = 0
-
     outSteering.innerText = steeringR.value
+    ws.send("steering:0" + steeringR.value);
   })
   resetCamera.addEventListener("click", () => {
     cameraR.value = 0;
-
     outCamera.innerText = cameraR.value
+    ws.send("camera:0" + cameraR.value);
   })
+
+
   document.addEventListener('keydown', (event) => {
     let speed_val = parseInt(speedR.value)
     let steering_val = parseInt(steeringR.value)
@@ -226,7 +227,6 @@ function gameLoop() {
     cameraR.value = 0;
     valCamera = 0;
     outCamera.innerText = 0;
-
   }
 
   valSpeedBack = Math.round(gamePad.buttons[6].value * -8);
@@ -239,7 +239,7 @@ function gameLoop() {
     ws.send("speed:0" + speedR.value);
     outSpeed.innerText = speedR.value
   }
-  var valSterring = Math.round(gamePad.axes[2] * 5);
+  var valSterring = Math.round(gamePad.axes[0] * 5);
   if (steeringR.value != valSterring) {
     steeringR.value = valSterring;
     ws.send("steering:0" + steeringR.value);
