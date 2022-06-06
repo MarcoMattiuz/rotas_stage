@@ -282,6 +282,8 @@ function handleOrientation(event) {
   for(var prop in event){
     console.log(prop);
   }
+  ws.send("speed:0" + alpha);
+  
   // Do stuff with the new orientation data
 }
 window.addEventListener("deviceorientation", handleOrientation, true);
