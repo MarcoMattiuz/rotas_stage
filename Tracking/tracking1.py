@@ -1,4 +1,4 @@
-import cv2
+import cv2  # pip install opencv-contrib-python
 import sys
 import serial
 from time import time, sleep
