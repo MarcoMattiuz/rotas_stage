@@ -11,6 +11,12 @@ let on_sr = document.getElementById("on_sr");
 let off_sr = document.getElementById("off_sr");
 let on_gp = document.getElementById("on_gp");
 let off_gp = document.getElementById("off_gp");
+var mSpeed = document.getElementById("mSpeed");
+var pSpeed = document.getElementById("pSpeed");
+var mSteering = document.getElementById("mSteering");
+var pSteering = document.getElementById("pSteering");
+var mCamera = document.getElementById("mCamera");
+var pCamera = document.getElementById("pCamera");
 
 function gpON() {
   on_gp.style.background = "#33a532"
@@ -87,23 +93,24 @@ ws.addEventListener("open", () => {
     let speed_val = parseInt(speedR.value)
     let steering_val = parseInt(steeringR.value)
 
-    if (event.key === 'ArrowUp' || event.key == 'w') {
+    if (event.key == 'w') {
       speedR.value = speed_val + 1
       ws.send("speed:0" + speedR.value);
       console.log(speedR.value);
-
-    }
-    else if (event.key == 'ArrowDown' || event.key == 's') {
+    } else if (event.key == 's') {
       speedR.value = speed_val - 1
       ws.send("speed:0" + speedR.value);
 
-    }
-    else if (event.key == 'ArrowLeft' || event.key == 'a') {
+    } else if (event.key == 'a') {
       steeringR.value = steering_val - 1
       ws.send("steering:0" + steeringR.value);
-
-    }
-    else if (event.key == 'ArrowRight' || event.key == 'd') {
+    } else if (event.key == 'ArrowUp') {
+      cameraR.value += 1;
+      ws.send("camera:0" + cameraR.value);
+    } else if (event.key == 'ArrowDown') {
+      cameraR.value += 1;
+      ws.send("camera:0" + cameraR.value);
+    } else if (event.key == 'd') {
       steeringR.value = steering_val + 1
       ws.send("steering:0" + steeringR.value);
     }
@@ -111,12 +118,12 @@ ws.addEventListener("open", () => {
       steeringR.value = 0
       ws.send("steering:0" + 0);
       stopSteering.style.opacity = "0.7"
-    } else if (event.key === 'Enter') {
+    } else if (event.key == 'Enter') {
       stopEverything()
       stopAll.style.opacity = "0.7"
-    } else if (event.key === '0') {
+    } else if (event.key == '0') {
       cameraR.value = 0;
-      ws.send("steering:0" + 0);
+      ws.send("camera:0" + 0);
       resetCamera.style.opacity = "0.7"
     }
     outSpeed.innerText = speedR.value
@@ -133,6 +140,44 @@ ws.addEventListener("open", () => {
       resetCamera.style.opacity = "1"
     }
   })
+
+  mSpeed.addEventListener("click", function () {
+    speedRange.value -= 1;
+    outSpeed.innerText = speedRange.value
+    ws.send("speed:0" + speedR.value);
+  }, false);
+
+  pSpeed.addEventListener("click", function () {
+    speedRange.value += 1;
+    outSpeed.innerText = speedRange.value
+    ws.send("speed:0" + speedR.value);
+  }, false);
+
+
+  mSteering.addEventListener("click", function () {
+    steeringRange.value -= 1;
+    outSteering.innerText = steeringRange.value
+    ws.send("steering:0" + steeringR.value);
+  }, false);
+
+  pSteering.addEventListener("click", function () {
+    steeringRange.value += 1;
+    outSteering.innerText = steeringRange.value
+    ws.send("steering:0" + steeringR.value);
+  }, false);
+
+
+  mCamera.addEventListener("click", function () {
+    cameraRange.value -= 1;
+    outCamera.innerText = cameraRange.value
+    ws.send("camera:0" + cameraR.value);
+  }, false);
+
+  pCamera.addEventListener("click", function () {
+    cameraRange.value += 1;
+    outCamera.innerText = cameraRange.value
+    ws.send("camera:0" + cameraR.value);
+  }, false);
 
 });
 ws.addEventListener("message", ({ data }) => {
