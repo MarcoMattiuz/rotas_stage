@@ -92,7 +92,7 @@ ws.addEventListener("open", () => {
     outSteering.innerText = steeringR.value
     outCamera.innerText = cameraR.value
   }, false);
-
+  
   document.addEventListener("keyup", (event) => {
     if (event.code == 'Space') {
       stopSteering.style.opacity = "1"
