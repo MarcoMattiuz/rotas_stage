@@ -288,7 +288,7 @@ function handleOrientation(event) {
 var s = document.getElementById("spped");
 window.addEventListener("deviceorientation", function(e){
   s.innerHTML = "working";
-  
+  alert(e.alpha);
 });
 
 
