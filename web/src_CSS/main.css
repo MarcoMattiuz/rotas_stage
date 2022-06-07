@@ -263,8 +263,13 @@ main {
   width: 100%;
   height: 100%;
   overflow-y: scroll;
+<<<<<<< HEAD
+  overflow-x: hidden;
+  scroll-snap-type: y mandatory;
+=======
   -ms-scroll-snap-type: y mandatory;
       scroll-snap-type: y mandatory;
+>>>>>>> c702a92de4d8c14150cc307fe69a1730ce4f0f4b
 }
 
 main section {
