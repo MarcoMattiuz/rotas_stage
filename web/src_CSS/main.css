@@ -360,6 +360,20 @@ main .videofeed {
   height: 100%;
 }
 
+@media (max-width: 750px) {
+  main .info {
+    display: none;
+  }
+  main .video_container {
+    width: 100%;
+    height: 100%;
+  }
+  main .videofeed {
+    width: 100%;
+    height: 100%;
+  }
+}
+
 .controls {
   position: relative;
   margin: 0 auto;
@@ -482,19 +496,5 @@ main .videofeed {
   content: "";
   clear: both;
   display: table;
-}
-
-@media only screen and (max-width: 750px) {
-  .info {
-    display: none;
-  }
-  .video_container {
-    width: 100%;
-    height: 100%;
-  }
-  .videofeed {
-    width: 100%;
-    height: 100%;
-  }
 }
 /*# sourceMappingURL=main.css.map */

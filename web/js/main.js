@@ -274,21 +274,4 @@ function gameLoop() {
   start = window.requestAnimationFrame(gameLoop);
 
 }
-function handleOrientation(event) {
-  var absolute = event.absolute;
-  var alpha    = event.alpha;
-  var beta     = event.beta;
-  var gamma    = event.gamma;
-  for(var prop in event){
-    console.log(prop);
-  }
- 
-  // Do stuff with the new orientation data
-}
-var s = document.getElementById("spped");
-window.addEventListener("deviceorientation", function(e){
-  s.innerHTML = "working";
-  
-});
-
 
