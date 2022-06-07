@@ -26,8 +26,26 @@
           </div>
         </div>
         <div class="video_container">
-          <embed src="http://192.168.8.40:8080" class="videofeed" class="video" />
+          <!-- <embed src="http://192.168.8.40:8080" class="videofeed" class="video" /> -->
+          <video autoplay="true" id="videoElement"></video>
         </div>
+        <!-- test CAMERA -->
+        <script>
+          let video = document.getElementById("videoElement")
+
+          if(navigator.mediaDevices.getUserMedia){
+            navigator.mediaDevices.getUserMedia({video : true})
+              .then(function (stream){
+                video.srcObject = stream;
+              })
+              .catch(function (error){
+                console.log("error");
+              })
+          }else{
+            console.log("Video not supported")
+          }
+        </script>
+
         <div class="controls"> 
           <div class="sliders_wrap box">
             <div class="title-slider out"> SPEED <div id="outSpeed">0</div> </div>
