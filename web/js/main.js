@@ -129,7 +129,7 @@ ws.addEventListener("open", () => {
     outSteering.innerText = steeringR.value
     outCamera.innerText = cameraR.value
   }, false);
-  
+
   document.addEventListener("keyup", (event) => {
     if (event.code == 'Space') {
       stopSteering.style.opacity = "1"
@@ -272,21 +272,20 @@ function gameLoop() {
    changeValue_Text(1, gamePad.buttons.axes[3] * 5) //--> SPEED
    changeValue_Text(3, gamePad.buttons.axes[0] * 5) //--> CAMERA*/
   start = window.requestAnimationFrame(gameLoop);
-
 }
 function handleOrientation(event) {
   var absolute = event.absolute;
-  var alpha    = event.alpha;
-  var beta     = event.beta;
-  var gamma    = event.gamma;
-  for(var prop in event){
+  var alpha = event.alpha;
+  var beta = event.beta;
+  var gamma = event.gamma;
+  for (var prop in event) {
     console.log(prop);
   }
- 
+
   // Do stuff with the new orientation data
 }
 var s = document.getElementById("spped");
-window.addEventListener("deviceorientation", function(e){
+window.addEventListener("deviceorientation", function (e) {
   s.innerHTML = "working";
   alert(e.alpha);
 });
