@@ -40,10 +40,9 @@ def set_camera(angle):
         print("Valori accettati da 0 a 5")
         exit()
     duty = angle / 18 + 2
-    print(duty)
     GPIO.output(servoPIN, True)
     pwmS.ChangeDutyCycle(duty)
-    sleep(0.3)
+    sleep(0.4)
     GPIO.output(servoPIN, False)
     pwmS.ChangeDutyCycle(0)
 

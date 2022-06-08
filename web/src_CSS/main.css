@@ -1,7 +1,8 @@
 @import url("https://fonts.googleapis.com/css2?family=Nanum+Gothic&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap");
 input[type="range"] {
   width: 100%;
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
   -webkit-appearance: none;
   height: 35px;
   background: transparent;
@@ -20,7 +21,8 @@ input[type="range"]::-webkit-slider-thumb {
   position: relative;
   height: 7px;
   width: 7px;
-  transform: scale(3);
+  -webkit-transform: scale(3);
+          transform: scale(3);
   margin-top: -1px;
   border-radius: 500px;
   background: #009fdf;
@@ -140,6 +142,9 @@ input[type="range"]:focus {
 /*******    Extra controls on the side    *******/
 .no-selection, .control-minus, .control-plus {
   -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
   user-select: none;
 }
 
@@ -220,6 +225,7 @@ input[type="range"]:focus {
   color: white;
   line-height: 22px;
   white-space: nowrap;
+  -webkit-transition: left 0.045s linear;
   transition: left 0.045s linear;
 }
 
@@ -257,7 +263,13 @@ main {
   width: 100%;
   height: 100%;
   overflow-y: scroll;
+<<<<<<< HEAD
+  overflow-x: hidden;
   scroll-snap-type: y mandatory;
+=======
+  -ms-scroll-snap-type: y mandatory;
+      scroll-snap-type: y mandatory;
+>>>>>>> c702a92de4d8c14150cc307fe69a1730ce4f0f4b
 }
 
 main section {
@@ -271,6 +283,8 @@ main .info {
   position: absolute;
   width: 10%;
   min-width: 100px;
+  max-height: -webkit-fit-content;
+  max-height: -moz-fit-content;
   max-height: fit-content;
   padding: 1rem;
 }
@@ -337,22 +351,12 @@ main .video_container {
   margin: 0 auto;
   width: 60%;
   height: 50%;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  justify-content: center;
-}
-
-@media only screen and (max-width: 750px) {
-  main .info {
-    display: none;
-  }
-  main .video_container {
-    width: 100%;
-    height: 100%;
-  }
-  main .videofeed {
-    width: 100%;
-    height: 100%;
-  }
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
 }
 
 main .videofeed {
@@ -368,17 +372,27 @@ main .videofeed {
   height: 50%;
   max-height: 17rem;
   padding: 1rem;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  justify-content: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
 }
 
 .sliders_wrap {
   position: relative;
   width: 40rem;
   height: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-flow: column;
-  justify-content: space-around;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-flow: column;
+          flex-flow: column;
+  -ms-flex-pack: distribute;
+      justify-content: space-around;
 }
 
 .stop_button {
@@ -387,9 +401,15 @@ main .videofeed {
   color: whitesmoke;
   height: 2rem;
   padding: 0.5rem 1rem;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
   border-radius: 0.2rem;
 }
 
@@ -403,9 +423,16 @@ main .videofeed {
 .button_container {
   position: relative;
   height: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  justify-content: space-between;
-  flex-direction: column;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
 }
 
 .out {
@@ -421,6 +448,7 @@ main .videofeed {
 }
 
 .r-cont {
+  display: -ms-grid;
   display: grid;
   place-items: center;
 }
@@ -438,9 +466,15 @@ main .videofeed {
   margin: 0.2rem;
   padding: 0.5rem;
   border-radius: 3px;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
   background-color: #e3e3e3;
   opacity: 0.9;
 }
@@ -453,5 +487,19 @@ main .videofeed {
   content: "";
   clear: both;
   display: table;
+}
+
+@media only screen and (max-width: 750px) {
+  .info {
+    display: none;
+  }
+  .video_container {
+    width: 100%;
+    height: 100%;
+  }
+  .videofeed {
+    width: 100%;
+    height: 100%;
+  }
 }
 /*# sourceMappingURL=main.css.map */
