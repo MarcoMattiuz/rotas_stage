@@ -1,0 +1,153 @@
+@import url("https://fonts.googleapis.com/css2?family=Nanum+Gothic&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap");
+
+html{
+    font-size: 100%;
+	font-size-adjust: 100%;
+	box-sizing: border-box;
+}
+*{
+    padding: 0;
+	margin: 0;
+	box-sizing: inherit;
+	list-style: none;
+	list-style-type: none;
+	text-rendering: optimizeLegibility;
+    font-family: "Roboto", sans-serif;
+    font-size: 1rem;
+    font-weight: normal;
+    line-height: 1.5;
+}
+body {
+	color: #2b2b2b;
+	background: #e7ebef;
+    display: flex;
+	justify-content: center;
+	align-items: center;
+    height: 100vh;
+}
+.outer-container {
+    position: absolute;
+    background:#ffffff;
+	width:900px;
+    border-radius: 0.5rem;
+    box-shadow:2px 4px 10px 1px rgba(0, 0, 0, 0.156);
+    z-index: 0;
+    .description::before{
+        content: ' ';
+        position: absolute;
+        cursor: pointer;
+        width: 12rem;
+        height: 3rem;
+        left:42%;
+        top:75%;
+        background-image: url("../assets/left-arm-robot1.svg");
+        background-position:0;
+        background-repeat: no-repeat;
+        background-size:6rem;
+        transform: rotateZ(-30deg);
+        transition: 500ms transform ease-in-out;
+        background-origin: padding-box;
+        z-index: 1;
+    }
+    .description:hover::before{
+        transform: rotateZ(50deg);
+        transition: 400ms transform ease-in-out;
+    }
+    .description{
+        position:absolute;
+        width: 50%;
+        height: 100%;
+        top:0px;
+        left:50%;
+        display: flex;
+        justify-content: center;
+        align-items:flex-start;
+        flex-direction: column;
+        padding-left: 3rem;
+        padding-right: 3rem;
+        background-image: url("../assets/robot-ai-svgrepo-com12.svg");
+        background-position: 13rem 16rem;
+        background-repeat: no-repeat;
+        background-size: 18rem;
+        z-index: 100;
+        h1{
+            font-weight: 700;
+            font-size: 1.7rem;
+        }
+    }
+    .wrapper:hover{
+        box-shadow: 5px 0px 10px 0px rgba(0, 0, 0, 0.266);
+    }
+    .wrapper{
+        background-color: rgba(28, 113, 225, 0.975);
+        color: #e7ebef;
+        border-radius:0.5rem 0 0 0.5rem;
+        width:450px;
+        height: 460px;
+        padding:4rem 3rem 4rem 3rem;
+        box-shadow: 6px 0px 10px 0px rgba(0, 0, 0, 0.156);
+        transition: 200ms box-shadow ease-in;
+        .heading{
+            font-weight: 500;
+            font-size: 1.7rem;
+            margin-bottom: 1rem;
+        }
+        form{
+            
+            .column-fields{
+                display: flex;
+                flex-direction: column;
+                .wrap{
+                    label{ 
+                        font-weight: 500;
+                        font-size: 1rem;
+                        margin-left: 1.1rem;
+                    }
+          
+                    top: 35%;
+                    left: 20%;
+                    margin-top:1rem;
+                    .input-field {
+                        font-weight: 400;
+                        width: 100%;
+                        height: auto;
+                        padding: 0.75rem 1.25rem;
+                        border: none;
+                        outline: none;
+                        border-radius: 2rem;
+                        color:#121212;
+                        background:#e7ebef;
+                        margin-top: 0.4rem;
+                    
+                    }
+                    .input-field::placeholder{
+                        color:rgb(192, 192, 192);
+                    }
+                }
+            }
+            .input-submit {
+                margin-left: 13rem;
+                margin-top:1.5rem;
+                font-weight: 500;
+				cursor: pointer;
+                width: 9rem;
+				height: auto;
+				padding: 0.55rem 1rem;
+				border: none;
+				outline: none;
+				border-radius: 1.5rem;
+				color: white;
+                background: #3686ef;
+				box-shadow:  0 6px 6px 2px rgba(0, 0, 0, 0.15);
+                transition: 200ms box-shadow;
+            }
+            .input-submit:hover {
+				color: rgba(255, 255, 255, 0.827);
+                background: rgba(28, 113, 225, 0.975);
+				box-shadow:  0 5px 5px 2px rgba(0, 0, 0, 0.302),
+                0 0px 0px -1px rgba(0, 0, 0, 0.06);
+            }
+     
+        }
+    }
+}
