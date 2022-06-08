@@ -3,7 +3,7 @@ import asyncio
 import websockets
 import subprocess
 # 192.168.9.245
-subprocess.Popen(["python", "/var/www/html/rotas_stage/camera.py"])
+#subprocess.Popen(["python", "/var/www/html/rotas_stage/camera.py"])
 # # # # # # # # # # # # # # # #   ROVER TRACTION   # # # # # # # # # # # # # # # #
 _speed = 0
 _steering = 0

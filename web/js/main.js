@@ -58,7 +58,7 @@ function stopEverything() {
 /* *************** */
 gpOFF()
 srOFF()
-const ws = new WebSocket("ws://192.168.8.40:8000");
+const ws = new WebSocket("ws://192.168.8.155:8000");
 ws.addEventListener("open", () => {
   console.log("we are connected");
   srON()
@@ -274,4 +274,21 @@ function gameLoop() {
   start = window.requestAnimationFrame(gameLoop);
 
 }
+function handleOrientation(event) {
+  var absolute = event.absolute;
+  var alpha    = event.alpha;
+  var beta     = event.beta;
+  var gamma    = event.gamma;
+  for(var prop in event){
+    console.log(prop);
+  }
+ 
+  // Do stuff with the new orientation data
+}
+var s = document.getElementById("spped");
+window.addEventListener("deviceorientation", function(e){
+  s.innerHTML = "working";
+  alert(e.alpha);
+});
+
 
