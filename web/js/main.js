@@ -63,7 +63,7 @@ function stopEverything()
 /* *************** */
 gpOFF()
 srOFF()
-const ws = new WebSocket("wss://192.168.8.155:8000?api_key=kjd29385y=)(b32iu238d2iuweiub");
+const ws = new WebSocket(" /api/websocket ws://192.168.8.155:8000");
 
 ws.addEventListener("open", () => {
   console.log("we are connected");
@@ -135,7 +135,7 @@ ws.addEventListener("open", () => {
     outSteering.innerText = steeringR.value
     outCamera.innerText = cameraR.value
   }, false);
-  
+
   document.addEventListener("keyup", (event) => {
     if (event.code == 'Space') {
       stopSteering.style.opacity = "1"
@@ -147,13 +147,13 @@ ws.addEventListener("open", () => {
   })
 
   mSpeed.addEventListener("click", function () {
-    speedRange.value -= 1;
+	speedRange.stepDown();    
     outSpeed.innerText = speedRange.value
     ws.send("speed:0" + speedR.value);
   }, false);
 
   pSpeed.addEventListener("click", function () {
-    speedRange.value += 1;
+    speedRange.stepUp();
     outSpeed.innerText = speedRange.value
     ws.send("speed:0" + speedR.value);
   }, false);
@@ -289,23 +289,21 @@ function gameLoop()
    changeValue_Text(1, gamePad.buttons.axes[3] * 5) //--> SPEED
    changeValue_Text(3, gamePad.buttons.axes[0] * 5) //--> CAMERA*/
   start = window.requestAnimationFrame(gameLoop);
-
 }
 function handleOrientation(event)
 {
   var absolute = event.absolute;
-  var alpha    = event.alpha;
-  var beta     = event.beta;
-  var gamma    = event.gamma;
-  for(var prop in event){
+  var alpha = event.alpha;
+  var beta = event.beta;
+  var gamma = event.gamma;
+  for (var prop in event) {
     console.log(prop);
   }
- 
+
   // Do stuff with the new orientation data
 }
 var s = document.getElementById("spped");
-window.addEventListener("deviceorientation", function(e)
-{
+window.addEventListener("deviceorientation", function (e) {
   s.innerHTML = "working";
   alert(e.alpha);
 });
