@@ -1,7 +1,6 @@
 <?php 
     session_start();
 
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -15,7 +14,7 @@
 <body>
     <div class="outer-container">
         <div class="description">
-            <h1>WELCOME BACK!</h1>
+            <h1>WELCOME <?php echo $_SERVER['REMOTE_ADDR'];?> !</h1>
             <p>
                 Log-in to see and command this rover moving. <br> 
                 Our mission is to imagine and create exceptional 
@@ -29,7 +28,7 @@
             <div class="heading">
                 Sign-in
             </div>
-            <form action="index.php">
+            <form action="controll-login.php" method = "post">
                 <div class="column-fields">
                     <div class="wrap">
                         <label>Username</label>
@@ -40,7 +39,7 @@
                         <input type="password" name="password" class="input-field" placeholder="password">
                     </div>
                 </div>
-                <input type="button" name="submit" class="input-submit" value="Login" disabled>
+                <input type="submit" name="submit" class="input-submit" value="Login" >
             </form>              
         </div>
        

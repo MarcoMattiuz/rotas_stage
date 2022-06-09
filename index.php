@@ -1,9 +1,9 @@
 <?php
 session_start();
 
-if(isset($_SESSION["login"])==null){
-  header("location: login.php");
-}
+ if(isset($_SESSION["login"])==null){
+   header("location: login.php");
+ }
 
 ?>
 <!DOCTYPE html>
@@ -35,30 +35,13 @@ if(isset($_SESSION["login"])==null){
         </div>
       </div>
         <div class="video_container">
-          <!-- <embed src="http://192.168.8.40:8080" class="videofeed" class="video" /> -->
-          <video autoplay="true" id="videoElement"></video>
+          <embed src="http://192.168.8.155:8080" class="videofeed" class="video"/>
         </div>
-        <!-- test CAMERA -->
-        <script>
-          let video = document.getElementById("videoElement")
-
-          if(navigator.mediaDevices.getUserMedia){
-            navigator.mediaDevices.getUserMedia({video : true})
-              .then(function (stream){
-                video.srcObject = stream;
-              })
-              .catch(function (error){
-                console.log("error");
-              })
-          }else{
-            console.log("Video not supported")
-          }
-        </script>
-
-        <div class="controls"> 
+        
+        <div class="controls">
           <div class="sliders_wrap box">
             <div class="title-slider out"> SPEED <div id="outSpeed">0</div> </div>
-              <div class="range-box vertical">        
+              <div class="range-box vertical">
                 <div title="Decrease" class="control-minus" id="mSpeed">-</div>    
                 <input id="speedRange"  type="range" min="-5" max="5" value="0" autocomplete="off">    
                 <span class="legend-min">-5</span>

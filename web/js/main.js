@@ -141,13 +141,13 @@ ws.addEventListener("open", () => {
   })
 
   mSpeed.addEventListener("click", function () {
-    speedRange.value -= 1;
+	speedRange.stepDown();    
     outSpeed.innerText = speedRange.value
     ws.send("speed:0" + speedR.value);
   }, false);
 
   pSpeed.addEventListener("click", function () {
-    speedRange.value += 1;
+    speedRange.stepUp();
     outSpeed.innerText = speedRange.value
     ws.send("speed:0" + speedR.value);
   }, false);
