@@ -1,4 +1,4 @@
-#import pwmraspberry as pwm
+import pwmraspberry as pwm
 import asyncio
 import websockets
 import json
@@ -14,33 +14,33 @@ def change_speed(speed):
     global _speed
     global _steering
     _speed = int(speed)
-   # pwm.traz(_speed, _steering)
+    pwm.traz(_speed, _steering)
 
 
 def change_steering(steering):
     global _speedte
     global _steering
     _steering = int(steering)
-   # pwm.traz(_speed, _steering)
+    pwm.traz(_speed, _steering)
 
 
 def change_camera(camera):
     global _camera
     _camera = camera
-    #pwm.set_camera(_camera)
+    pwm.set_camera(_camera)
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 _auth = 0
 def on_message(messag):
     print(messag)      
         
-    if messag.find("speed:0") != -1:
-        change_speed(messag[-2:])
+    if "speed" in messag:
+        change_speed(messag["speed"])
+        print(f"speed: {_speed} steerind: {_steering}")
+    elif "steering" in messag:
+        change_steering(messag["steering"])
         print(f"speed: {_speed} steering: {_steering}")
-    elif messag.find("steering:0") != -1:
-        change_steering(messag[-2:])
-        print(f"speed: {_speed} steering: {_steering}")
-    elif messag.find("camera:0") != -1:
-        change_camera(messag[-2:])
+    elif "camera" in messag:
+        change_camera(messag["camera"])
         print(f"camera: {_camera}")
 
 
@@ -48,14 +48,13 @@ async def server(websocket, path):
     while True:
         message = await websocket.recv()
         message = json.loads(message)
-        print(message['sls'])
         if message['u']=='admin':
             _auth=1
             if message['p']=='rotas88':
                 _auth=2
         if _auth==2 :
             print("logged")        
-            #on_message(message)
+            on_message(message)
 
 
 start_server = websockets.serve(server, "0.0.0.0", 8000)
