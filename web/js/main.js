@@ -63,7 +63,7 @@ function stopEverything()
 /* *************** */
 gpOFF()
 srOFF()
-const ws = new WebSocket(" /api/websocket ws://192.168.8.155:8000");
+const ws = new WebSocket("/api/websocket ws://192.168.8.155:8000");
 
 ws.addEventListener("open", () => {
   console.log("we are connected");
