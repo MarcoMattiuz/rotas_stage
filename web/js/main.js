@@ -51,7 +51,9 @@ function stopEverything()
   speedR.value = 0;
   steeringR.value = 0;
   cameraR.value = 0;
-  ws.send(JSON.stringify({"speed":0,"steering":0,"camera":0}));
+  ws.send(JSON.stringify({"speed":0}));
+  ws.send(JSON.stringify({"steering":0}));
+  ws.send(JSON.stringify({"camera":0}));
   outSpeed.innerText = speedR.value
   outSteering.innerText = steeringR.value;
   outCamera.innerText = cameraR.value
