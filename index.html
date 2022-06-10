@@ -69,9 +69,13 @@
 
         });
              
-        ws.addEventListener("message", ({ data }) => {
-            console.log("received-client: ", data);
-        });
-    }
+     
+        }
+        ws.onmessage = function(event){
+            if(event.data=='logged'){
+                console.log("prova;");
+                location.href("pages/rover-control.html");  
+            }          
+        }
 </script>
 </html>

@@ -1,3 +1,4 @@
+
 import pwmraspberry as pwm
 import asyncio
 import websockets
@@ -31,8 +32,7 @@ def change_camera(camera):
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 _auth = 0
 def on_message(messag):
-    print(messag)      
-        
+    print(messag)
     if "speed" in messag:
         change_speed(messag["speed"])
         print(f"speed: {_speed} steerind: {_steering}")
@@ -53,7 +53,7 @@ async def server(websocket, path):
             if message['p']=='rotas88':
                 _auth=2
         if _auth==2 :
-            print("logged")        
+            print("logged")
             on_message(message)
 
 
