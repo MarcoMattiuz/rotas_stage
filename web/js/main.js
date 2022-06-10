@@ -51,11 +51,9 @@ function stopEverything()
   speedR.value = 0;
   steeringR.value = 0;
   cameraR.value = 0;
-  ws.send("speed:0" + 0);
+  ws.send(JSON.stringify({"speed":0,"steering":0,"camera":0}));
   outSpeed.innerText = speedR.value
-  ws.send("steering:0" + 0);
-  outSteering.innerText = steeringR.value
-  ws.send("camera:0" + 0);
+  outSteering.innerText = steeringR.value;
   outCamera.innerText = cameraR.value
 }
 
@@ -69,15 +67,15 @@ ws.addEventListener("open", () => {
   console.log("we are connected");
   srON()
   speedR.addEventListener("change", () => {
-    ws.send("speed:0" + speedR.value);
+    ws.send(JSON.stringify({"speed":speedR.value}));
     outSpeed.innerText = speedR.value;
   });
   cameraR.addEventListener("change", () => {
-    ws.send("camera:0" + cameraR.value);
+    ws.send(JSON.stringify({"camera":cameraR.value}));
     outCamera.innerText = cameraR.value;
   });
   steeringR.addEventListener("change", () => {
-    ws.send("steering:0" + steeringR.value);
+    ws.send(JSON.stringify({"steering":steeringR.value}));
     outSteering.innerText = steeringR.value;
   });
 
@@ -87,12 +85,12 @@ ws.addEventListener("open", () => {
   stopSteering.addEventListener("click", () => {
     steeringR.value = 0
     outSteering.innerText = steeringR.value
-    ws.send("steering:0" + steeringR.value);
+    ws.send(JSON.stringify({"steering":steeringR.value}));
   })
   resetCamera.addEventListener("click", () => {
     cameraR.value = 0;
     outCamera.innerText = cameraR.value
-    ws.send("camera:0" + cameraR.value);
+    ws.send(JSON.stringify({"camera":cameraR.value}));
   })
 
 
@@ -102,33 +100,33 @@ ws.addEventListener("open", () => {
 
     if (event.key == 'w') {
       speedR.value = speed_val + 1
-      ws.send("speed:0" + speedR.value);
+      ws.send(JSON.stringify({"speed":speedR.value}));
       console.log(speedR.value);
     } else if (event.key == 's') {
       speedR.value = speed_val - 1
-      ws.send("speed:0" + speedR.value);
+      ws.send(JSON.stringify({"speed":speedR.value}));
     } else if (event.key == 'a') {
       steeringR.value = steering_val - 1
-      ws.send("steering:0" + steeringR.value);
+      ws.send(JSON.stringify({"steering":steeringR.value}));
     } else if (event.key == 'ArrowUp') {
       cameraR.value += 1;
-      ws.send("camera:0" + cameraR.value);
+      ws.send(JSON.stringify({"camera":cameraR.value}));
     } else if (event.key == 'ArrowDown') {
       cameraR.value += 1;
-      ws.send("camera:0" + cameraR.value);
+      ws.send(JSON.stringify({"camera":cameraR.value}));
     } else if (event.key == 'd') {
       steeringR.value = steering_val + 1
-      ws.send("steering:0" + steeringR.value);
+      ws.send(JSON.stringify({"steering":steeringR.value}));
     } else if (event.code == 'Space') {
       steeringR.value = 0
-      ws.send("steering:0" + 0);
+      ws.send(JSON.stringify({"steering":0}));
       stopSteering.style.opacity = "0.7"
     } else if (event.key == 'Enter') {
       stopEverything()
       stopAll.style.opacity = "0.7"
     } else if (event.key == '0') {
       cameraR.value = 0;
-      ws.send("camera:0" + 0);
+      ws.send(JSON.stringify({"camera":0}));
       resetCamera.style.opacity = "0.7"
     }
     outSpeed.innerText = speedR.value
@@ -149,39 +147,39 @@ ws.addEventListener("open", () => {
   mSpeed.addEventListener("click", function () {
 	speedRange.stepDown();    
     outSpeed.innerText = speedRange.value
-    ws.send("speed:0" + speedR.value);
+    ws.send(JSON.stringify({"speed":speedR.value}));
   }, false);
 
   pSpeed.addEventListener("click", function () {
     speedRange.stepUp();
     outSpeed.innerText = speedRange.value
-    ws.send("speed:0" + speedR.value);
+    ws.send(JSON.stringify({"speed":speedR.value}));
   }, false);
 
 
   mSteering.addEventListener("click", function () {
     steeringRange.value -= 1;
     outSteering.innerText = steeringRange.value
-    ws.send("steering:0" + steeringR.value);
+    ws.send(JSON.stringify({"steering":steeringR.value}));
   }, false);
 
   pSteering.addEventListener("click", function () {
     steeringRange.value += 1;
     outSteering.innerText = steeringRange.value
-    ws.send("steering:0" + steeringR.value);
+    ws.send(JSON.stringify({"steering":steeringR.value}));
   }, false);
 
 
   mCamera.addEventListener("click", function () {
     cameraRange.value -= 1;
     outCamera.innerText = cameraRange.value
-    ws.send("camera:0" + cameraR.value);
+    ws.send(JSON.stringify({"camera":cameraR.value}));
   }, false);
 
   pCamera.addEventListener("click", function () {
     cameraRange.value += 1;
     outCamera.innerText = cameraRange.value
-    ws.send("camera:0" + cameraR.value);
+    ws.send(JSON.stringify({"camera":cameraR.value}));
   }, false);
 
 });
@@ -249,14 +247,14 @@ function gameLoop()
   if (speedR.value != valSpeed)
   {
     speedR.value = valSpeed;
-    ws.send("speed:0" + speedR.value);
+    ws.send(JSON.stringify({"speed":speedR.value}));
     outSpeed.innerText = speedR.value
   }
   var valSterring = Math.round(gamePad.axes[0] * 5);
   if (steeringR.value != valSterring)
   {
     steeringR.value = valSterring;
-    ws.send("steering:0" + steeringR.value);
+    ws.send(JSON.stringify({"steering":steeringR.value}));
     outSteering.innerText = steeringR.value
   }
   if (gamePad.buttons[12].pressed)
@@ -282,7 +280,7 @@ function gameLoop()
   if (cameraR.value != valCamera) 
   {
     cameraR.value = valCamera;
-    ws.send("camera:0" + cameraR.value);
+    ws.send(JSON.stringify({"camera":cameraR.value}));
     outCamera.innerText = cameraR.value;
   }
   /* changeValue_Text(2, gamePad.buttons.axes[2] * 5) //--> STEERING

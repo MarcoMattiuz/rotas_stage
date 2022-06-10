@@ -29,7 +29,7 @@
             <div class="heading">
                 Sign-in
             </div>
-            <form action="controll-login.php" method = "post">
+            <form id="form" method="post">
                 <div class="column-fields">
                     <div class="wrap">
                         <label>Username</label>
@@ -40,7 +40,7 @@
                         <input type="password" id="password" name="password" class="input-field" autocomplete placeholder="password">
                     </div>
                 </div>
-                <input type="submit" name="submit" class="input-submit" value="Login" >
+                <input type="submit" name="submit" onclick="controll_ws();" class="input-submit" value="Login" >
             </form>              
         </div>
        
@@ -50,19 +50,28 @@
 
 </body>
 <script>
-    $.getJSON('https://europe-west3-devrcc.cloudfunctions.net/whatismyip', function(data){
+   /* $.getJSON('https://europe-west3-devrcc.cloudfunctions.net/whatismyip', function(data){
         $("#print-ip").html("Welcome "+data.ip);
+    });*/
+    $(document).ready(function(){
+        $("#form").submit(function(e){
+            e.preventDefault();
+        });
     });
 
     function controll_ws(){
-        const ws = new WebSocket("/api/websocket ws://192.168.8.155:8000");
+       
+        const ws = new WebSocket("wss://rover.rotas.eu/api/websocket");
         ws.addEventListener("open", () => {
             console.log("we are connected");
-            ws.send("u:" + $("#username").text());
-            ws.send("p:" + $("#password").text());
-           
+            ws.send(JSON.stringify({"u":$("#username").val(),"p":$("#password").val()}));
+       
+
         });
-    
+             
+        ws.addEventListener("message", ({ data }) => {
+            console.log("received-client: ", data);
+        });
     }
 </script>
 </html>
