@@ -58,20 +58,18 @@
             e.preventDefault();
         });
     });
-
-    function controll_ws(){
-       
-        const ws = new WebSocket("wss://rover.rotas.eu/api/websocket");
-        ws.addEventListener("open", () => {
+    const ws = new WebSocket("wss://rover.rotas.eu/api/websocket");
+      
+    ws.addEventListener("open", () => {
             console.log("we are connected");
-            ws.send(JSON.stringify({"u":$("#username").val(),"p":$("#password").val()}));
-       
-
-        });
-             
-        ws.addEventListener("message", ({ data }) => {
-            console.log("received-client: ", data);
-        });
+    });
+    function controll_ws(){ 
+        ws.send(JSON.stringify({"u":$("#username").val(),"p":$("#password").val()}));
+    }
+    ws.onmessage = function(event){
+        if(event.data=="logged"){
+            location.href = "pages/rover-control.html";
+        }
     }
 </script>
 </html>

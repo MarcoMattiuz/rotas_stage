@@ -48,6 +48,7 @@ async def server(websocket, path):
     while True:
         message = await websocket.recv()
         message = json.loads(message)
+        websocket.send("hi")
         if message['u']=='admin':
             _auth=1
             if message['p']=='rotas88':
