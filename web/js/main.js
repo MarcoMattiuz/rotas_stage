@@ -63,11 +63,14 @@ function stopEverything()
 /* *************** */
 gpOFF()
 srOFF()
-const ws = new WebSocket("/api/websocket ws://rover.rotas.eu:8000");
+const ws = new WebSocket("wss://rover.rotas.eu/api/websocket");
 
 ws.addEventListener("open", () => {
   console.log("we are connected");
   srON()
+  ws.addEventListener("close", () => {
+    console.log("server is down");
+  });
   speedR.addEventListener("change", () => {
     ws.send(JSON.stringify({"speed":speedR.value}));
     outSpeed.innerText = speedR.value;
@@ -102,6 +105,7 @@ ws.addEventListener("open", () => {
 
     if (event.key == 'w') {
       speedR.value = speed_val + 1
+      
       ws.send(JSON.stringify({"speed":speedR.value}));
       console.log(speedR.value);
     } else if (event.key == 's') {

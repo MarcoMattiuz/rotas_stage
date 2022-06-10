@@ -1,4 +1,5 @@
 
+
 import pwmraspberry as pwm
 import asyncio
 import websockets
@@ -30,7 +31,6 @@ def change_camera(camera):
     _camera = camera
     pwm.set_camera(_camera)
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-_auth = 0
 def on_message(messag):
     print(messag)
     if "speed" in messag:
@@ -45,16 +45,20 @@ def on_message(messag):
 
 
 async def server(websocket, path):
+    await websocket.send("hi")
+    _auth=0
     while True:
         message = await websocket.recv()
         message = json.loads(message)
-        if message['u']=='admin':
-            _auth=1
-            if message['p']=='rotas88':
-                _auth=2
-        if _auth==2 :
-            print("logged")
-            on_message(message)
+        if "u" in message:
+            if message['u']=='admin':
+                _auth=1
+                if "p" in message:
+                    if message['p']=='rotas88':
+                        _auth=2
+                        await websocket.send("logged")
+            if _auth==2 :
+                on_message(message)
 
 
 start_server = websockets.serve(server, "0.0.0.0", 8000)
