@@ -18,31 +18,36 @@ var pSteering = document.getElementById("pSteering");
 var mCamera = document.getElementById("mCamera");
 var pCamera = document.getElementById("pCamera");
 
-function gpON() {
+function gpON()
+{
   on_gp.style.background = "#33a532"
   on_gp.style.boxShadow = "0 0 15px #33a532"
   off_gp.style.background = "#cccccc"
   off_gp.style.boxShadow = "none"
 }
-function gpOFF() {
+function gpOFF()
+{
   off_gp.style.background = "#bb1e10"
   off_gp.style.boxShadow = "0 0 15px  #bb1e10"
   on_gp.style.background = "#cccccc"
   on_gp.style.boxShadow = "none"
 }
-function srON() {
+function srON()
+{
   on_sr.style.background = "#33a532"
   on_sr.style.boxShadow = "0 0 15px #33a532"
   off_sr.style.background = "#cccccc"
   off_sr.style.boxShadow = "none"
 }
-function srOFF() {
+function srOFF()
+{
   off_sr.style.background = "#bb1e10"
   off_sr.style.boxShadow = "0 0 15px  #bb1e10"
   on_sr.style.background = "#cccccc"
   on_sr.style.boxShadow = "none"
 }
-function stopEverything() {
+function stopEverything()
+{
   speedR.value = 0;
   steeringR.value = 0;
   cameraR.value = 0;
@@ -58,7 +63,8 @@ function stopEverything() {
 /* *************** */
 gpOFF()
 srOFF()
-const ws = new WebSocket("ws://192.168.8.155:8000");
+const ws = new WebSocket(" /api/websocket ws://192.168.8.155:8000");
+
 ws.addEventListener("open", () => {
   console.log("we are connected");
   srON()
@@ -180,17 +186,18 @@ ws.addEventListener("open", () => {
 
 });
 
-function prompt_alerts(description) {
+function prompt_alerts(description)
+{
   alert(description);
 
 }
 ////////////////////////server websockets /////////////////////
 ws.addEventListener("message", ({ data }) => {
   console.log("received-client: ", data);
-})
+});
 ws.addEventListener("close", () => {
   srOFF();
-})
+});
 
 
 ///////////////////////////////GAMEPAD COMMANDS/////////////////////////////////
@@ -203,7 +210,7 @@ window.addEventListener("gamepadconnected", function (e) {
     e.gamepad.buttons.length, e.gamepad.axes.length);
   gameLoop();
 });
-window.addEventListener("gamepaddisconnected", e => {
+window.addEventListener("gamepaddisconnected", e =>{
   gpOFF()
   console.log("Gamepad disconnected from index %d: %s",
     e.gamepad.index, e.gamepad.id);
@@ -217,15 +224,18 @@ var pressedDown = false;
 var pressedUp = false;
 var valCameraDown = 0;
 // var interval
-function gameLoop() {
+function gameLoop()
+{
 
   var gamepads = navigator.getGamepads ? navigator.getGamepads() : (navigator.webkitGetGamepads ? navigator.webkitGetGamepads() : []);
-  if (!gamepads) {
+  if (!gamepads)
+  {
     return;
   }
 
   gamePad = gamepads[0];
-  if (gamePad.buttons[0].value == 1) {
+  if (gamePad.buttons[0].value == 1)
+  {
     cameraR.value = 0;
     valCamera = 0;
     outCamera.innerText = 0;
@@ -236,34 +246,41 @@ function gameLoop() {
   valSpeedFront = Math.round(gamePad.buttons[7].value * 8);
   valSpeedFront = valSpeedFront > 5 ? 5 : valSpeedFront;
   valSpeed = valSpeedBack + valSpeedFront;
-  if (speedR.value != valSpeed) {
+  if (speedR.value != valSpeed)
+  {
     speedR.value = valSpeed;
     ws.send("speed:0" + speedR.value);
     outSpeed.innerText = speedR.value
   }
   var valSterring = Math.round(gamePad.axes[0] * 5);
-  if (steeringR.value != valSterring) {
+  if (steeringR.value != valSterring)
+  {
     steeringR.value = valSterring;
     ws.send("steering:0" + steeringR.value);
     outSteering.innerText = steeringR.value
   }
-  if (gamePad.buttons[12].pressed) {
-    if (pressedUp != true) {
+  if (gamePad.buttons[12].pressed)
+  {
+    if (pressedUp != true)
+    {
       valCamera += 1;
     }
     pressedUp = true;
-  } else { pressedUp = false; }
+  } else pressedUp = false; 
 
-  if (gamePad.buttons[13].pressed) {
-    if (pressedDown != true) {
+  if (gamePad.buttons[13].pressed)
+  {
+    if (pressedDown != true) 
+    {
       valCamera -= 1;
     }
     pressedDown = true;
-  } else { pressedDown = false; }
+  } else pressedDown = false; 
 
   valCamera = valCamera > 5 ? 5 : valCamera;
   valCamera = valCamera < 0 ? 0 : valCamera;
-  if (cameraR.value != valCamera) {
+  if (cameraR.value != valCamera) 
+  {
     cameraR.value = valCamera;
     ws.send("camera:0" + cameraR.value);
     outCamera.innerText = cameraR.value;
@@ -273,7 +290,8 @@ function gameLoop() {
    changeValue_Text(3, gamePad.buttons.axes[0] * 5) //--> CAMERA*/
   start = window.requestAnimationFrame(gameLoop);
 }
-function handleOrientation(event) {
+function handleOrientation(event)
+{
   var absolute = event.absolute;
   var alpha = event.alpha;
   var beta = event.beta;
