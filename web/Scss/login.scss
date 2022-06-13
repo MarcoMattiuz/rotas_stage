@@ -97,13 +97,16 @@ body {
             .column-fields{
                 display: flex;
                 flex-direction: column;
-                 .error-input{
+
+                .error-input{
+
                     color:red;
                     font-weight: 300;
                     font-size: 1rem;
                     margin-top: 1rem;
                 }
-		.wrap{
+                .wrap{
+
                     label{ 
                         font-weight: 500;
                         font-size: 1rem;

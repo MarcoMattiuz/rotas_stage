@@ -145,6 +145,13 @@ body {
           flex-direction: column;
 }
 
+.outer-container .wrapper form .column-fields .error-input {
+  color: red;
+  font-weight: 300;
+  font-size: 1rem;
+  margin-top: 1rem;
+}
+
 .outer-container .wrapper form .column-fields .wrap {
   top: 35%;
   left: 20%;
