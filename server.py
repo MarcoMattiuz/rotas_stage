@@ -1,6 +1,6 @@
 
 import cv2
-import pwmraspberry as pwm
+#import pwmraspberry as pwm
 import asyncio
 import websockets
 import json
@@ -16,20 +16,20 @@ def change_speed(speed):
     global _speed
     global _steering
     _speed = int(speed)
-    pwm.traz(_speed, _steering)
+    #pwm.traz(_speed, _steering)
 
 
 def change_steering(steering):
     global _speed
     global _steering
     _steering = int(steering)
-    pwm.traz(_speed, _steering)
+    #pwm.traz(_speed, _steering)
 
 
 def change_camera(camera):
     global _camera
     _camera = camera
-    pwm.set_camera(_camera)
+    #pwm.set_camera(_camera)
 
 # # # # # # # # VIDEO CAM # # # # # # # #
 # cam = cv2.VideoCapture(0)
@@ -75,8 +75,6 @@ async def server(websocket, path):
     receive_result= await asyncio.gather(receive())            
 
         
-
-
-start_server = websockets.serve(server, "0.0.0.0", 8000)
+start_server = websockets.serve(server, "192.168.8.46", 8000)
 asyncio.get_event_loop().run_until_complete(start_server)
 asyncio.get_event_loop().run_forever()

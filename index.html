@@ -59,8 +59,8 @@
             e.preventDefault();
         });
     });
-    const ws = new WebSocket("wss://rover.rotas.eu/api/websocket");
-      
+    //const ws = new WebSocket("wss://rover.rotas.eu/api/websocket");
+    const ws = new WebSocket("ws://192.168.8.46:8000");
     ws.addEventListener("open", () => {
             console.log("we are connected");
     });
@@ -73,7 +73,7 @@
             location.href = "pages/rover-control.html";
             $(".error-input").html() = ""; 
         }else{
-            $(".error-input").html() = event.data; 
+            $(".error-input").html(event.data); 
         }
     });
 </script>
