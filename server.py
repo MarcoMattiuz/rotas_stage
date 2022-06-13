@@ -20,7 +20,7 @@ def change_speed(speed):
 
 
 def change_steering(steering):
-    global _speedte
+    global _speed
     global _steering
     _steering = int(steering)
     pwm.traz(_speed, _steering)
@@ -55,27 +55,22 @@ async def server(websocket, path):
     async def receive():
         _auth=0
         while True:
-            try:
-                message = await websocket.recv()
-                message = json.loads(message)
-                if "u" in message:
-                    if message['u']=='admin':
-                        _auth=1
-                        if "p" in message:
-                            if message['p']=='rotas88':
-                                _auth=2
-                                await websocket.send("logged")
-                    else:
-                            await websocket.send("Wrong password or password")    
+          
+            message = await websocket.recv()
+            message = json.loads(message)
+            if "u" in message:
+                if message['u']=='admin':
+                    _auth=1
+                    if "p" in message:
+                        if message['p']=='rotas88':
+                            _auth=2
+                            await websocket.send("logged")
                 else:
-                    await websocket.send("Wrong username or password")      
-                if _auth==2 :
-                    await on_message(message)
-            except websockets.exceptions.ConnectionClosedError as e:
-                raise Exception(f'Websocket closed {e.code}')
-                break
-            except Exception:
-                raise Exception('Not a websocket')
+                        await websocket.send("Wrong password or password")    
+            else:
+                await websocket.send("Wrong username or password")      
+            if _auth==2 :
+                await on_message(message)
     
     receive_result= await asyncio.gather(receive())            
 
