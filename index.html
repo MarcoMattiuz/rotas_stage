@@ -71,6 +71,7 @@
 	console.log("received :"+ event.data);
         if(event.data=="logged"){
             location.href = "pages/rover-control.html";
+            $(".error-input").html() = ""; 
         }else{
             $(".error-input").html() = event.data; 
         }
