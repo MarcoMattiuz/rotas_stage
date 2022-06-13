@@ -1,11 +1,11 @@
 
-
+import cv2
 import pwmraspberry as pwm
 import asyncio
 import websockets
 import json
 import subprocess
-# 192.168.9.245
+# 192.168.8.155
 #subprocess.Popen(["python", "/var/www/html/rotas_stage/camera.py"])
 # # # # # # # # # # # # # # # #   ROVER TRACTION   # # # # # # # # # # # # # # # #
 _speed = 0
@@ -30,8 +30,13 @@ def change_camera(camera):
     global _camera
     _camera = camera
     pwm.set_camera(_camera)
+
+# # # # # # # # VIDEO CAM # # # # # # # #
+# cam = cv2.VideoCapture(0)
+# cam.set(3, 320)
+# cam.set(4, 240)    
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-def on_message(messag):
+async def on_message(messag):
     print(messag)
     if "speed" in messag:
         change_speed(messag["speed"])
@@ -44,21 +49,37 @@ def on_message(messag):
         print(f"camera: {_camera}")
 
 
+
 async def server(websocket, path):
-    await websocket.send("hi")
-    _auth=0
-    while True:
-        message = await websocket.recv()
-        message = json.loads(message)
-        if "u" in message:
-            if message['u']=='admin':
-                _auth=1
-                if "p" in message:
-                    if message['p']=='rotas88':
-                        _auth=2
-                        await websocket.send("logged")
-            if _auth==2 :
-                on_message(message)
+   
+    async def receive():
+        _auth=0
+        while True:
+            try:
+                message = await websocket.recv()
+                message = json.loads(message)
+                if "u" in message:
+                    if message['u']=='admin':
+                        _auth=1
+                        if "p" in message:
+                            if message['p']=='rotas88':
+                                _auth=2
+                                await websocket.send("logged")
+                    else:
+                            await websocket.send("Wrong password or password")    
+                else:
+                    await websocket.send("Wrong username or password")      
+                if _auth==2 :
+                    await on_message(message)
+            except websockets.exceptions.ConnectionClosedError as e:
+                raise Exception(f'Websocket closed {e.code}')
+                break
+            except Exception:
+                raise Exception('Not a websocket')
+    
+    receive_result= await asyncio.gather(receive())            
+
+        
 
 
 start_server = websockets.serve(server, "0.0.0.0", 8000)
