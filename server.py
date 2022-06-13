@@ -54,13 +54,15 @@ async def server(websocket, path):
     global _auth
     async def receive():
         _auth=0
-        while True:
-          
+        while True: 
             message = await websocket.recv()
             message = json.loads(message)
+            print(message)
             if "u" in message:
+	        print("username exits")
                 if message['u']=='admin':
                     _auth=1
+		    print("username valid")
                     if "p" in message:
                         if message['p']=='rotas88':
                             _auth=2
