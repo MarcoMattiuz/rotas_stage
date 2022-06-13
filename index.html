@@ -39,6 +39,7 @@
                         <label>Password</label>
                         <input type="password" id="password" name="password" class="input-field" autocomplete placeholder="password">
                     </div>
+  			<p class="error-input">s</p>
                 </div>
                 <input type="submit" name="submit" onclick="controll_ws();" class="input-submit" value="Login" >
             </form>              
@@ -64,12 +65,14 @@
             console.log("we are connected");
     });
     function controll_ws(){ 
-        ws.send(JSON.stringify({"u":$("#username").val(),"p":$("#password").val()}));
+        ws.send(JSON.stringify({"username":$("#username").val(),"password":$("#password").val()}));
     }
     ws.addEventListener("message", function(event){	
 	console.log("received :"+ event.data);
         if(event.data=="logged"){
             location.href = "pages/rover-control.html";
+        }else{
+            $(".error-input").html(event.data); 
         }
     });
 </script>

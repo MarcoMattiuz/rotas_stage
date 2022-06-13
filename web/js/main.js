@@ -187,24 +187,7 @@ ws.addEventListener("open", () => {
     outCamera.innerText = cameraRange.value
     ws.send(JSON.stringify({"camera":cameraR.value}));
   }, false);
-
-});
-
-function prompt_alerts(description)
-{
-  alert(description);
-
-}
-////////////////////////server websockets /////////////////////
-ws.addEventListener("message", ({ data }) => {
-  console.log("received-client: ", data);
-});
-ws.addEventListener("close", () => {
-  srOFF();
-});
-
-
-///////////////////////////////GAMEPAD COMMANDS/////////////////////////////////
+  ///////////////////////////////GAMEPAD COMMANDS/////////////////////////////////
 var gamePad;
 var start
 window.addEventListener("gamepadconnected", function (e) {
@@ -294,6 +277,23 @@ function gameLoop()
    changeValue_Text(3, gamePad.buttons.axes[0] * 5) //--> CAMERA*/
   start = window.requestAnimationFrame(gameLoop);
 }
+});
+
+function prompt_alerts(description)
+{
+  alert(description);
+
+}
+////////////////////////server websockets /////////////////////
+ws.addEventListener("message", ({ data }) => {
+  console.log("received-client: ", data);
+});
+ws.addEventListener("close", () => {
+  srOFF();
+});
+
+
+
 function handleOrientation(event)
 {
   var absolute = event.absolute;

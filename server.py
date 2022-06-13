@@ -6,12 +6,12 @@ import websockets
 import json
 import subprocess
 # 192.168.9.245
-#subprocess.Popen(["python", "/var/www/html/rotas_stage/camera.py"])
+#subprocess.Popen(["python", "/var/www/html/camera.py"])
 # # # # # # # # # # # # # # # #   ROVER TRACTION   # # # # # # # # # # # # # # # #
 _speed = 0
 _steering = 0
 _camera = 0
-
+_auth=0
 def change_speed(speed):
     global _speed
     global _steering
@@ -45,20 +45,28 @@ def on_message(messag):
 
 
 async def server(websocket, path):
-    await websocket.send("hi")
-    _auth=0
+    global _auth
+    await websocket.send(".")
+   
     while True:
         message = await websocket.recv()
         message = json.loads(message)
-        if "u" in message:
-            if message['u']=='admin':
+
+        #only for login
+        if "username" in message:
+            if message['username']=='admin':
                 _auth=1
-                if "p" in message:
-                    if message['p']=='rotas88':
+                if "password" in message:
+                    if message['password']=='rotas88':
                         _auth=2
                         await websocket.send("logged")
-            if _auth==2 :
-                on_message(message)
+                    else:
+                        await websocket.send("Wrong username or password")
+            else:
+                await websocket.send("Wrong username or password")
+        print(_auth)
+        if _auth==0 :
+            on_message(message)
 
 
 start_server = websockets.serve(server, "0.0.0.0", 8000)
