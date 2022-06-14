@@ -57,29 +57,34 @@
    /* $.getJSON('https://europe-west3-devrcc.cloudfunctions.net/whatismyip', function(data){
         $("#print-ip").html("Welcome "+data.ip);
     });*/
+    
     $(document).ready(function(){
         $("#form").submit(function(e){
             e.preventDefault();
         });
     });
-    const ws = new WebSocket("wss://rover.rotas.eu/api/websocket");
-      
+    //const ws = new WebSocket("wss://rover.rotas.eu/api/websocket");
+    const ws = new WebSocket("ws://192.168.8.46:8000");
     ws.addEventListener("open", () => {
             console.log("we are connected");
+          
     });
     function controll_ws(){ 
         ws.send(JSON.stringify({"username":$("#username").val(),"password":$("#password").val()}));
     }
     ws.addEventListener("message", function(event){	
-	console.log("received :"+ event.data);
-        if(event.data=="logged"){
+        console.log("received :",JSON.parse(event.data));
+        messageJson = JSON.parse(event.data);
+        if(messageJson.hasOwnProperty("error")){
+        
+            $(".error-input").html(messageJson['error']); 
+        
+        }else if(messageJson.hasOwnProperty("login")){ 
+            console.log("logged");
+            $(".error-input").html("logged");  
             location.href = "pages/rover-control.html";
-            $(".error-input").html() = ""; 
-        }else{
-
-            $(".error-input").html(event.data); 
-
-        }
+                
+            }
     });
 </script>
 </html>

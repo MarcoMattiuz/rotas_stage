@@ -50,30 +50,6 @@ async def on_message(messag):
 
 
 async def server(websocket, path):
-<<<<<<< HEAD
-    global _auth
-    await websocket.send(".")
-   
-    while True:
-        message = await websocket.recv()
-        message = json.loads(message)
-
-        #only for login
-        if "username" in message:
-            if message['username']=='admin':
-                _auth=1
-                if "password" in message:
-                    if message['password']=='rotas88':
-                        _auth=2
-                        await websocket.send("logged")
-                    else:
-                        await websocket.send("Wrong username or password")
-            else:
-                await websocket.send("Wrong username or password")
-        print(_auth)
-        if _auth==0 :
-            on_message(message)
-=======
    
     async def receive():
         _auth=0
@@ -103,7 +79,6 @@ async def server(websocket, path):
     receive_result= await asyncio.gather(receive())            
 
         
->>>>>>> 3638d5fa8109797ea0d0ee848fd8787033510fe0
 
 
 start_server = websockets.serve(server, "0.0.0.0", 8000)

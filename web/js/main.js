@@ -17,7 +17,7 @@ var mSteering = document.getElementById("mSteering");
 var pSteering = document.getElementById("pSteering");
 var mCamera = document.getElementById("mCamera");
 var pCamera = document.getElementById("pCamera");
-
+var msg = document.getElementById("video-embed");
 function gpON()
 {
   on_gp.style.background = "#33a532"
@@ -63,13 +63,20 @@ function stopEverything()
 /* *************** */
 gpOFF()
 srOFF()
-const ws = new WebSocket("wss://rover.rotas.eu/api/websocket");
+var ws = new WebSocket("ws://192.168.8.46:8000");
 
 ws.addEventListener("open", () => {
   console.log("we are connected");
+  ws.send(JSON.stringify({"photo":1}))
   srON()
+  ws.onerror = function (e) {
+    Console. log ('WebSocket error: '+ e.code)
+    console.log(e)
+  }
   ws.addEventListener("close", () => {
     console.log("server is down");
+   
+    srOFF();
   });
   speedR.addEventListener("change", () => {
     ws.send(JSON.stringify({"speed":speedR.value}));
@@ -89,7 +96,7 @@ ws.addEventListener("open", () => {
   })
   stopSteering.addEventListener("click", () => {
     steeringR.value = 0
-    outSteering.innerText = steeringR.value
+    outSteering.innerText = steeringR.values
     ws.send(JSON.stringify({"steering":steeringR.value}));
   })
   resetCamera.addEventListener("click", () => {
@@ -134,6 +141,10 @@ ws.addEventListener("open", () => {
       cameraR.value = 0;
       ws.send(JSON.stringify({"camera":0}));
       resetCamera.style.opacity = "0.7"
+    }else if (event.key == 'o') {
+      
+      ws.send(JSON.stringify({"photo":1}));
+     
     }
     outSpeed.innerText = speedR.value
     outSteering.innerText = steeringR.value
@@ -286,13 +297,14 @@ function prompt_alerts(description)
 }
 ////////////////////////server websockets /////////////////////
 ws.addEventListener("message", ({ data }) => {
-  console.log("received-client: ", data);
+  
+  photo = JSON.parse(data);
+  console.log(photo);
+  if(photo.hasOwnProperty("photo")){ 
+    msg.src='data:image/jpg;base64,'+photo['photo'];
+  }
+   //console.log("received-client: ", data);
 });
-ws.addEventListener("close", () => {
-  srOFF();
-});
-
-
 
 function handleOrientation(event)
 {
