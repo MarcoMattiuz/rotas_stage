@@ -15,6 +15,30 @@ lr_check = True
 # Create pipeline
 pipeline = dai.Pipeline()
 
+# Define source and output
+camRgb = pipeline.create(dai.node.ColorCamera)
+xoutVideo = pipeline.create(dai.node.XLinkOut)
+
+xoutVideo.setStreamName("video")
+
+# Properties
+camRgb.setBoardSocket(dai.CameraBoardSocket.RGB)
+camRgb.setResolution(dai.ColorCameraProperties.SensorResolution.THE_1080_P)
+camRgb.setVideoSize(640, 400)
+
+xoutVideo.input.setBlocking(False)
+xoutVideo.input.setQueueSize(1)
+
+# Properties
+# camRgb.setPreviewSize(300, 300)
+# camRgb.setInterleaved(False)
+# camRgb.setColorOrder(dai.ColorCameraProperties.ColorOrder.RGB)
+
+# Linking
+camRgb.video.link(xoutVideo.input)
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # m
+
 # Define sources and outputs
 monoLeft = pipeline.create(dai.node.MonoCamera)
 monoRight = pipeline.create(dai.node.MonoCamera)
@@ -45,8 +69,7 @@ depth.disparity.link(xout.input)
 
 
 ############################working on###########################
-def resize_percent(perc, src):
-    scale_percent = 50
+def resize_percent(scale_percent, src):
 
     width = int(src.shape[1] * scale_percent / 100)
     height = int(src.shape[0] * scale_percent / 100)
@@ -83,22 +106,25 @@ def zone_matrix(divX, frame):
     
 # Connect to device and start pipeline
 device = dai.Device(pipeline) 
-
-# Output queue will be used to get the disparity frames from the outputs defined above
+video = device.getOutputQueue(name="video", maxSize=4, blocking=False)
 q = device.getOutputQueue(name="disparity", maxSize=4, blocking=False)
 kernel = np.ones((15,15),dtype="uint8")
 #kernel = np.ones((6, 6), np.uint8)
-inDisparity = q.get()  # blocking call, will wait until a new data has arrived
-frame = inDisparity.getFrame()
 
 while True:
     inDisparity = q.get() 
     frame = inDisparity.getFrame()
+
+    inRgb = video.get()  # blocking call, will wait until a new data has arrived
+    # Retrieve 'bgr' (opencv format) frame
+    
+    cv2.imshow("video", resize_percent(70,inRgb.getCvFrame()))
+
     frame = (frame * (255 / depth.initialConfig.getMaxDisparity())).astype(np.uint8)
+    frame = resize_percent(50,frame)
     frame = cv2.erode(frame, kernel)
     frame = cv2.dilate(frame, kernel)
     ret,frame = cv2.threshold(frame,150, 255, cv2.THRESH_TOZERO)
-    frame = resize_percent(50,frame)
     out_matrix = zone_matrix(8,frame) #non toccare
     print(out_matrix)
     frame = cv2.applyColorMap(frame, cv2.COLORMAP_PLASMA)

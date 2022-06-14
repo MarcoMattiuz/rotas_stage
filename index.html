@@ -41,8 +41,6 @@
                     </div>
 
   			<p class="error-input"></p>
-
-
                 </div>
                 <input type="submit" name="submit" onclick="controll_ws();" class="input-submit" value="Login" >
             </form>              
@@ -63,8 +61,7 @@
             e.preventDefault();
         });
     });
-    //const ws = new WebSocket("wss://rover.rotas.eu/api/websocket");
-    const ws = new WebSocket("ws://192.168.8.46:8000");
+    const ws = new WebSocket("wss://rover.rotas.eu/api/websocket");
     ws.addEventListener("open", () => {
             console.log("we are connected");
           

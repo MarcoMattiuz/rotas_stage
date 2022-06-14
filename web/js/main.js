@@ -63,7 +63,7 @@ function stopEverything()
 /* *************** */
 gpOFF()
 srOFF()
-var ws = new WebSocket("ws://192.168.8.46:8000");
+var ws = new WebSocket("wss://rover.rotas.eu/api/websocket");
 
 ws.addEventListener("open", () => {
   console.log("we are connected");
@@ -299,11 +299,9 @@ function prompt_alerts(description)
 ws.addEventListener("message", ({ data }) => {
   
   photo = JSON.parse(data);
-  console.log(photo);
   if(photo.hasOwnProperty("photo")){ 
     msg.src='data:image/jpg;base64,'+photo['photo'];
   }
-   //console.log("received-client: ", data);
 });
 
 function handleOrientation(event)
