@@ -17,7 +17,7 @@ var mSteering = document.getElementById("mSteering");
 var pSteering = document.getElementById("pSteering");
 var mCamera = document.getElementById("mCamera");
 var pCamera = document.getElementById("pCamera");
-
+var msg = document.getElementById("video-embed");
 function gpON()
 {
   on_gp.style.background = "#33a532"
@@ -63,13 +63,19 @@ function stopEverything()
 /* *************** */
 gpOFF()
 srOFF()
-const ws = new WebSocket("wss://rover.rotas.eu/api/websocket");
+var ws = new WebSocket("ws://172.20.10.11:8000");
 
 ws.addEventListener("open", () => {
   console.log("we are connected");
   srON()
+  ws.onerror = function (e) {
+    Console. log ('WebSocket error: '+ e.code)
+    console.log(e)
+  }
   ws.addEventListener("close", () => {
     console.log("server is down");
+   
+    srOFF();
   });
   speedR.addEventListener("change", () => {
     ws.send(JSON.stringify({"speed":speedR.value}));
@@ -134,6 +140,10 @@ ws.addEventListener("open", () => {
       cameraR.value = 0;
       ws.send(JSON.stringify({"camera":0}));
       resetCamera.style.opacity = "0.7"
+    }else if (event.key == 'o') {
+      
+      ws.send(JSON.stringify({"photo":1}));
+     
     }
     outSpeed.innerText = speedR.value
     outSteering.innerText = steeringR.value
@@ -187,24 +197,7 @@ ws.addEventListener("open", () => {
     outCamera.innerText = cameraRange.value
     ws.send(JSON.stringify({"camera":cameraR.value}));
   }, false);
-
-});
-
-function prompt_alerts(description)
-{
-  alert(description);
-
-}
-////////////////////////server websockets /////////////////////
-ws.addEventListener("message", ({ data }) => {
-  console.log("received-client: ", data);
-});
-ws.addEventListener("close", () => {
-  srOFF();
-});
-
-
-///////////////////////////////GAMEPAD COMMANDS/////////////////////////////////
+  ///////////////////////////////GAMEPAD COMMANDS/////////////////////////////////
 var gamePad;
 var start
 window.addEventListener("gamepadconnected", function (e) {
@@ -294,6 +287,22 @@ function gameLoop()
    changeValue_Text(3, gamePad.buttons.axes[0] * 5) //--> CAMERA*/
   start = window.requestAnimationFrame(gameLoop);
 }
+});
+
+function prompt_alerts(description)
+{
+  alert(description);
+
+}
+////////////////////////server websockets /////////////////////
+ws.addEventListener("message", ({ data }) => {
+  console.log(data);
+  // photo = JSON.parse(data);
+  // console.log(photo)
+  // msg.src='data:image/jpg;base64,'+photo['photo'];
+  // //console.log("received-client: ", data);
+});
+
 function handleOrientation(event)
 {
   var absolute = event.absolute;
