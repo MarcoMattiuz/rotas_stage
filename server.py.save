@@ -5,13 +5,8 @@ import asyncio
 import websockets
 import json
 import subprocess
-<<<<<<< HEAD
-# 192.168.9.245
-#subprocess.Popen(["python", "/var/www/html/camera.py"])
-=======
 # 192.168.8.155
 #subprocess.Popen(["python", "/var/www/html/rotas_stage/camera.py"])
->>>>>>> 3638d5fa8109797ea0d0ee848fd878 # # # # # # # # # # # # # # #   ROVER TRACTION   # # # # # # # # # # # # # # # #
 _speed = 0
 _steering = 0
 _camera = 0

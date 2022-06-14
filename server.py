@@ -98,7 +98,7 @@ async def server(websocket, path):
     #if _auth==2 :
         #await on_message(message)
 async def main():
-    async with websockets.serve(server, "172.20.10.11", 8000):
+    async with websockets.serve(server, "192.168.8.46", 8000):
         await asyncio.Future()  # run forever
 
 asyncio.run(main())        

@@ -63,7 +63,7 @@ function stopEverything()
 /* *************** */
 gpOFF()
 srOFF()
-var ws = new WebSocket("ws://172.20.10.11:8000");
+var ws = new WebSocket("ws://192.168.8.46:8000");
 
 ws.addEventListener("open", () => {
   console.log("we are connected");
