@@ -99,9 +99,9 @@ while True:
     frame = cv2.dilate(frame, kernel)
     ret,frame = cv2.threshold(frame,150, 255, cv2.THRESH_TOZERO)
     frame = resize_percent(50,frame)
-    out_matrix = zone_matrix(10,frame) #non toccare
+    out_matrix = zone_matrix(8,frame) #non toccare
     print(out_matrix)
     frame = cv2.applyColorMap(frame, cv2.COLORMAP_PLASMA)
-    cv2.imshow("disparity", frame)
+    cv2.imshow("depth frame", frame)
     if cv2.waitKey(1) == ord('q'):
         break 

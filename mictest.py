@@ -11,7 +11,7 @@ def clear():
 
 def get_audio():
     r = sr.Recognizer()
-    with sr.Microphone() as source:
+    with sr.Microphone(device_index=1) as source:
         print("->")
         audio = r.listen(source)
         said = ""
@@ -50,6 +50,10 @@ while True:
         pwm.traz(v, -5)
         sleep(1.5)
         pwm.traz(v, 0)
+    elif "girotondo" in command:
+        pwm.traz(v, 5)
+        sleep(5)
+        pwm.traz(0, 0)
     elif "ferm" in command:
         mess = "sono fermo"
         pwm.traz(0,0)
