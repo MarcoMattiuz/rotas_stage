@@ -67,6 +67,7 @@ var ws = new WebSocket("ws://192.168.8.46:8000");
 
 ws.addEventListener("open", () => {
   console.log("we are connected");
+  ws.send(JSON.stringify({"photo":1}))
   srON()
   ws.onerror = function (e) {
     Console. log ('WebSocket error: '+ e.code)
@@ -95,7 +96,7 @@ ws.addEventListener("open", () => {
   })
   stopSteering.addEventListener("click", () => {
     steeringR.value = 0
-    outSteering.innerText = steeringR.value
+    outSteering.innerText = steeringR.values
     ws.send(JSON.stringify({"steering":steeringR.value}));
   })
   resetCamera.addEventListener("click", () => {
@@ -296,11 +297,13 @@ function prompt_alerts(description)
 }
 ////////////////////////server websockets /////////////////////
 ws.addEventListener("message", ({ data }) => {
-  console.log(data);
-  // photo = JSON.parse(data);
-  // console.log(photo)
-  // msg.src='data:image/jpg;base64,'+photo['photo'];
-  // //console.log("received-client: ", data);
+  
+  photo = JSON.parse(data);
+  console.log(photo);
+  if(photo.hasOwnProperty("photo")){ 
+    msg.src='data:image/jpg;base64,'+photo['photo'];
+  }
+   //console.log("received-client: ", data);
 });
 
 function handleOrientation(event)

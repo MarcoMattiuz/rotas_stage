@@ -67,7 +67,7 @@
     const ws = new WebSocket("ws://192.168.8.46:8000");
     ws.addEventListener("open", () => {
             console.log("we are connected");
-            location.href = "pages/rover-control.html";
+          
     });
     function controll_ws(){ 
         ws.send(JSON.stringify({"username":$("#username").val(),"password":$("#password").val()}));
