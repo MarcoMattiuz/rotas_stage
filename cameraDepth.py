@@ -3,6 +3,7 @@ import cv2
 import depthai as dai
 import numpy as np
 import pwmraspberry as pwm
+import sys
 # import server as serv
 # Closer-in minimum depth, disparity range is doubled (from 95 to 190):
 extended_disparity = False
@@ -41,15 +42,7 @@ monoLeft.out.link(depth.left)
 monoRight.out.link(depth.right)
 depth.disparity.link(xout.input)
 
-# Connect to device and start pipeline
-device = dai.Device(pipeline) 
 
-# Output queue will be used to get the disparity frames from the outputs defined above
-q = device.getOutputQueue(name="disparity", maxSize=4, blocking=False)
-kernel = np.ones((15,15),dtype="uint8")
-#kernel = np.ones((6, 6), np.uint8)
-inDisparity = q.get()  # blocking call, will wait until a new data has arrived
-frame = inDisparity.getFrame()
 
 ############################working on###########################
 def resize_percent(perc, src):
@@ -64,53 +57,51 @@ def resize_percent(perc, src):
     # resize image
     output = cv2.resize(src, dsize)
     return output
-def zone_matrix(divX,divY):
+
+def zone_matrix(divX, frame):
     lenX = len(frame[0])  
-    lenY = len(frame)  
-    totals = [[] * divX]*divY  
-    iterX=iterY=i=j=0 
-    for iterY in range(0,divY):
-        for iterX in range(0,divX):
-            for i in range(0,int(lenX), 1):
-                for j in range(0,int(lenY), 1):
-                    totals[iterX][iterY] += frame[int(lenY/divY)*iterY][int(lenX/divX)*iterX] #check
-                    
-    # mDX = int(totals[0]/count)
-    # mFW = int(totals[1]/count)
-    # mSX= int(totals[2]/count)
-    # minVal = min(mDX,mFW,mSX)
-    # print(minVal) 
-    # print("SINISTRA",mSX) 
-    # print("DESTRA",mDX)
-    # print("FORWARD",mFW)  
-    # if mFW == 0:  
-    #     print("--FORWARD")
-    #     pwm.traz(3,0)
-    # elif mSX == minVal:
-    #     print("--SINISTRA")
-    #     pwm.traz(-5,0)
-    #     pwm.traz(3,-5)
-    # elif mDX == minVal:
-    #     print("--DESTRA")
-    #     pwm.traz(-5,0)
-    #     pwm.traz(3,5)
-    # else: 
-    #     pwm.traz(3,0)
-    #     print("--FORWARD")
+    lenY = len(frame)
+    ## totals ##
+    totals = [0] * divX
+    limX = int(lenX/divX)
+    # limY = int(lenY)
+
+    iterX=countX=0
+    for y in range(int(lenY/2),lenY-1, 1):
+        iterX=countX=0
+        for x in range(0,lenX, 1):
+            if countX==limX:
+                countX=0
+                iterX+=1
+            totals[iterX] += frame[y][x] #check
+            # print("countX: ",countX,"tot[",iterX,"] = frame[",y,"][",x,"] = ",frame[y][x])
+            # print("totals[",iterX,"]:::",totals[iterX])
+            countX+=1     
+    for i in range(0,len(totals),1):
+        totals[i] = int(totals[i] / lenY/2)
+    return totals   
+    
+# Connect to device and start pipeline
+device = dai.Device(pipeline) 
+
+# Output queue will be used to get the disparity frames from the outputs defined above
+q = device.getOutputQueue(name="disparity", maxSize=4, blocking=False)
+kernel = np.ones((15,15),dtype="uint8")
+#kernel = np.ones((6, 6), np.uint8)
+inDisparity = q.get()  # blocking call, will wait until a new data has arrived
+frame = inDisparity.getFrame()
+
 while True:
     inDisparity = q.get() 
     frame = inDisparity.getFrame()
     frame = (frame * (255 / depth.initialConfig.getMaxDisparity())).astype(np.uint8)
     frame = cv2.erode(frame, kernel)
     frame = cv2.dilate(frame, kernel)
-    ret,frame = cv2.threshold(frame,180, 255, cv2.THRESH_TOZERO)
+    ret,frame = cv2.threshold(frame,150, 255, cv2.THRESH_TOZERO)
     frame = resize_percent(50,frame)
-    # #funzione che calcola una matrice con le medie delle vare zone
-    
+    out_matrix = zone_matrix(10,frame) #non toccare
+    print(out_matrix)
     frame = cv2.applyColorMap(frame, cv2.COLORMAP_PLASMA)
-    # frame = cv2.rectangle(frame, (0,0), (int(lenX/3),400), (255,255,255),3)
-    # frame = cv2.rectangle(frame, (int(lenX/3),0), (int(lenX/3*2),400), (255,0,255),3)
-    # frame = cv2.rectangle(frame, (int(lenX/3*2),0),(int(lenX),400) , (255,255,0),3)
     cv2.imshow("disparity", frame)
     if cv2.waitKey(1) == ord('q'):
         break 
