@@ -9,7 +9,6 @@ import depthai as dai
 import threading
 import numpy as np
 import pwmraspberry as pwm
-# import server as serv
 # Closer-in minimum depth, disparity range is doubled (from 95 to 190):
 extended_disparity = False
 # Better accuracy for longer distance, fractional disparity 32-levels:
@@ -21,31 +20,18 @@ lr_check = True
 pipeline = dai.Pipeline()
 
 # Define sources and outputs
-monoLeft = pipeline.create(dai.node.MonoCamera)
-monoRight = pipeline.create(dai.node.MonoCamera)
-depth = pipeline.create(dai.node.StereoDepth)
-xout = pipeline.create(dai.node.XLinkOut)
+camRgb = pipeline.create(dai.node.ColorCamera)
+xoutVideo = pipeline.create(dai.node.XLinkOut)
+xoutVideo.setStreamName("video")
 
-xout.setStreamName("disparity")
 
 # Properties
-monoLeft.setResolution(dai.MonoCameraProperties.SensorResolution.THE_400_P)
-monoLeft.setBoardSocket(dai.CameraBoardSocket.LEFT)
-monoRight.setResolution(dai.MonoCameraProperties.SensorResolution.THE_400_P)
-monoRight.setBoardSocket(dai.CameraBoardSocket.RIGHT)
-
-# Create a node that will produce the depth map (using disparity output as it's easier to visualize depth this way)
-depth.setDefaultProfilePreset(dai.node.StereoDepth.PresetMode.HIGH_DENSITY)
-# Options: MEDIAN_OFF, KERNEL_3x3, KERNEL_5x5, KERNEL_7x7 (default)
-depth.initialConfig.setMedianFilter(dai.MedianFilter.KERNEL_7x7)
-depth.setLeftRightCheck(lr_check)
-depth.setExtendedDisparity(extended_disparity)
-depth.setSubpixel(subpixel)
+camRgb.setPreviewSize(640, 480)
+camRgb.setInterleaved(False)
+camRgb.setColorOrder(dai.ColorCameraProperties.ColorOrder.RGB)
 
 # Linking
-monoLeft.out.link(depth.left)
-monoRight.out.link(depth.right)
-depth.disparity.link(xout.input)
+camRgb.video.link(xoutVideo.input)
 
 # # # # # # # # # # # # # # # #   ROVER TRACTION   # # # # # # # # # # # # # # # #
 _speed = 0
@@ -76,34 +62,25 @@ def change_camera(camera):
 
 # # # # # # # # VIDEO CAM # # # # # # # #
 device = dai.Device(pipeline) 
-q = device.getOutputQueue(name="disparity", maxSize=4, blocking=False)
+q = device.getOutputQueue(name="video", maxSize=4, blocking=False)
 
-
-# cam = cv2.VideoCapture(3)
-# cam.set(3, 320)
-# cam.set(4, 240)
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 async def send_frames(websocket):
     global _webcamOn
-    global cam
     while _webcamOn:
-        # frame = cam.read()[1]
-        inDisparity = q.get()  # blocking call, will wait until a new data has arrived
+        inDisparity = q.get() 
         frame = inDisparity.getFrame()
-        frame = cv2.flip(frame, 0)
-        frame = cv2.applyColorMap(frame, cv2.COLORMAP_PLASMA)
-        print(frame)
 
         imgJPG_encoded = cv2.imencode('.jpg', frame)[1].tobytes()
         imgBASE64 = base64.b64encode(imgJPG_encoded)
         imgBASE64_string = imgBASE64.decode('utf-8')
         await websocket.send(json.dumps({'photo':imgBASE64_string}))
+        
+    
+        
+        
    
 
-# def sendCallBack_frames():
-#     while _cThreadIsRunning:
-#         print("webs: ")
 
 async def on_message(messag):
     print(messag)

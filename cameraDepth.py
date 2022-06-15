@@ -18,21 +18,13 @@ pipeline = dai.Pipeline()
 # Define source and output
 camRgb = pipeline.create(dai.node.ColorCamera)
 xoutVideo = pipeline.create(dai.node.XLinkOut)
-
 xoutVideo.setStreamName("video")
 
-# Properties
-camRgb.setBoardSocket(dai.CameraBoardSocket.RGB)
-camRgb.setResolution(dai.ColorCameraProperties.SensorResolution.THE_1080_P)
-camRgb.setVideoSize(640, 400)
-
-xoutVideo.input.setBlocking(False)
-xoutVideo.input.setQueueSize(1)
 
 # Properties
-# camRgb.setPreviewSize(300, 300)
-# camRgb.setInterleaved(False)
-# camRgb.setColorOrder(dai.ColorCameraProperties.ColorOrder.RGB)
+camRgb.setPreviewSize(640, 480)
+camRgb.setInterleaved(False)
+camRgb.setColorOrder(dai.ColorCameraProperties.ColorOrder.RGB)
 
 # Linking
 camRgb.video.link(xoutVideo.input)
@@ -68,18 +60,16 @@ depth.disparity.link(xout.input)
 
 
 
-############################working on###########################
 def resize_percent(scale_percent, src):
 
     width = int(src.shape[1] * scale_percent / 100)
     height = int(src.shape[0] * scale_percent / 100)
 
-    # dsize
     dsize = (width, height)
 
-    # resize image
     output = cv2.resize(src, dsize)
     return output
+
 
 def zone_matrix(divX, frame):
     lenX = len(frame[0])  
@@ -88,7 +78,7 @@ def zone_matrix(divX, frame):
     totals = [0] * divX
     limX = int(lenX/divX)
     # limY = int(lenY)
-
+  
     iterX=countX=0
     for y in range(int(lenY/2),lenY-1, 1):
         iterX=countX=0
@@ -102,32 +92,32 @@ def zone_matrix(divX, frame):
             countX+=1     
     for i in range(0,len(totals),1):
         totals[i] = int(totals[i] / lenY/2)
+    for i in range(1,limX,1):
+        frame = cv2.rectangle(frame, ((int(lenX/divX)*(i-1)),int(lenY/2)), ((int(lenX/divX)*i),lenY), (255,255,255), 2)
     return totals   
     
 # Connect to device and start pipeline
 device = dai.Device(pipeline) 
 video = device.getOutputQueue(name="video", maxSize=4, blocking=False)
 q = device.getOutputQueue(name="disparity", maxSize=4, blocking=False)
-kernel = np.ones((15,15),dtype="uint8")
-#kernel = np.ones((6, 6), np.uint8)
-
-while True:
-    inDisparity = q.get() 
+kernel = np.ones((13,13),dtype="uint8")
+while True:    
+    inDisparity = q.get()
     frame = inDisparity.getFrame()
 
-    inRgb = video.get()  # blocking call, will wait until a new data has arrived
-    # Retrieve 'bgr' (opencv format) frame
-    
-    cv2.imshow("video", resize_percent(70,inRgb.getCvFrame()))
+
+    inRgb = video.get()  
+    videoFrame = inRgb.getCvFrame()
+    cv2.imshow("video", resize_percent(40,videoFrame))
 
     frame = (frame * (255 / depth.initialConfig.getMaxDisparity())).astype(np.uint8)
-    frame = resize_percent(50,frame)
+    frame = resize_percent(60,frame)
     frame = cv2.erode(frame, kernel)
     frame = cv2.dilate(frame, kernel)
-    ret,frame = cv2.threshold(frame,150, 255, cv2.THRESH_TOZERO)
-    out_matrix = zone_matrix(8,frame) #non toccare
+    ret,frame = cv2.threshold(frame, 150, 255, cv2.THRESH_TOZERO)
+    out_matrix = zone_matrix(12,frame) 
     print(out_matrix)
-    frame = cv2.applyColorMap(frame, cv2.COLORMAP_PLASMA)
-    cv2.imshow("depth frame", frame)
+    frame = cv2.applyColorMap(frame, cv2.COLORMAP_OCEAN)
+    cv2.imshow("depth frame", frame)   
     if cv2.waitKey(1) == ord('q'):
         break 

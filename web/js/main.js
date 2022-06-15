@@ -297,29 +297,12 @@ function prompt_alerts(description)
 }
 ////////////////////////server websockets /////////////////////
 ws.addEventListener("message", ({ data }) => {
-  
   photo = JSON.parse(data);
   if(photo.hasOwnProperty("photo")){ 
+    console.log(photo['photo']);
     msg.src='data:image/jpg;base64,'+photo['photo'];
   }
 });
 
-function handleOrientation(event)
-{
-  var absolute = event.absolute;
-  var alpha = event.alpha;
-  var beta = event.beta;
-  var gamma = event.gamma;
-  for (var prop in event) {
-    console.log(prop);
-  }
-
-  // Do stuff with the new orientation data
-}
-var s = document.getElementById("spped");
-window.addEventListener("deviceorientation", function (e) {
-  s.innerHTML = "working";
-  alert(e.alpha);
-});
 
 
