@@ -128,6 +128,12 @@ body {
   background: #e7ebef;
   margin-top: 0.4rem;
 }
+.outer-container .wrapper form .column-fields .wrap .input-field::-moz-placeholder {
+  color: rgb(192, 192, 192);
+}
+.outer-container .wrapper form .column-fields .wrap .input-field:-ms-input-placeholder {
+  color: rgb(192, 192, 192);
+}
 .outer-container .wrapper form .column-fields .wrap .input-field::placeholder {
   color: rgb(192, 192, 192);
 }
@@ -151,4 +157,26 @@ body {
   color: rgba(255, 255, 255, 0.827);
   background: rgba(28, 113, 225, 0.975);
   box-shadow: 0 5px 5px 2px rgba(0, 0, 0, 0.302), 0 0px 0px -1px rgba(0, 0, 0, 0.06);
+}
+
+@media only screen and (max-width: 960px) {
+  .outer-container {
+    width: 350px;
+  }
+  .outer-container .wrapper {
+    width: 350px;
+    border-radius: 0.5rem 0.5em 0.5em 0.5rem;
+  }
+  .outer-container .wrapper form .wrap .input-field {
+    font-weight: 400;
+    width: 100%;
+  }
+  .outer-container .wrapper form .input-submit {
+    margin-left: 8rem;
+    padding-bottom: 1rem;
+    height: 2.6rem;
+  }
+  .outer-container .description {
+    display: none;
+  }
 }/*# sourceMappingURL=login.css.map */

@@ -40,8 +40,6 @@ _steering = 0
 _threadRunning = True
 _webcamOn = True
 _auth = 0 
-_websocket = nullcontext
-_ThreadIsRunning = False
 
 def change_speed(speed):
     global _speed
@@ -63,26 +61,26 @@ def change_camera(camera):
     pwm.set_camera(_camera)
 
 # # # # # # # # VIDEO CAM # # # # # # # #
+#checks if camera is connected
 try:
     device = dai.Device(pipeline) 
     q = device.getOutputQueue(name="video", maxSize=4, blocking=False)
 except:
     print("camera is not connected")
+    _webcamOn = False
 
-async def send_frames():
-    global _webcamOn
-    global _websocket
-    # if _websocket!=nullcontext:
-        # if 'photo' in message:
-        #     if message['photo']==1:
-    while _webcamOn:
-        inDisparity = q.get() 
-        frame = inDisparity.getFrame()
-        imgJPG_encoded = cv2.imencode('.jpg', frame)[1].tobytes()
-        imgBASE64 = base64.b64encode(imgJPG_encoded)
-        imgBASE64_string = imgBASE64.decode('utf-8')
-        await _websocket.send(json.dumps({'photo':imgBASE64_string}))
+#resize the resolution of the camera
+def resize_percent(scale_percent, src):
 
+    width = int(src.shape[1] * scale_percent / 100)
+    height = int(src.shape[0] * scale_percent / 100)
+
+    dsize = (width, height)
+
+    output = cv2.resize(src, dsize)
+    return output
+
+#asynchronous message to send
 async def on_message(messag):
     print(messag)
     if "speed" in messag:
@@ -95,34 +93,48 @@ async def on_message(messag):
         change_camera(messag["camera"])
         print(f"camera: {_camera}")
 
-async def receive(websocket, path):
-    global _threadRunning
-    global _auth
-    global _websocket
-    print(websocket)
-    _websocket = websocket
-    while _webcamOn:  
-        message = await _websocket.recv()
-        message = json.loads(message)
-        if "username" in message:
-            if message['username']=='admin':
-                _auth=1
-                if "password" in message:
-                    if message['password']=='rotas88':
-                        _auth=2
-                        await websocket.send(json.dumps({"login":"logged"}))
+#websocket function
+async def send_receive(websocket):
+        # receive and send the packets
+        async def receive():
+            global _auth
+            global _threadRunning
+            while _threadRunning    :  
+                message = await websocket.recv()
+                message = json.loads(message)
+                if "username" in message:
+                    if message['username']=='admin':
+                        _auth=1
+                        if "password" in message:
+                            if message['password']=='rotas88':
+                                _auth=2
+                                await websocket.send(json.dumps({"login":"logged"}))
+                            else:
+                                await websocket.send(json.dumps({"error":"Wrong username or password"}))    
                     else:
-                        await websocket.send(json.dumps({"error":"Wrong password or password"}))    
-            else:
-                await websocket.send(json.dumps({"error":"Wrong username or password"}))
-        if _auth==2 :
-           
-            await on_message(message)      
-   
-  
+                        await websocket.send(json.dumps({"error":"Wrong username or password"}))
+                if _auth==2 :
+                    await on_message(message) 
+                    await asyncio.sleep(0.1) 
+        #send webcam frames
+        async def webcam():
+            global _webcamOn
+            global _auth
+            if(_auth==2):
+                while _webcamOn:
+                    inDisparity = q.get() 
+                    frame = inDisparity.getCvFrame()
+                    frame = resize_percent(20,frame)
+                    imgJPG_encoded = cv2.imencode('.jpg', frame)[1].tobytes()
+                    imgBASE64 = base64.b64encode(imgJPG_encoded)
+                    imgBASE64_string = imgBASE64.decode('utf-8')
+                    await websocket.send(json.dumps({'photo':imgBASE64_string}))
 
-start_server = websockets.serve(receive, "192.168.8.155", 8000)
-print(_websocket)
-# asyncio.get_event_loop().create_task(send_frames())   
-asyncio.get_event_loop().run_until_complete(start_server)
-asyncio.get_event_loop().run_forever()
+
+        receive_result, webcam_result = await asyncio.gather(receive(), webcam())
+
+async def main():
+    async with websockets.serve(send_receive,"192.168.8.155", 8000):
+        await asyncio.Future()  # run forever
+
+asyncio.run(main())

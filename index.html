@@ -54,15 +54,13 @@
 
 </body>
 <script>
-    /* $.getJSON('https://europe-west3-devrcc.cloudfunctions.net/whatismyip', function(data){
-         $("#print-ip").html("Welcome "+data.ip);
-     });*/
-
+    // stops form event from reloding every time 
     $(document).ready(function () {
         $("#form").submit(function (e) {
             e.preventDefault();
         });
     });
+    //connects to websockets
     const ws = new WebSocket("wss://rover.rotas.eu/api/websocket");
     ws.addEventListener("open", () => {
         console.log("we are connected");
@@ -71,18 +69,18 @@
     function controll_ws() {
         ws.send(JSON.stringify({ "username": $("#username").val(), "password": $("#password").val() }));
     }
+    ws.addEventListener("close", () => {
+        $(".error-input").html("the server is down");
+    })
     ws.addEventListener("message", function (event) {
         console.log("received :", JSON.parse(event.data));
         messageJson = JSON.parse(event.data);
         if (messageJson.hasOwnProperty("error")) {
-
             $(".error-input").html(messageJson['error']);
-
         } else if (messageJson.hasOwnProperty("login")) {
             console.log("logged");
             $(".error-input").html("logged");
             location.href = "pages/rover-control.html";
-
         }
     });
 </script>

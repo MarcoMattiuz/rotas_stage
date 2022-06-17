@@ -244,7 +244,8 @@ main {
   height: 100%;
   overflow-y: scroll;
   overflow-x: hidden;
-  scroll-snap-type: y mandatory;
+  -ms-scroll-snap-type: y mandatory;
+      scroll-snap-type: y mandatory;
 }
 main section {
   scroll-snap-align: start;
@@ -256,6 +257,8 @@ main .info {
   position: absolute;
   width: 10%;
   max-width: 10rem;
+  max-height: -webkit-fit-content;
+  max-height: -moz-fit-content;
   max-height: fit-content;
   padding: 1rem;
 }

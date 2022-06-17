@@ -15,18 +15,8 @@ var pSpeed = document.getElementById("pSpeed");
 var mSteering = document.getElementById("mSteering");
 var pSteering = document.getElementById("pSteering");
 var msg = document.getElementById("video-embed");
-var videoDisp = document.getElementById("video-display")
-var w = window.innerWidth;
-var h = window.innerHeight;
-window.addEventListener("resize", () => {
-  var w = window.innerWidth;
-  var h = window.innerHeight;
-  if (w <= 750) {
-    videoDisp.style.display = 'none'
-  } else {
-    videoDisp.style.display = 'block'
-  }
-})
+
+
 function gpON() {
   on_gp.style.background = "#33a532"
   on_gp.style.boxShadow = "0 0 15px #33a532"
@@ -69,6 +59,8 @@ var ws = new WebSocket("wss://rover.rotas.eu/api/websocket");
 ws.addEventListener("open", () => {
   console.log("we are connected");
   ws.send(JSON.stringify({ "photo": 1 }))
+
+
   srON()
   ws.onerror = function (e) {
     Console.log('WebSocket error: ' + e.code)
@@ -186,13 +178,14 @@ ws.addEventListener("open", () => {
 
   recognition.onresult = function (event) {
     text = "";
+    direzione = "";
     for (let i = event.resultIndex; i < event.results.length; ++i) {
       if (!event.results[i].isFinal) {
         text = event.results[i][0].transcript;
       }
     }
     text = text.toLowerCase();
-    // console.log(text);
+    console.log(text);
     message = text.split(" ");
 
     for (let i = 0; i < message.length; i++) {
@@ -219,7 +212,6 @@ ws.addEventListener("open", () => {
       else if (text.includes("lento")) {
         direzione = "lento";
       }
-      
     }
 
     if (direzione != direzione_old) {
@@ -252,7 +244,6 @@ ws.addEventListener("open", () => {
         sleep(5000);
         ws.send(JSON.stringify({ "speed": 0 }));
         ws.send(JSON.stringify({ "steering": 0 }));
-
       } else if (direzione == "scodinzola") {    // SCODINZOLA
         for (let i = 0; i < 4; i++) {
           ws.send(JSON.stringify({ "speed": max_speed }));
@@ -265,109 +256,110 @@ ws.addEventListener("open", () => {
         ws.send(JSON.stringify({ "speed": 0 }));
         ws.send(JSON.stringify({ "steering": 0 }));
       }
-      else if(direzione == "veloce"){
+      else if (direzione == "veloce") {
         max_speed = 5;
       }
-      else if(direzione == "lento"){
+      else if (direzione == "lento") {
         max_speed = 3;
       }
     }
-    direzione = "-";
+    //  console.log(direzione);
+    text = "";
+    direzione = "";
+  }
 
-    // document.getElementById("textarea").value = direzione;
-    console.log(direzione)
-  };
-
-
-
-  speechToggle.addEventListener("change", () => {
-    if (!speechToggle.checked) {
-      console.log("riconoscimento vocale ON")
-      recognition.start();
-    } else {
-      console.log("riconoscimento vocale OFF")
-      recognition.stop();
-    }
-  })
+});
 
 
-  /////////////////////////////////////// GAMEPAD COMMANDS ///////////////////////////////////////
-  var gamePad;
-  var start
-  window.addEventListener("gamepadconnected", function (e) {
-    gpON()
-    console.log("Gamepad connected at index %d: %s. %d buttons, %d axes.",
-      e.gamepad.index, e.gamepad.id,
-      e.gamepad.buttons.length, e.gamepad.axes.length);
-    gameLoop();
-  });
-  window.addEventListener("gamepaddisconnected", e => {
-    gpOFF()
-    console.log("Gamepad disconnected from index %d: %s",
-      e.gamepad.index, e.gamepad.id);
-    window.cancelRequestAnimationFrame(start)
 
-  });
-  var valSpeed;
-  var pressedDown = false;
-  var pressedUp = false;
-  // var interval
-  function gameLoop() {
-
-    var gamepads = navigator.getGamepads ? navigator.getGamepads() : (navigator.webkitGetGamepads ? navigator.webkitGetGamepads() : []);
-    if (!gamepads) {
-      return;
-    }
-
-    gamePad = gamepads[0];
-    if (gamePad.buttons[0].value == 1) {
-      cameraR.value = 0;
-      outCamera.innerText = 0;
-    }
-
-    valSpeedBack = Math.round(gamePad.buttons[6].value * -8);
-    valSpeedBack = valSpeedBack < -5 ? -5 : valSpeedBack;
-    valSpeedFront = Math.round(gamePad.buttons[7].value * 8);
-    valSpeedFront = valSpeedFront > 5 ? 5 : valSpeedFront;
-    valSpeed = valSpeedBack + valSpeedFront;
-    if (speedR.value != valSpeed) {
-      speedR.value = valSpeed;
-      ws.send(JSON.stringify({ "speed": speedR.value }));
-      outSpeed.innerText = speedR.value
-    }
-    var valSterring = Math.round(gamePad.axes[0] * 5);
-    if (steeringR.value != valSterring) {
-      steeringR.value = valSterring;
-      ws.send(JSON.stringify({ "steering": steeringR.value }));
-      outSteering.innerText = steeringR.value
-    }
-    if (gamePad.buttons[12].pressed) {
-      if (pressedUp != true) {
-        valCamera += 1;
-      }
-      pressedUp = true;
-    } else pressedUp = false;
-
-    if (gamePad.buttons[13].pressed) {
-      if (pressedDown != true) {
-        valCamera -= 1;
-      }
-      pressedDown = true;
-    } else pressedDown = false;
-
-    valCamera = valCamera > 5 ? 5 : valCamera;
-    valCamera = valCamera < 0 ? 0 : valCamera;
-    if (cameraR.value != valCamera) {
-      cameraR.value = valCamera;
-      ws.send(JSON.stringify({ "camera": cameraR.value }));
-      outCamera.innerText = cameraR.value;
-    }
-    /* changeValue_Text(2, gamePad.buttons.axes[2] * 5) //--> STEERING
-     changeValue_Text(1, gamePad.buttons.axes[3] * 5) //--> SPEED
-     changeValue_Text(3, gamePad.buttons.axes[0] * 5) //--> CAMERA*/
-    start = window.requestAnimationFrame(gameLoop);
+speechToggle.addEventListener("change", () => {
+  if (!speechToggle.checked) {
+    console.log("riconoscimento vocale ON")
+    recognition.start();
+  } else {
+    console.log("riconoscimento vocale OFF")
+    recognition.stop();
   }
 });
+
+
+/////////////////////////////////////// GAMEPAD COMMANDS ///////////////////////////////////////
+var gamePad;
+var start
+window.addEventListener("gamepadconnected", function (e) {
+  gpON()
+  console.log("Gamepad connected at index %d: %s. %d buttons, %d axes.",
+    e.gamepad.index, e.gamepad.id,
+    e.gamepad.buttons.length, e.gamepad.axes.length);
+  gameLoop();
+});
+window.addEventListener("gamepaddisconnected", e => {
+  gpOFF()
+  console.log("Gamepad disconnected from index %d: %s",
+    e.gamepad.index, e.gamepad.id);
+  window.cancelRequestAnimationFrame(start)
+
+});
+var valSpeed;
+var pressedDown = false;
+var pressedUp = false;
+// var interval
+function gameLoop() {
+
+  var gamepads = navigator.getGamepads ? navigator.getGamepads() : (navigator.webkitGetGamepads ? navigator.webkitGetGamepads() : []);
+  if (!gamepads) {
+    return;
+  }
+
+  gamePad = gamepads[0];
+  if (gamePad.buttons[0].value == 1) {
+    cameraR.value = 0;
+    outCamera.innerText = 0;
+  }
+
+  valSpeedBack = Math.round(gamePad.buttons[6].value * -8);
+  valSpeedBack = valSpeedBack < -5 ? -5 : valSpeedBack;
+  valSpeedFront = Math.round(gamePad.buttons[7].value * 8);
+  valSpeedFront = valSpeedFront > 5 ? 5 : valSpeedFront;
+  valSpeed = valSpeedBack + valSpeedFront;
+  if (speedR.value != valSpeed) {
+    speedR.value = valSpeed;
+    ws.send(JSON.stringify({ "speed": speedR.value }));
+    outSpeed.innerText = speedR.value
+  }
+  var valSterring = Math.round(gamePad.axes[0] * 5);
+  if (steeringR.value != valSterring) {
+    steeringR.value = valSterring;
+    ws.send(JSON.stringify({ "steering": steeringR.value }));
+    outSteering.innerText = steeringR.value
+  }
+  if (gamePad.buttons[12].pressed) {
+    if (pressedUp != true) {
+      valCamera += 1;
+    }
+    pressedUp = true;
+  } else pressedUp = false;
+
+  if (gamePad.buttons[13].pressed) {
+    if (pressedDown != true) {
+      valCamera -= 1;
+    }
+    pressedDown = true;
+  } else pressedDown = false;
+
+  valCamera = valCamera > 5 ? 5 : valCamera;
+  valCamera = valCamera < 0 ? 0 : valCamera;
+  if (cameraR.value != valCamera) {
+    cameraR.value = valCamera;
+    ws.send(JSON.stringify({ "camera": cameraR.value }));
+    outCamera.innerText = cameraR.value;
+  }
+  /* changeValue_Text(2, gamePad.buttons.axes[2] * 5) //--> STEERING
+   changeValue_Text(1, gamePad.buttons.axes[3] * 5) //--> SPEED
+   changeValue_Text(3, gamePad.buttons.axes[0] * 5) //--> CAMERA*/
+  start = window.requestAnimationFrame(gameLoop);
+}
+
 
 function prompt_alerts(description) {
   alert(description);
@@ -377,7 +369,6 @@ function prompt_alerts(description) {
 ws.addEventListener("message", ({ data }) => {
   photo = JSON.parse(data);
   if (photo.hasOwnProperty("photo")) {
-    console.log(photo['photo']);
     msg.src = 'data:image/jpg;base64,' + photo['photo'];
   }
 });
