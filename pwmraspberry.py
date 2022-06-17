@@ -8,15 +8,15 @@ GPIO.setwarnings(False)
 
 GPIO.setup(31, GPIO.OUT)
 GPIO.setup(32, GPIO.OUT)
-GPIO.setup(12, GPIO.OUT)
-GPIO.setup(35, GPIO.OUT)
+GPIO.setup(37, GPIO.OUT)
+GPIO.setup(38, GPIO.OUT)
 GPIO.setup(servoPIN, GPIO.OUT)
 
 freq = 50
 left1 = GPIO.PWM(31, freq)
 left2 = GPIO.PWM(32, freq)
-right1 = GPIO.PWM(12, freq)
-right2 = GPIO.PWM(35, freq)
+right1 = GPIO.PWM(37, freq)
+right2 = GPIO.PWM(38, freq)
 pwmS = GPIO.PWM(servoPIN, 50)
 
 left1.start(0)
