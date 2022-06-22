@@ -54,12 +54,20 @@ function stopEverything() {
 /* *************** */
 gpOFF()
 srOFF()
+/////////////////////////////////////// server websockets ///////////////////////////////////////
 var ws = new WebSocket("wss://rover.rotas.eu/api/websocket");
 
 ws.addEventListener("open", () => {
   console.log("we are connected");
   ws.send(JSON.stringify({ "photo": 1 }))
 
+  ws.addEventListener("message", ({ data }) => {
+    photo = JSON.parse(data);
+    if (photo.hasOwnProperty("photo")) {
+      msg.src = 'data:image/jpg;base64,' + photo['photo'];
+    }
+  });
+  
 
   srON()
   ws.onerror = function (e) {
@@ -160,7 +168,7 @@ ws.addEventListener("open", () => {
 
   function sleep(milliseconds) {
     var start = new Date().getTime();
-    for (var i = 0; ; i++) {
+    while (1) {
       if ((new Date().getTime() - start) > milliseconds) {
         break;
       }
@@ -225,20 +233,20 @@ ws.addEventListener("open", () => {
       } else if (direzione == "destra") {    // DESTRA
         ws.send(JSON.stringify({ "speed": max_speed }));
         ws.send(JSON.stringify({ "steering": 5 }));
-        sleep(1300);
+        sleep(1400);
         ws.send(JSON.stringify({ "speed": 0 }));
         ws.send(JSON.stringify({ "steering": 0 }));
       } else if (direzione == "sinistra") {    // SINISTRA
         ws.send(JSON.stringify({ "speed": max_speed }));
         ws.send(JSON.stringify({ "steering": -5 }));
-        sleep(1300);
+        sleep(1400);
         ws.send(JSON.stringify({ "speed": 0 }));
         ws.send(JSON.stringify({ "steering": 0 }));
       } else if (direzione == "stop") {    // STOP
         ws.send(JSON.stringify({ "speed": 0 }));
         ws.send(JSON.stringify({ "steering": 0 }));
       }
-      else if (direzione == "giro") {    // GIRO
+      else if (direzione == "giro") {    // GIRO !/bin/sh -e
         ws.send(JSON.stringify({ "speed": max_speed }));
         ws.send(JSON.stringify({ "steering": 5 }));
         sleep(5000);
@@ -354,9 +362,6 @@ function gameLoop() {
     ws.send(JSON.stringify({ "camera": cameraR.value }));
     outCamera.innerText = cameraR.value;
   }
-  /* changeValue_Text(2, gamePad.buttons.axes[2] * 5) //--> STEERING
-   changeValue_Text(1, gamePad.buttons.axes[3] * 5) //--> SPEED
-   changeValue_Text(3, gamePad.buttons.axes[0] * 5) //--> CAMERA*/
   start = window.requestAnimationFrame(gameLoop);
 }
 
@@ -365,13 +370,7 @@ function prompt_alerts(description) {
   alert(description);
 
 }
-/////////////////////////////////////// server websockets ///////////////////////////////////////
-ws.addEventListener("message", ({ data }) => {
-  photo = JSON.parse(data);
-  if (photo.hasOwnProperty("photo")) {
-    msg.src = 'data:image/jpg;base64,' + photo['photo'];
-  }
-});
+
 
 
 

@@ -3,6 +3,7 @@ from contextlib import nullcontext
 import cv2
 import multiprocessing as mp
 import asyncio
+#!/bin/env python
 import websockets
 import json
 import subprocess
@@ -80,18 +81,18 @@ def resize_percent(scale_percent, src):
     output = cv2.resize(src, dsize)
     return output
 
-#asynchronous message to send
-async def on_message(messag):
-    print(messag)
-    if "speed" in messag:
-        change_speed(messag["speed"])
-        print(f"speed: {_speed} steerind: {_steering}")
-    elif "steering" in messag:
-        change_steering(messag["steering"])
-        print(f"speed: {_speed} steering: {_steering}")
-    elif "camera" in messag:
-        change_camera(messag["camera"])
-        print(f"camera: {_camera}")
+#message to send
+def on_message(messag):
+   print(messag)
+   if "speed" in messag:
+       change_speed(messag["speed"])
+       print(f"speed: {_speed} steerind: {_steering}")
+   elif "steering" in messag:
+       change_steering(messag["steering"])
+       print(f"speed: {_speed} steering: {_steering}")
+   elif "camera" in messag:
+       change_camera(messag["camera"])
+       print(f"camera: {_camera}")
 
 #websocket function
 async def send_receive(websocket):
@@ -99,9 +100,10 @@ async def send_receive(websocket):
         async def receive():
             global _auth
             global _threadRunning
-            while _threadRunning    :  
+            while _threadRunning:  
                 message = await websocket.recv()
                 message = json.loads(message)
+                print(message)
                 if "username" in message:
                     if message['username']=='admin':
                         _auth=1
@@ -114,8 +116,8 @@ async def send_receive(websocket):
                     else:
                         await websocket.send(json.dumps({"error":"Wrong username or password"}))
                 if _auth==2 :
-                    await on_message(message) 
-                    await asyncio.sleep(0.1) 
+                    on_message(message) 
+                    await asyncio.sleep(0.01) 
         #send webcam frames
         async def webcam():
             global _webcamOn
@@ -129,6 +131,7 @@ async def send_receive(websocket):
                     imgBASE64 = base64.b64encode(imgJPG_encoded)
                     imgBASE64_string = imgBASE64.decode('utf-8')
                     await websocket.send(json.dumps({'photo':imgBASE64_string}))
+                    await asyncio.sleep(0.01) 
 
 
         receive_result, webcam_result = await asyncio.gather(receive(), webcam())
