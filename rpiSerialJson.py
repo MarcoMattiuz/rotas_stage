@@ -2,14 +2,8 @@ import serial
 import json
 from time import sleep
 
-ser = serial.Serial(port='/dev/ttyACM1', baudrate=9600, timeout=.1)
+ser = serial.Serial(port='/dev/ttyACM0', baudrate=9600, timeout=.1)
 
-jsonData = {
-    "right": 10,
-    "left": 10
-}
-
-payload = json.dumps(jsonData).encode()
 
 def func():
     data = ''
@@ -18,10 +12,22 @@ def func():
         data = str(ser.readline(), encoding='utf-8')
     while ser.in_waiting: data += str(ser.readline(), 'utf-8')
 
-    print("Ricevuto: ", end='')
-    print(data)
+    print("\n")
 
-while input("-->") != "exit": func()
+while True:
+    right = int(input(":"))
+    left = int(input(":"))
+    
+    if right == 0 and left == 0:
+        break
+    
+    if right != 0 and left != 0:
+        jsonData = {
+        "right": right,
+        "left": left
+        }
 
+        payload = json.dumps(jsonData).encode()
+        func()
 
 ser.close()
