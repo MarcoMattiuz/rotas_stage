@@ -1,0 +1,35 @@
+#box1 {
+    width: 400px;
+    height: 400px;
+    border: 1px solid black;
+    position: absolute;
+    top:60%;
+    left: 50%;
+}
+ 
+#box2 {
+    width: 400px;
+    height: 400px;
+    border: 1px solid black;
+    position: absolute;
+    top:60%;
+    left: 70%;
+}
+
+.circle {
+    width: 50px;
+    height: 50px;
+    background-color: black;
+    border-radius: 50%;
+    margin: 0 auto;
+    position: relative;
+    top: 45%;
+    transform: translateY(-50%);
+}
+
+#L{
+    background-color: blue;
+}
+#R{
+    background-color: red;
+}
