@@ -1,7 +1,3 @@
-function map(val, inMin, inMax, outMin, outMax) {
-    return (val-inMin)/(inMax-inMin) * (outMax-outMin) + outMin;
-}
-
 function pitagora(x, y) {
     return Math.sqrt(x*x+y*y);
 }
@@ -12,7 +8,7 @@ function updateGamepadStatus() {
     for (var i = 0; i < gamepads.length; i++) {
         let gamepad = gamepads[i];
 
-        if (gamepad && (gamepad.id === "Xbox 360 Controller (XInput STANDARD GAMEPAD)" || gamepad.id === "Xbox Wireless Controller (STANDARD GAMEPAD Vendor: 045e Product: 0b13)")) {
+        if (connect && (gamepad && (gamepad.id === "Xbox 360 Controller (XInput STANDARD GAMEPAD)" || gamepad.id === "Xbox Wireless Controller (STANDARD GAMEPAD Vendor: 045e Product: 0b13)"))) {
             let buttons = gamepad.buttons;
             let axes = gamepad.axes;
             
@@ -86,7 +82,10 @@ function val(pressed){
     }
 }
 
+
 updateGamepadStatus();
+
+
 
 
 

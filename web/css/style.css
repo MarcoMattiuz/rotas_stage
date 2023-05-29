@@ -1,5 +1,23 @@
 #controller{
     position: absolute;
-    top: 10%;
+    top: 7%;
+    left: 75%;
+}
+
+#cam {
+    width: 800px;
+    height: 370px;
+    border: 1px solid black;
+    position: absolute;
+    top: 3.5%;
+    left: 20%;
+}
+
+#map {
+    width: 800px;
+    height: 370px;
+    border: 1px solid black;
+    position: absolute;
+    top: 50%;
     left: 20%;
 }

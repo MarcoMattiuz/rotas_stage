@@ -18,12 +18,18 @@ class Motor:
             "backward": PWM(bwd, freq = freq, duty_u16 = 0)
         }
 
-    def setpower(self, power=0):
-        if power == 0:
-            return {(name, mot.duty()) for name, mot in self.motors.items()}            
+    def power(self, power=None):
+        powers = (0, 0)
+        if power is None:
+            # Old:
+            # return {(name, mot.duty()) for name, mot in self.motors.items()}
+
+            return self.motors['forward'].duty() - self.motors['backward'].duty()
+        
         elif power < 0:
-            self.motors["forward"].duty(0)
-            self.motors["backward"].duty(abs(power))
-        else:
-            self.motors["forward"].duty(abs(power))
-            self.motors["backward"].duty(0)
+            powers = (0, abs(power))
+        elif power > 0:
+            powers = (abs(power), 0)
+
+        self.motors["forward"].duty(powers[0])
+        self.motors["backward"].duty(powers[1])

@@ -9,9 +9,7 @@ function off(element){
     element.style.backgroundColor="#cccccc";
 }
 
-function text(msg){
-    gps.innerHTML=msg;
-}
+
 var connect=false;
 function connectPage(){
     if(!connect){
@@ -22,8 +20,9 @@ function connectPage(){
         websocket.close();
     }
 }
+
 function connectWebSocket() {
-    const wsURL = 'ws://rotaspi.local:8000';
+    const wsURL = 'ws://192.168.9.193:8000';
 
     websocket = new WebSocket(wsURL);
 
@@ -35,10 +34,11 @@ function connectWebSocket() {
         value(); //funz in controller.js
     }; 
 
-    // Message received from the WebSocket server
+    //mesaggio ricevuto dal server
     websocket.onmessage = function(event) {
-        const message = event.data;
-        text("GPS:", message);
+        receivedMessage = event.data;
+        var jsonpos = JSON.parse(receivedMessage); 
+        pos(jsonpos.latitude,jsonpos.longitude);
     };
 
     //connessione WebSocket chiusa

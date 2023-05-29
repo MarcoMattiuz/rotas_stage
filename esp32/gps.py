@@ -1,28 +1,38 @@
 from machine import UART
 
 class GPS(UART):
-    buff = bytearray(255)
-
     def __init__(self, uart_index = 1, rx = 27, baud = 9600) -> None:
-        super().__init__(uart_index, rx = rx, baudrate = baud)
+        super().__init__(uart_index)
+        super().init(baudrate = baud, rx = rx)
         self.latitude = None
         self.longitude = None
         self.satellites = None
 
-    def getGPS(self, blocking = True):
-        if blocking:
-            while self.buff == '':
-                # self.readline()
-                self.buff = str(self.readline(), 'utf-8')
-                parts = self.buff.split(',')
-        else:
-            self.buff = str(self.readline(), 'utf-8')
-            parts = self.buff.split(',')
-    
-        if (parts[0] == "b'$GPGGA" and len(parts) == 15):
-            if(parts[1] and parts[2] and parts[3] and parts[4] and parts[5] and parts[6] and parts[7]): 
+    def get(self, blocking = True) -> int:
+        parts = []
 
-                # Latitude               
+        if blocking:            
+            while True:
+                try:
+                    parts = str(self.readline(), "utf-8").strip('\r\n').split(',')
+                except TypeError:
+                    continue
+                except UnicodeError:
+                    continue
+                if parts != [] and parts[0] in ("$GPGGA", "$GPRMC"):
+                    break
+        else:
+            try:
+                parts = str(self.readline(), "utf-8").strip('\r\n').split(',')
+            except TypeError:
+                return -1
+            except UnicodeError:
+                return -1
+
+        if (parts[0] == "$GPGGA" and len(parts) == 15):
+            if (parts[2] and parts[4] and parts[6] and parts[7]): 
+
+                # Latitude
                 self.latitude = convertToDegree(parts[2])
                 if (parts[3] == 'S'):
                     self.latitude = -self.latitude
@@ -35,9 +45,10 @@ class GPS(UART):
                 # Satellites
                 self.satellites = parts[7]
                 self.connected = True
-        else:
-            self.connected = False
-            return -1
+                return 0
+            
+        self.connected = False
+        return -1
         
 def convertToDegree(RawDegrees):
     RawAsFloat = float(RawDegrees)

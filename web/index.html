@@ -1,16 +1,15 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Xbox 360 Controller</title>
+    <title>Rover Rotas</title>
     <link rel="stylesheet" href="css/style.css"/>
     <link rel="stylesheet" href="css/main.css"/>
 </head>
 <body>
-    <div id="gps">GPS</div>
     <main>
         <section>
             <div class="info">
-              <img onclick="connectPage()" src="images/Logo_rotas.png" alt="logo rotas">
+                <img onclick="connectPage()" src="images/Logo_rotas.png" alt="logo rotas">
                 <div class="gamepad-connection">
                     <h2>Gamepad <br> connection </h2>
                     <div class="connection_indicator on" id="on_gp"></div>
@@ -61,7 +60,7 @@
                     </mask>
                     <path d="M150.335 226.113C147.21 222.989 141.997 222.966 140.014 226.914C139.743 227.455 139.491 228.006 139.258 228.566C138.002 231.6 137.355 234.85 137.355 238.134C137.355 241.417 138.002 244.667 139.258 247.701C139.491 248.261 139.743 248.812 140.014 249.353C141.997 253.301 147.21 253.279 150.335 250.154L156.698 243.79C159.823 240.666 159.823 235.601 156.698 232.477L150.335 226.113Z" fill="rgba(0,0,0,0)" stroke="rgba(0,0,0,1)" stroke-width="6" mask="url(#path-11-inside-4)" id="DLeft"></path>
                 </g>
-
+                
                 <circle id="BOutline" cx="329" cy="160" r="37.5" stroke="hsl(210,50%,85%)" stroke-opacity="1" stroke-width="3"></circle>
                 <g id="Top">
                     <mask id="path-13-inside-5" fill="white">
@@ -87,14 +86,14 @@
                     </mask>
                     <path d="M313.335 148.113C310.21 144.989 304.997 144.966 303.014 148.914C302.743 149.455 302.491 150.006 302.258 150.566C301.002 153.6 300.355 156.851 300.355 160.134C300.355 163.417 301.002 166.668 302.258 169.701C302.491 170.261 302.743 170.812 303.014 171.353C304.997 175.301 310.21 175.279 313.335 172.154L319.698 165.79C322.823 162.666 322.823 157.601 319.698 154.477L313.335 148.113Z" fill="rgba(0,0,0,0)" stroke="rgba(0,0,0,1)" stroke-width="6" mask="url(#path-16-inside-8)" id="BLeft"></path>
                 </g>
-
+                
                 <g id="Meta1">
                     <circle cx="185" cy="162" r="10" fill="rgba(0,0,0,0)" stroke="rgba(0,0,0,1)" stroke-width="3" id="LMeta"></circle>
                 </g>
                 <g id="Meta2">
                     <circle cx="259" cy="162" r="10" fill="rgba(0,0,0,0)" stroke="rgba(0,0,0,1)" stroke-width="3" id="RMeta"></circle>
                 </g>
-
+                
                 <rect id="L1" x="111.5" y="61.5" width="41" height="13" rx="6.5" fill="rgba(0,0,0,0)" stroke="rgba(0,0,0,1)" stroke-width="3"></rect>
                 <rect id="R1" x="289.5" y="61.5" width="41" height="13" rx="6.5" fill="rgba(0,0,0,0)" stroke="rgba(0,0,0,1)" stroke-width="3"></rect>
                 
@@ -106,7 +105,18 @@
             </g>
         </svg>
     </div>
+    
+    <div id="cam"></div>
+    <div id="map"></div>
+
     <script src="js/websocket.js"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.css" />
+    
+    <script src="js/maps.js"></script>
+
+
     <script src="js/controller.js"></script>
     <script src="js/controllerIcon.js"></script>
 </body>
