@@ -28,7 +28,7 @@ class Battery(ADC):
     def level(self):
         vbat = self.voltage()
         lvl = (vbat - VMIN) / (VMAX - VMIN)
-        return lvl
+        return self.limit(lvl, 0, 1)
 
     def width(self, bits = None):
         if bits is None: return self.bits
@@ -40,3 +40,15 @@ class Battery(ADC):
         vadc = self.read_uv()/1000000
         self.filter_val = self.alpha * vadc + (1 - self.alpha) * self.filter_val
         return self.filter_val
+    
+    @staticmethod
+    def limit(val, min, max):
+        if min > max:
+            min, max = (max, min)
+        
+        if val < min:
+            val = min
+        elif val > max:
+            val = max
+    
+        return val

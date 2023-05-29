@@ -38,6 +38,10 @@ const data = new Date()
 var prevTime = data.getTime();
 var prevR=0, prevL=0;
 
+
+var triggerR;
+var triggerL;
+
 //___CONTROLLER___
 function value() {
     let gamepads = navigator.getGamepads();
@@ -50,8 +54,8 @@ function value() {
             let buttons = gamepad.buttons;
             let axes = gamepad.axes;
 
-            var triggerR = triggerRVal(buttons);
-            var triggerL = triggerLVal(buttons);
+            triggerR = triggerRVal(buttons);
+            triggerL = triggerLVal(buttons);
     
             if(buttons[5].pressed){
                 triggerR=-triggerR;
@@ -164,3 +168,6 @@ function axesVal(val){
     return val;
 }
 
+function getVal(){
+    return triggerRVal(buttons);
+}

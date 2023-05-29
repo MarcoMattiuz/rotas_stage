@@ -6,15 +6,9 @@ var firstPositionSet = false;
 
 function pos(pos_latitude, pos_longitude) {
   if (pos_latitude === null || pos_longitude === null) {
-    // Coordinate nulle, mostra messaggio di errore sulla mappa
-    mapElement.style.background = "#f8f8f8";
-    mapElement.style.display = "flex";
-    mapElement.style.justifyContent = "center";
-    mapElement.style.alignItems = "center";
-    mapElement.style.fontSize = "24px";
-    mapElement.style.color = "#555";
-    mapElement.innerHTML = '<div class="error-message">Impossibile recuperare la posizione.</div>';
+    mapElement.innerHTML = '<div class="error-message">Impossibile recuperare la posizione</div>';
     return;
+
   }else{
 
     if (!firstPositionSet) {
@@ -66,29 +60,6 @@ function pos(pos_latitude, pos_longitude) {
     marker.on('click', function() {
       map.setView(newLatLng, zoom+5);
     });
-  }
-}
 
-function toggleFullscreen() {
-  if (!document.fullscreenElement) {
-    if (mapElement.requestFullscreen) {
-      mapElement.requestFullscreen();
-    } else if (mapElement.mozRequestFullScreen) {
-      mapElement.mozRequestFullScreen();
-    } else if (mapElement.webkitRequestFullscreen) {
-      mapElement.webkitRequestFullscreen();
-    } else if (mapElement.msRequestFullscreen) {
-      mapElement.msRequestFullscreen();
-    }
-  } else {
-    if (document.exitFullscreen) {
-      document.exitFullscreen();
-    } else if (document.mozCancelFullScreen) {
-      document.mozCancelFullScreen();
-    } else if (document.webkitExitFullscreen) {
-      document.webkitExitFullscreen();
-    } else if (document.msExitFullscreen) {
-      document.msExitFullscreen();
-    }
   }
 }
