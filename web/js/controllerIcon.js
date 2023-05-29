@@ -83,8 +83,6 @@ function val(pressed){
 }
 
 
-updateGamepadStatus();
-
 
 
 

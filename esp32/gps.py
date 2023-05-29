@@ -15,7 +15,7 @@ class GPS(UART):
             while True:
                 try:
                     parts = str(self.readline(), "utf-8").strip('\r\n').split(',')
-                except TypeError:
+                except AttributeError:
                     continue
                 except UnicodeError:
                     continue

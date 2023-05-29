@@ -1,6 +1,5 @@
-from time import sleep
+from utime import sleep
 import ujson
-import uasyncio
 from config import *
 
 def get_data() -> str:
@@ -16,21 +15,21 @@ def mainloop():
     # get data from serial
     data = get_data()
     
-    response = False
+    response = dict()
 
     # parse json
     doc = ujson.loads(data)
 
     # check if any data is requested
     if 'batt' in doc.keys():
-        battdata = {
+        response['batt'] = {
             "level": batt.level(),
             "volts": batt.voltage()
         }
 
     if 'gps' in doc.keys():
         gps.get()
-        gpsdata = {
+        response['gps'] = {
             "latitude": gps.latitude,
             "longitude": gps.longitude,
             "satellites": gps.satellites
@@ -38,27 +37,28 @@ def mainloop():
     
     if 'left' in doc.keys():
         left = doc['left']
+
         if left is None:
-            leftdata = 
+            response['left'] = leftMotor.power()
+        else:
+            leftMotor.power(int(left))
+            
+    if 'right' in doc.keys():
+        right = doc['right']
 
-    left = int(doc["left"])
-    right = int(doc["right"])
-    oled = doc["oled"]
-    
-    # activate motors/display
-    leftMotor.power(left)
-    rightMotor.power(right)
+        if right is None:
+            response['right'] = rightMotor.power()
+        else:
+            rightMotor.power(int(right))
 
-    display.fill(0)
-    display.text(oled, 0, 0, 1)
-    display.show()
+    if 'oled' in doc.keys():
+        display.fill(0)
+        display.text(doc['oled'], 0, 0, 1)
+        display.show()
 
     # return data
     if response:
-        ser.write(ujson.dumps({
-            "gps": gpsdata,
-            "batt": battdata
-        }).encode())
+        ser.write(ujson.dumps(response).encode())
 
 
 while True:

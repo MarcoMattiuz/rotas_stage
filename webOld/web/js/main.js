@@ -368,7 +368,6 @@ function gameLoop() {
 
 function prompt_alerts(description) {
   alert(description);
-
 }
 
 

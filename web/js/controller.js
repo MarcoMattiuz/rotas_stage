@@ -34,6 +34,10 @@ setInterval(checkControllerStatus, 10);
 
 var controller_prec="";
 var controller="";
+const data = new Date()
+var prevTime = data.getTime();
+var prevR=0, prevL=0;
+
 //___CONTROLLER___
 function value() {
     let gamepads = navigator.getGamepads();
@@ -42,30 +46,49 @@ function value() {
         let gamepad = gamepads[i];
 
     if (gamepad && (gamepad.id === "Xbox 360 Controller (XInput STANDARD GAMEPAD)" || gamepad.id === "Xbox Wireless Controller (STANDARD GAMEPAD Vendor: 045e Product: 0b13)" || gamepad.id === "")) {
-            
+
             let buttons = gamepad.buttons;
             let axes = gamepad.axes;
 
             var triggerR = triggerRVal(buttons);
             var triggerL = triggerLVal(buttons);
+    
+            if(buttons[5].pressed){
+                triggerR=-triggerR;
+            }
+            if(buttons[4].pressed){
+                triggerL=-triggerL;
+            }
 
+            //console.log("d L:"+derivata(triggerL,prevL)+" d R:"+derivata(triggerR,prevR));
+            prevL=triggerL;
+            prevR=triggerR;
+            const data=new Date();
+            dL=derivata(triggerL,prevL);
+            dR=derivata(triggerR,prevR);
+
+            prevTime = data.getTime();
             controller = JSON.stringify({
-                triggerR: triggerR,
-                triggerL: triggerL,
+                "left": triggerL,
+                "right": triggerR,
 
-                buttonR: buttons[5].value,
+                /*buttonR: buttons[5].value,
                 buttonL: buttons[4].value,
 
                 axesXR:axesVal(axes[2]),
                 axesYR:axesVal(axes[3]),
                 axesXL:axesVal(axes[0]),
-                axesYL:axesVal(axes[1])
+                axesYL:axesVal(axes[1])*/
+
+                "gps":  null, 
+                "batt":  null
             });
 
             if (controller === controller_prec) {
                 
             } else {
                 controller_prec = controller;
+                
                 sendMessage(controller); //funz in websocket.js
             }
 
@@ -81,10 +104,18 @@ function value() {
                         weakMagnitude: vibrationPowerL,
                         strongMagnitude: vibrationPowerR
                     });
+                } else if (triggerR < -500 && triggerL < -500) {
+                    var vibrationPowerR = Math.min((-triggerR - 500) / 23, 1);
+                    var vibrationPowerL = Math.min((-triggerL - 500) / 23, 1);
+
+                    gamepad.vibrationActuator.playEffect("dual-rumble", {
+                        startDelay: 0,
+                        duration: 100,
+                        weakMagnitude: vibrationPowerL,
+                        strongMagnitude: vibrationPowerR
+                    });
                 }
             }
-
-            
         }
     }
 
@@ -114,6 +145,14 @@ function triggerLVal(buttons){
     }else{
         return 0;
     }
+}
+
+function derivata(val, prev){
+    const d = new Date();
+    dTime = d.getTime() - prevTime;
+    dVal = val - prev;
+
+    return dVal/dTime;
 }
 
 function axesVal(val){
