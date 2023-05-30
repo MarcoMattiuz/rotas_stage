@@ -4,7 +4,7 @@ from battery import Battery
 from movement import Motor
 from gps import GPS
 
-batt = Battery(36)
+batt = Battery(4)
 
 ser = UART(2, baudrate=115200, tx=17, rx=16)
 

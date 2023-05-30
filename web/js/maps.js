@@ -1,8 +1,11 @@
 var mapElement = document.getElementById('map');
+var frame = document.getElementById('frame');
+
 var zoom = 18;
 var map = null;
 var marker = null;
 var firstPositionSet = false;
+var polyline = null;
 
 function pos(pos_latitude, pos_longitude) {
   if (pos_latitude === null || pos_longitude === null) {
@@ -31,14 +34,14 @@ function pos(pos_latitude, pos_longitude) {
       }).addTo(map);
 
       var satelliteLayer = L.tileLayer('http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
-        maxZoom: 30,
+        maxZoom: 30 ,
         subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
         attribution: 'Mappa dati &copy; <a href="https://www.google.com/maps">Google Maps</a>'
       });
 
       var baseLayers = {
         'Mappa': L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          maxZoom: 19,
+          maxZoom: 30,
           attribution: 'Mappa dati &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
         }),
         'Satellite': satelliteLayer
@@ -56,7 +59,7 @@ function pos(pos_latitude, pos_longitude) {
 
     //centrea maooa
     //map.setView([pos_latitude, pos_longitude], zoom);
-    
+
     marker.on('click', function() {
       map.setView(newLatLng, zoom+2);
     });
@@ -64,10 +67,10 @@ function pos(pos_latitude, pos_longitude) {
   }
 }
 
-function reset_map(){
-  
+function reset_map() {
+  map.remove();
   map = null;
   marker = null;
   firstPositionSet = false;
-  document.getElementById("map").innerHTML='<span class="error-message"> Impossibile recuperare la posizione</span>';       
+  mapElement.innerHTML = '<span class="error-message">Impossibile recuperare la posizione</span>';
 }

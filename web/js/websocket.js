@@ -38,6 +38,7 @@ function connectWebSocket() {
     //mesaggio ricevuto dal server
     websocket.onmessage = function(event) {
         receivedMessage = event.data;
+        console.log(receivedMessage);
         var json = JSON.parse(receivedMessage);
     
 
@@ -58,6 +59,7 @@ function connectWebSocket() {
 function sendMessage(message) {
     // msg inviare al WebSocket
     if(message!=undefined){
+        console.log(message);
         websocket.send(message);
     }
 }

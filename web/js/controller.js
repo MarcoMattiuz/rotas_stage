@@ -49,7 +49,7 @@ function value() {
     for (var i = 0; i < gamepads.length; i++) {
         let gamepad = gamepads[i];
 
-    if (gamepad && (gamepad.id === "Xbox 360 Controller (XInput STANDARD GAMEPAD)" || gamepad.id === "Xbox Wireless Controller (STANDARD GAMEPAD Vendor: 045e Product: 0b13)" || gamepad.id === "")) {
+    if (gamepad) {
 
             let buttons = gamepad.buttons;
             let axes = gamepad.axes;
@@ -84,18 +84,16 @@ function value() {
                 axesXL:axesVal(axes[0]),
                 axesYL:axesVal(axes[1])*/
 
-                "gps":  null, 
-                "batt":  null
             });
 
             if (controller === controller_prec) {
-                
             } else {
                 controller_prec = controller;
-                
                 sendMessage(controller);
+                
             }
 
+            
             
             if(gamepad.id === "Xbox 360 Controller (XInput STANDARD GAMEPAD)"){
                 if (triggerR > 500 && triggerL > 500) {

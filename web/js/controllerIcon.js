@@ -8,7 +8,7 @@ function updateGamepadStatus() {
     for (var i = 0; i < gamepads.length; i++) {
         let gamepad = gamepads[i];
 
-        if (connect && (gamepad && (gamepad.id === "Xbox 360 Controller (XInput STANDARD GAMEPAD)" || gamepad.id === "Xbox Wireless Controller (STANDARD GAMEPAD Vendor: 045e Product: 0b13)"))) {
+        if (connect && gamepad) {
             let buttons = gamepad.buttons;
             let axes = gamepad.axes;
             

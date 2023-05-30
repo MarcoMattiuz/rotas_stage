@@ -76,6 +76,7 @@ span{
   height: 30vmin;
   margin-left: 7%;
   margin-top: 3%;
+  min-width: 10vmin;
 }
 
 svg{
