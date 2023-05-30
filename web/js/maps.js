@@ -1,5 +1,5 @@
 var mapElement = document.getElementById('map');
-var zoom = 15;
+var zoom = 18;
 var map = null;
 var marker = null;
 var firstPositionSet = false;
@@ -58,8 +58,16 @@ function pos(pos_latitude, pos_longitude) {
     //map.setView([pos_latitude, pos_longitude], zoom);
     
     marker.on('click', function() {
-      map.setView(newLatLng, zoom+5);
+      map.setView(newLatLng, zoom+2);
     });
 
   }
+}
+
+function reset_map(){
+  
+  map = null;
+  marker = null;
+  firstPositionSet = false;
+  document.getElementById("map").innerHTML='<span class="error-message"> Impossibile recuperare la posizione</span>';       
 }

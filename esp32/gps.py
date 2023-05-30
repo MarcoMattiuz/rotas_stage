@@ -38,7 +38,7 @@ class GPS(UART):
             # This is part of the GPVTG string
             self.speed = parts[parts.index('K') - 1]
 
-        if (parts[0] == "$GPGGA" and len(parts) == 15):
+        if (parts[0] == "$GPGGA" and len(parts) == 15 and parts[2] and parts[4] and parts[7]):
 
             # Latitude
             self.latitude = convertToDegree(parts[2])
@@ -57,18 +57,24 @@ class GPS(UART):
             return 0
         
         if (parts[0] == '$GPRMC'):
-            # Latitude
-            self.latitude = convertToDegree(parts[3])
-            if (parts[4] == 'S'):
-                self.latitude = -self.latitude
-            
-            # Longitude
-            self.longitude = convertToDegree(parts[5])
-            if (parts[6] == 'W'):
-                self.longitude = -self.longitude
+            try:
+                # Latitude
+                self.latitude = convertToDegree(parts[3])
+                if (parts[4] == 'S'):
+                    self.latitude = -self.latitude
+                
+                # Longitude
+                self.longitude = convertToDegree(parts[5])
+                if (parts[6] == 'W'):
+                    self.longitude = -self.longitude
 
-            # Speed
-            self.speed = float(parts[7]) * 1.852
+                # Speed
+                self.speed = float(parts[7]) * 1.852
+            
+            except ValueError:
+                return -1
+            except IndexError:
+                return -1
             
         self.connected = False
         self.satellites = 0

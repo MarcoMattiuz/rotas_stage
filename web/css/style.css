@@ -1,131 +1,142 @@
 *{
   user-select: none;
 }
+main{
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  height: 100%;
+
+}
+
+#info{
+  width: 24vmin;
+  height: 12vmin;
+  margin: 15%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgb(227, 227, 227);
+  border-radius: 1.5vmin 1.5vmin 1.5vmin 1.5vmin;
+}
+img{
+  width: 20vmin;
+}
+
+
+#gamepad, #server, #battery{
+  width: 28vmin;
+  height: 20vmin;
+  border-radius: 1vmin 1vmin 0 0;
+  
+  margin: 15%;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  background: rgb(227, 227, 227);
+}
+
+#battery{
+  height: 17vmin;
+}
+
+h2, span{
+  font-family: "Nanum Gothic", sans-serif;
+  font-family: "Roboto", sans-serif;
+  font-weight: bold;
+  font-size: 2vmin;
+  color: #545454;
+  
+  margin: 8.5% 10%;
+  margin-bottom: 2%;
+}
+span{
+  margin: 7%;
+}
+
+.connection_indicator{
+  width: 3vmin;
+  height: 3vmin;
+  border-radius: 100%;
+  margin-left: 10%;
+  margin-top: 5.5% ;
+  background-color: rgb(204, 204, 204);
+}
+
+
+#on, #off{
+  margin-bottom: 5.5% ;
+  display: flex;
+  flex-direction: row;
+}
 
 #controller{
-    position: absolute;
-    top: 7%;
-    left: 75%;
+  width: 30vmin;
+  height: 30vmin;
+  margin-left: 7%;
+  margin-top: 3%;
 }
 
-#cam {
-    width: 800px;
-    height: 370px;
-    border: 1px solid black;
-    position: absolute;
-    top: 3.5%;
-    left: 20%;
-    background : #f8f8f8;
-    display : flex;
-    justify-content : center;
-    align-items : center;
-    font-size: 24px;
-    color: #555;
+svg{
+  width: 100%;
+  height: 100%;
 }
 
-#map {
-    width: 800px;
-    height: 370px;
-    border: 1px solid black;
-    position: absolute;
-    top: 50%;
-    left: 20%;
-    background : #f8f8f8;
-    display : flex;
-    justify-content : center;
-    align-items : center;
-    font-size: 24px;
-    color: #555;
+#frame{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100vmin;
+  height: 100%;
+  margin-left: 8%;
 }
-
-.error-message {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    font-size: 24px;
-    color: #555;
+#cam,#map{
+  width: 85vmin;
+  height: 40vmin;
+  font-size: 24px;
+  color: #555;
+  background: rgb(227, 227, 227);
+  display : flex;
+  justify-content : center;
+  align-items : center;
+  margin: 3% ;
 }
 
 .error-message::before {
   content: "!";
   display: inline-block;
-  width: 20px;
-  height: 20px;
+  width: 2.2vmin;
+  height: 2.2vmin;
   background-color: #ff0000;
   color: #ffffff;
   border-radius: 50%;
   text-align: center;
-  margin-right: 10px;
   font-weight: bold;
-  font-size: 16px;
-  line-height: 20px;
   }
 
   #progress-bar {
-    width: 190px;
-    height: 30px;
-    border: 1px solid #ccc;
-    margin-bottom: 10px;
-    position: absolute;
-    top: 50%;
-    left: 2%;
+    width: 22vmin;
+    height: 3vmin;
+    border: 0.3vmin solid #ccc;
+    
+    margin-top: 1vmin;
+    margin-left: 2.7vmin;
+
+    display: flex;
+    flex-direction: column;
   }
-  #cent{
-    position: absolute;
-    top: 50.2%;
-    left: 2.5%;
-    display : flex;
-    justify-content : center;
-    align-items : center;
-    font-size: 24px;
-    color: #555;
-  }
-  
   #progress {
-    height: 100%;
+    height: 300vmin;
     background-color: #4CAF50;
-    width: 0%;
-  }
-
-
-  .meter {
-    padding: 10px 20px;
-    border-radius: 10px;
-    position: absolute;
-    left: 75.8%;
-    top: 30%;
-    display: block;
-    width: 300px;
-    margin: 40px auto;
-  }
-  #meter {
-  }
-  #needle {
-    position: absolute;
-    left: 43%;
-    top: 15%;
-    transform-origin: 50% calc(100% - 15px);
-    transform: rotate(-110deg);
-  
+    width: 3vmin;
   }
   
-  @keyframes rotate {
-    to {
-      transform: rotate(100deg);
-    }
-  }
-  
-  svg {
-    margin: auto;
-    max-width: 100%;
-  }
-  
-  .meter h3 {
-    display: block;
-    text-align: center;
-    margin-top: -130px;
-    font-family: Arial;
+  #cent{
+    width: 22vmin;
+    margin-top: 2vmin;
+    margin-left: 1.3vmin;
   }
   
   

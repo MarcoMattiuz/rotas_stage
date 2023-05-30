@@ -93,7 +93,7 @@ function value() {
             } else {
                 controller_prec = controller;
                 
-                sendMessage(controller); //funz in websocket.js
+                sendMessage(controller);
             }
 
             
