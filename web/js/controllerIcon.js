@@ -1,14 +1,17 @@
+let LOutline = document.getElementById("LOutline");
+let ROutline = document.getElementById("ROutline");
+
 function pitagora(x, y) {
     return Math.sqrt(x*x+y*y);
 }
 
 function updateGamepadStatus() {
-    
     let gamepads = navigator.getGamepads();
+   
     for (var i = 0; i < gamepads.length; i++) {
         let gamepad = gamepads[i];
 
-        if (connect && gamepad) {
+        if (gamepad) {
             let buttons = gamepad.buttons;
             let axes = gamepad.axes;
             
@@ -82,6 +85,26 @@ function val(pressed){
     }
 }
 
+
+
+async function lgbt(){
+    let letters = "0123456789ABCDEF";
+    let color = "#";
+
+    for(var i=0; i<6; i++)
+    {
+        color += letters[Math.floor(Math.random()*16)];
+    }
+
+    LOutline.setAttribute("stroke", color);
+    ROutline.setAttribute("stroke", color);
+
+}
+
+async function resetColor(){
+    LOutline.setAttribute("stroke", "hsl(210,50%,85%)");
+    ROutline.setAttribute("stroke", "hsl(210,50%,85%)");
+}
 
 
 

@@ -1,7 +1,7 @@
 from machine import Pin, ADC
 
-R1 = 66000
-R2 = 18000
+R1 = 66700
+R2 = 17500
 
 VMAX = 14.7
 VMIN = 11.5

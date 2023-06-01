@@ -3,7 +3,7 @@ var cent = document.getElementById("cent");
 
 function updateBattery(batteryLevel) {
     progressBar.style.width = batteryLevel + "%";
-    cent.innerHTML="<span>"+parseInt(batteryLevel) + "%<span>";
+    cent.innerHTML='<span id="batt">'+parseInt(batteryLevel) + '%<span>';
 }
 
 function reset_battery(){

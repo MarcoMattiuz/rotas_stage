@@ -68,7 +68,9 @@ function pos(pos_latitude, pos_longitude) {
 }
 
 function reset_map() {
-  map.remove();
+  if(map!=null){
+    map.remove();
+  }
   map = null;
   marker = null;
   firstPositionSet = false;

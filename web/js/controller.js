@@ -1,34 +1,37 @@
 var on_gp = document.getElementById("on_gp");
 var off_gp = document.getElementById("off_gp");
 
-function on(element) {
-  element.style.backgroundColor = "red";
+function on(element){
+    element.classList.add('on');
+    element.classList.remove('off');
 }
 
-function off(element) {
-  element.style.backgroundColor = "#cccccc";
+function off(element){
+    element.classList.add('off');
+    element.classList.remove('on');
 }
+
 // Funzione per verificare lo stato del controller
 function checkControllerStatus() {
-  let gamepads = navigator.getGamepads();
-
-  // Verifica se il controller è collegato
-  var controllerConnected = false;
-  for (var i = 0; i < gamepads.length; i++) {
-    let gamepad = gamepads[i];
-    if (gamepad && (gamepad.id === "Xbox 360 Controller (XInput STANDARD GAMEPAD)" || gamepad.id === "Xbox Wireless Controller (STANDARD GAMEPAD Vendor: 045e Product: 0b13)")) {
-        controllerConnected = true;
-      break;
+    let gamepads = navigator.getGamepads();
+    
+    var controllerConnected = false;
+    for (var i = 0; i < gamepads.length; i++) {
+        let gamepad = gamepads[i];
+        if (gamepad) {
+            controllerConnected = true;
+        break;
+        }
     }
-  }
+ 
+    if (controllerConnected) {
+        on(on_gp);
+        off(off_gp);
+    } else {
+        off(on_gp);
+        on(off_gp);
+    }
 
-  if (controllerConnected) {
-    on(on_gp);
-    off(off_gp);
-  } else {
-    off(on_gp);
-    on(off_gp);
-  }
 }
 setInterval(checkControllerStatus, 10);
 
@@ -49,7 +52,7 @@ function value() {
     for (var i = 0; i < gamepads.length; i++) {
         let gamepad = gamepads[i];
 
-    if (gamepad) {
+    if (gamepad)  {
 
             let buttons = gamepad.buttons;
             let axes = gamepad.axes;
@@ -65,11 +68,11 @@ function value() {
             }
 
             //console.log("d L:"+derivata(triggerL,prevL)+" d R:"+derivata(triggerR,prevR));
-            prevL=triggerL;
+            /*prevL=triggerL;
             prevR=triggerR;
             const data=new Date();
             dL=derivata(triggerL,prevL);
-            dR=derivata(triggerR,prevR);
+            dR=derivata(triggerR,prevR);*/
 
             prevTime = data.getTime();
             controller = JSON.stringify({
@@ -90,33 +93,37 @@ function value() {
             } else {
                 controller_prec = controller;
                 sendMessage(controller);
-                
             }
 
             
             
             if(gamepad.id === "Xbox 360 Controller (XInput STANDARD GAMEPAD)"){
-                if (triggerR > 500 && triggerL > 500) {
+                if (triggerR > 500 && triggerL > 500) 
+                {
                     var vibrationPowerR = Math.min((triggerR - 500) / 23, 1);
                     var vibrationPowerL = Math.min((triggerL - 500) / 23, 1);
-
+                    lgbt();
                     gamepad.vibrationActuator.playEffect("dual-rumble", {
                         startDelay: 0,
                         duration: 100,
                         weakMagnitude: vibrationPowerL,
                         strongMagnitude: vibrationPowerR
                     });
-                } else if (triggerR < -500 && triggerL < -500) {
-                    var vibrationPowerR = Math.min((-triggerR - 500) / 23, 1);
-                    var vibrationPowerL = Math.min((-triggerL - 500) / 23, 1);
-
-                    gamepad.vibrationActuator.playEffect("dual-rumble", {
-                        startDelay: 0,
-                        duration: 100,
-                        weakMagnitude: vibrationPowerL,
-                        strongMagnitude: vibrationPowerR
-                    });
-                }
+                } 
+                else if(triggerR < -500 && triggerL < -500) 
+                    {
+                        var vibrationPowerR = Math.min((-triggerR - 500) / 23, 1);
+                        var vibrationPowerL = Math.min((-triggerL - 500) / 23, 1);
+                        
+                        lgbt();
+                        gamepad.vibrationActuator.playEffect("dual-rumble", {
+                            startDelay: 0,
+                            duration: 100,
+                            weakMagnitude: vibrationPowerL,
+                            strongMagnitude: vibrationPowerR
+                        });
+                    }
+                    else{resetColor();}
             }
         }
     }

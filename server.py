@@ -27,7 +27,8 @@ async def on_message(websocket):
         if 'left' in msg.keys() and 'right' in msg.keys():
             print("left:", msg["left"])
             print("right:", msg["right"])
-        
+            print()
+            
         if 'gps' in msg.keys() and 'batt' in msg.keys():
             # print("gps required")
             # print("batt required")
@@ -37,9 +38,13 @@ async def on_message(websocket):
             # print(data, '')
             await websocket.send(data)
 
+        if 'msg' in msg.keys():
+            print("Ip connceted:", msg["msg"])
+            
+
 #run websocket function
 async def main():
-    async with websockets.serve(on_message, "192.168.9.193", 8000):
+    async with websockets.serve(on_message, '0.0.0.0', 8000):
         print("Server avviato")
         await asyncio.Future() # Run forever
 

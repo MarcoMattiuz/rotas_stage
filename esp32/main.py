@@ -14,6 +14,8 @@ def get_data() -> str:
 def mainloop():
     # get data from serial
     data = get_data()
+
+    print(data)
     
     response = dict()
 
@@ -51,10 +53,10 @@ def mainloop():
         else:
             rightMotor.power(int(right))
 
-    if 'oled' in doc.keys():
-        display.fill(0)
-        display.text(doc['oled'], 0, 0, 1)
-        display.show()
+    # if 'oled' in doc.keys():
+    #     display.fill(0)
+    #     display.text(doc['oled'], 0, 0, 1)
+    #     display.show()
 
     # return data
     if response:

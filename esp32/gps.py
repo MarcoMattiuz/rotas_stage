@@ -1,7 +1,7 @@
 from machine import UART
 
 class GPS(UART):
-    def __init__(self, uart_index = 1, rx = 27, baud = 9600) -> None:
+    def __init__(self, uart_index = 1, rx = 13, baud = 9600) -> None:
         super().__init__(uart_index)
         super().init(baudrate = baud, rx = rx)
         self.latitude = None
