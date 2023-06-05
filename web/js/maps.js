@@ -5,10 +5,9 @@ var zoom = 18;
 var map = null;
 var marker = null;
 var firstPositionSet = false;
-var polyline = null;
 
-function pos(pos_latitude, pos_longitude) {
-  if (pos_latitude === null || pos_longitude === null) {
+function pos(pos_latitude, pos_longitude, pos_satellites) {
+  if (pos_latitude === null || pos_longitude === null ) {
     mapElement.innerHTML = '<div class="error-message">Impossibile recuperare la posizione</div>';
     return;
 
@@ -20,6 +19,8 @@ function pos(pos_latitude, pos_longitude) {
       //mappa con prima pos
       var latitude = pos_latitude;
       var longitude = pos_longitude;
+      var satellites = pos_satellites;
+
       map = L.map(mapElement).setView([latitude, longitude], zoom);
       marker = L.marker([latitude, longitude], {
         icon: L.icon({
@@ -30,19 +31,20 @@ function pos(pos_latitude, pos_longitude) {
 
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 30,
-        attribution: 'Mappa dati &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
+        //attribution: 'Mappa dati &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
+        attribution:'Latitude: '+latitude+' | Longitude: '+longitude+' | Satellites: '+satellites
       }).addTo(map);
 
       var satelliteLayer = L.tileLayer('http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
         maxZoom: 30 ,
         subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
-        attribution: 'Mappa dati &copy; <a href="https://www.google.com/maps">Google Maps</a>'
+        //attribution: 'Mappa dati &copy; <a href="https://www.google.com/maps">Google Maps</a>'
       });
 
       var baseLayers = {
         'Mappa': L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
           maxZoom: 30,
-          attribution: 'Mappa dati &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
+          //attribution: 'Mappa dati &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
         }),
         'Satellite': satelliteLayer
       };
@@ -74,5 +76,5 @@ function reset_map() {
   map = null;
   marker = null;
   firstPositionSet = false;
-  mapElement.innerHTML = '<span class="error-message">Impossibile recuperare la posizione</span>';
+  mapElement.innerHTML = '<span class="error-message" style="font-size: medium;">Impossibile recuperare la posizione</span>';
 }

@@ -1,5 +1,6 @@
-
 var websocket;
+
+// connection indicator
 var on_sr=document.getElementById("on_sr");
 var off_sr=document.getElementById("off_sr");
 
@@ -13,8 +14,10 @@ function off(element){
     element.classList.remove('on');
 }
 
+
 var connect = false;
 
+//check connetion ws
 function connectPage() {
   if (!connect) {
     connect = true;
@@ -41,19 +44,12 @@ function connectWebSocket() {
     websocket.onopen = function () {
         console.log('WebSocket connection opened');
 
-        fetch('https://api.ipify.org?format=json')
-        .then(response => response.json())
-        .then(data => {
-            const ip = data.ip;
-            sendMessage(JSON.stringify({"msg": ip}));
-        })
-        .catch(error => {
-            console.error('Error retrieving IP address:', error);
-            sendMessage(JSON.stringify({"msg": "Ip error"}));
-        });
-        
+        //ip();
+        //pos(10, 10, 05);
+
         on(on_sr);
         off(off_sr);
+        
         value(); 
         updateGamepadStatus();
         rqs=true;
@@ -65,7 +61,7 @@ function connectWebSocket() {
         console.log("ricevuto: "+receivedMessage);
         var json = JSON.parse(receivedMessage);
 
-        pos(json.gps.latitude, json.gps.longitude);
+        pos(json.gps.latitude, json.gps.longitude, json.gps.satellites);
         updateBattery(Math.abs(json.batt.level) * 100);
     }
 
@@ -80,3 +76,16 @@ function connectWebSocket() {
     };
 }
 
+// lettura ip connesso al ws
+function ip(){
+    fetch('https://api.ipify.org?format=json')
+    .then(response => response.json())
+    .then(data => {
+        const ip = data.ip;
+        sendMessage(JSON.stringify({"ip": ip}));
+    })
+    .catch(error => {
+        console.error('Error retrieving IP address:', error);
+        sendMessage(JSON.stringify({"ip": "Ip error"}));
+    });
+}

@@ -23,11 +23,11 @@ class Battery(ADC):
 
     def voltage(self):
         self.filter()
-        return self.filter_val * (R1 + R2)/R2
+        return round(self.filter_val * (R1 + R2)/R2, 2)
 
     def level(self):
         vbat = self.voltage()
-        lvl = (vbat - VMIN) / (VMAX - VMIN)
+        lvl = round((vbat - VMIN) / (VMAX - VMIN), 2)
         return self.limit(lvl, 0, 1)
 
     def width(self, bits = None):

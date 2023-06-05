@@ -52,7 +52,7 @@ function value() {
     for (var i = 0; i < gamepads.length; i++) {
         let gamepad = gamepads[i];
 
-    if (gamepad)  {
+    if (gamepad&&connect)  {
 
             let buttons = gamepad.buttons;
             let axes = gamepad.axes;
@@ -92,7 +92,7 @@ function value() {
             if (controller === controller_prec) {
             } else {
                 controller_prec = controller;
-                sendMessage(controller);
+                //sendMessage(controller);
             }
 
             
