@@ -1,7 +1,9 @@
 from machine import Pin, ADC
 
 R1 = 66700
-R2 = 17500
+R2 = 18000
+
+VF = 0.6
 
 VMAX = 14.7
 VMIN = 11.5
@@ -23,7 +25,7 @@ class Battery(ADC):
 
     def voltage(self):
         self.filter()
-        return round(self.filter_val * (R1 + R2)/R2, 2)
+        return round(self.filter_val * (R1 + R2)/R2, 2) + VF
 
     def level(self):
         vbat = self.voltage()

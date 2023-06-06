@@ -1,3 +1,4 @@
+import cv2
 import numpy as np
 
 from depthai_sdk import OakCamera
@@ -41,6 +42,7 @@ def decode(nn_data: ImgDetections):
     return dets
 
 def cb(packet: DetectionPacket):
+    cv2.imshow("frame", packet.frame)
     for detection in packet.detections:
         img: SpatialImgDetection = detection.img_detection
         print(labels[img.label])
@@ -52,5 +54,5 @@ with OakCamera() as oak:
 
     nn.config_nn(conf_threshold=0.5)
 
-    oak.visualize(nn, callback=cb)  # Display encoded output
+    oak.visualize(nn)  # Display encoded output
     oak.start(blocking=True)

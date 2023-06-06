@@ -16,8 +16,6 @@
                 <div class="Logo_rotas mx-auto my-3">
                     <img class="my-3" onclick="connectPage()" src="images/Logo_rotas.png" alt="logo rotas">
                 </div>
-                
-                    
                         
                     <div class="card text-bg-light mx-auto mb-3" style="max-width: 18rem;">
                         <div class="card-header"><h5 class="card-title">Gamepad connection</h5></div>
@@ -48,8 +46,12 @@
                     </div>  
             </div>
             <div class="col-sm-7 main-container px-5">
-                <div class="frame d-flex align-items-center mx-auto" id="cam" style="min-width: 45vmin; min-height:42vmin;"><span class="error-message">Impossibile recuperare la videocamera</span></div>
-                <div class="frame d-flex align-items-center mx-auto" id="map" style="min-width: 45vmin; min-height:42vmin;"><span class="error-message">Impossibile recuperare la posizione</span></div>
+                <div class="frame d-flex align-items-center mx-auto" id="cam" style="min-width: 45vmin; min-height:42vmin;">
+                    <span class="error-message">Impossibile recuperare la videocamera</span>
+                </div>
+                <div class="frame d-flex align-items-center mx-auto" id="map" style="min-width: 45vmin; min-height:42vmin;">
+                    <span class="error-message">Impossibile recuperare la posizione</span>
+                </div>
             </div>
             <div class="col-sm-3 gamepad-container d-flex align-items-center">
                 <div class="controller mx-auto">
@@ -142,19 +144,19 @@
         <!--SCRIPT-->
 
         <!--<script src="js/websocket.js"></script>-->
-        <script src="js/receiveData.js"></script>
-        <script src="js/sendData.js"></script>
+        <script src="js/js-backend/receiveData.js"></script>
+        <script src="js/js-backend/sendData.js"></script>
 
         <script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.js"></script>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.css" />
-        <script src="js/maps.js"></script>
+        <script src="js/js-backend/maps.js"></script>
 
-        <script src="js/battery.js"></script>
+        <script src="js/js-backend/battery.js"></script>
+        <script src="js/js-backend/cam.js"></script>
 
-        <script src="js/controller.js"></script>
-        <script src="js/controllerIcon.js"></script>
+        <script src="js/js-backend/controller.js"></script>
+        <script src="js/js-frontend/controllerIcon.js"></script>
     
-
         <!--<script src="js/prova.js"></script>-->
     </body>
 </html>

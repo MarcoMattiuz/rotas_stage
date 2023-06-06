@@ -7,10 +7,20 @@ auto lo eth0
 iface lo inet loopback 
 # Configuration for em1 
 # This line ensures that the interface will be brought up during boot
-auto eth0
-allow-hotplug eth0 
-# The address, gateway and netmask are necessary. 
-iface eth0 inet static 
+
+### CONF eth0 ###
+# auto eth0
+# allow-hotplug eth0 
+# iface eth0 inet static 
+#     address 192.168.9.193/23
+#     gateway 192.168.9.111
+#     dns-search rotaspi
+#     dns-namesevers 192.168.9.147, 1.1.1.1
+
+### CONF wlan0 ###
+auto wlan0
+allow-hotplug wlan0 
+iface wlan0 inet static 
     address 192.168.9.193/23
     gateway 192.168.9.111
     dns-search rotaspi
