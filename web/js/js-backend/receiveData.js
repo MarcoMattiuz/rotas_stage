@@ -1,39 +1,34 @@
-var websocket;
-
 // connection indicator
-var on_sr=document.getElementById("on_sr");
-var off_sr=document.getElementById("off_sr");
+var on_sr=document.getElementsByClassName("on_sr");
+var off_sr=document.getElementsByClassName("off_sr");
 
 function on(element){
-    element.classList.add('on');
-    element.classList.remove('off');
+    for (let i = 0; i < element.length; i++) {
+        element[i].classList.add('on');
+        element[i].classList.remove('off');
+    }
 }
 
 function off(element){
-    element.classList.add('off');
-    element.classList.remove('on');
+    for (let i = 0; i < element.length; i++) {
+        element[i].classList.add('off');
+        element[i].classList.remove('on');
+    }
 }
 
-
-var connect = false;
-
-var camconnect=false;
 
 //check connetion ws
 function connectPage() {
   if (!connect) {
     connect = true;
     connectWebSocket();
-  } else {
-    connect = false;
+    
+    loading_cam.classList.remove("d-none");
+    loading_map.classList.remove("d-none");
+
+  }else {
     websocket.close();
-    on(off_sr);
-    off(on_sr);
-
-    reset_battery();
-    reset_map();
-    rqs=false;
-
+    reset_all();
   }
 }
 
@@ -48,12 +43,14 @@ function connectWebSocket() {
 
         //ip();
         //pos(10, 10, 05);
-
+        
         on(on_sr);
         off(off_sr);
         
         value(); 
         updateGamepadStatus();
+
+        checkNavServer();
         rqs=true;
     };
 
@@ -66,37 +63,63 @@ function connectWebSocket() {
         if (json.hasOwnProperty("img")) {
             if(!camconnect){
                 openCam();
-            }
+            } 
             var src = 'data:image/jpg;base64,' + json.img;
-            updateCam(src);
+            updateCam(src);    
+        }else{
+            reset_cam();
         }
 
-        if (json.hasOwnProperty("latitude")&&json.hasOwnProperty("longitude")&&json.hasOwnProperty("satellites")) {
+        if (json.hasOwnProperty("dets")){
+            if(camconnect){
+                
+                read_dets(json.dets);
+            }
+        }else{
+            var json_null=null;
+            read_dets(json_null);
+        }
+
+        if (json.hasOwnProperty("gps")) {
             pos(json.gps.latitude, json.gps.longitude, json.gps.satellites);
+            //pos(10, 10, 05);
         }
 
-        if (json.hasOwnProperty("level")) {
+        if (json.hasOwnProperty("batt")) {
             updateBattery(Math.abs(json.batt.level) * 100);
         }
-
-
-        
     }
 
     // Connessione WebSocket chiusa
     websocket.onclose = function () {
         console.log('WebSocket connection closed');
-        on(off_sr);
-        off(on_sr);
-
-        reset_battery();
-        reset_map();
-        reset_cam();
-
-        rqs=false;
+        reset_all();
     };
 }
 
+function reset_all(){
+    connect=false;
+
+    on(off_sr);
+    off(on_sr);
+
+    reset_battery();
+    reset_map();
+    reset_cam();
+
+    loading_cam.classList.add("d-none");
+    loading_map.classList.add("d-none");
+
+    checkNavServer();
+    resetColor();
+
+    if(manager){
+        destroyJoystick();
+        destroyDivJoystick();
+    }
+
+    rqs=false;
+}
 // lettura ip connesso al ws
 function ip(){
     fetch('https://api.ipify.org?format=json')
@@ -110,3 +133,4 @@ function ip(){
         sendMessage(JSON.stringify({"ip": "Ip error"}));
     });
 }
+

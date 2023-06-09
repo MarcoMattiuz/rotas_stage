@@ -1,12 +1,44 @@
-var progressBar = document.getElementById("progress");
-var cent = document.getElementById("cent");
+var progressBar = document.getElementsByClassName("progress");
+var cent = document.getElementsByClassName("cent");
+
+function on(element){
+    for (let i = 0; i < element.length; i++) {
+        element[i].classList.add('on');
+        element[i].classList.remove('off');
+    }
+}
+
+function off(element){
+    for (let i = 0; i < element.length; i++) {
+        element[i].classList.add('off');
+        element[i].classList.remove('on');
+    }
+}
+
+
 
 function updateBattery(batteryLevel) {
-    progressBar.style.width = batteryLevel + "%";
-    cent.innerHTML='<span id="batt">'+parseInt(batteryLevel) + '%<span>';
+    for (let i = 0; i < progressBar.length && i < cent.length; i++) {
+        progressBar[i].style.width = batteryLevel + "%";
+        cent[i].innerHTML='<span class="batt">'+parseInt(batteryLevel) + '%<span>';
+
+        if(batteryLevel>=0 && batteryLevel<=5){
+            progressBar[i].style.backgroundColor="#d33333";
+
+        }else if(batteryLevel>5 && batteryLevel<=10){
+            progressBar[i].style.backgroundColor="#e2f026";
+
+        }else if(batteryLevel>10 && batteryLevel<=100){
+            progressBar[i].style.backgroundColor="#4CAF50";
+        }
+    }
+    checkNavBatt(batteryLevel);
 }
 
 function reset_battery(){
-    progressBar.style.width = 0 + "%";
-    cent.innerHTML='<span id="batt" class="error-message"> Nessuna batteria</span>';           
+    for (let i = 0; i < progressBar.length && i < cent.length; i++) {
+        progressBar[i].style.width = 0 + "%";
+        cent[i].innerHTML='<span class="batt error-message"> Nessuna batteria</span>';    
+    } 
+    checkNavBatt(-1);
 }

@@ -33,3 +33,16 @@ class Motor:
 
         self.motors["forward"].duty(powers[0])
         self.motors["backward"].duty(powers[1])
+
+class MotorPair:
+    def __init__(self, left: Motor, right: Motor) -> None:
+        pass
+
+    def steerPower(self, steer = 0.0, power = 0.0):
+        pass
+
+    def leftPower(self, power = 0.0):
+        pass
+
+    def rightPower():
+        pass

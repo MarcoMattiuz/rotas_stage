@@ -69,9 +69,8 @@ function updateGamepadStatus() {
             
             LMeta.setAttribute("fill", val(buttons[8].pressed));
             RMeta.setAttribute("fill", val(buttons[9].pressed));
-           
-            
-        }        
+         
+        }    
     }
     requestAnimationFrame(updateGamepadStatus); 
 }

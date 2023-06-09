@@ -4,24 +4,23 @@ import uasyncio
 from uos import dupterm
 from utime import sleep
 
-dupterm(None)
+# dupterm(None)
 
 async def get_data(blocking = True) -> str:
     data = None
     while data == None and blocking:
-        try:
-            data = ser.readline().decode()
-        except AttributeError:
-            await uasyncio.sleep_ms(100)
+        if ser.in_waiting:
+            data = ser.readline().decode()        
     return data
 
 async def mainloop():
-    
     while True:
         # get data from serial
         
+        print("Awaiting serial data...")
         data = await get_data()
-
+        
+        print("Raw data:", data)
         
         d = '}'
 
@@ -29,7 +28,8 @@ async def mainloop():
             if toco:
                 toco += d
                 
-                
+                print("Req:", toco)
+
                 # parse json
                 try:
                     doc = ujson.loads(toco)
@@ -78,7 +78,7 @@ def parsePayload(doc: dict):
     #     display.show()
 
     if response:
-        
+        print("Res:", response)
         ser.write(ujson.dumps(response).encode())
 
 async def gps_coro():
@@ -89,7 +89,7 @@ async def gps_coro():
 async def main():
     uasyncio.create_task(mainloop())
     uasyncio.create_task(gps_coro())
-    
+    print("Started")
     while 1:
         await uasyncio.sleep_ms(10_000)
 

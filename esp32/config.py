@@ -11,8 +11,8 @@ ser = UART(2, baudrate=115200, tx=17, rx=16)
 
 gps = GPS(rx = 13)
 
-leftMotor = Motor(32, 33)
-rightMotor = Motor(25, 26)
+leftMotor = Motor(33, 32)
+rightMotor = Motor(26, 25)
 
 led = RGB(0, 2, 15)
 

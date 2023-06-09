@@ -5,52 +5,6 @@ from serial import Serial
 from base64 import b64encode
 import depthai as dai
 from time import perf_counter
-import cv2
-
-oak = True
-
-# # # # # # # # VIDEO CAM # # # # # # # #
-# Closer-in minimum depth, disparity range is doubled (from 95 to 190):
-extended_disparity = False
-# Better accuracy for longer distance, fractional disparity 32-levels:
-subpixel = False
-# Better handling for occlusions:
-lr_check = True
-
-# Create pipeline
-pipeline = dai.Pipeline()
-
-# Define sources and outputs
-camRgb = pipeline.create(dai.node.ColorCamera)
-xoutVideo = pipeline.create(dai.node.XLinkOut)
-xoutVideo.setStreamName("video")
-
-# Properties
-camRgb.setPreviewSize(640, 480)
-camRgb.setInterleaved(False)
-camRgb.setColorOrder(dai.ColorCameraProperties.ColorOrder.RGB)
-
-# Linking
-camRgb.video.link(xoutVideo.input)
-
-#checks if camera is connected
-try:
-    device = dai.Device(pipeline) 
-    q = device.getOutputQueue(name="video", maxSize=4, blocking=False)
-except:
-    print("camera is not connected")
-    oak = False
-
-#resize the resolution of the camera
-def resize_percent(scale_percent, src):
-
-    width = int(src.shape[1] * scale_percent / 100)
-    height = int(src.shape[0] * scale_percent / 100)
-
-    dsize = (width, height)
-
-    output = cv2.resize(src, dsize)
-    return output
 
 ser = Serial(port='/dev/ttyS0', baudrate=115200, timeout=.1)
 
@@ -79,6 +33,9 @@ async def on_message(websocket):
         if 'batt' in msg.keys():
             batt_requested = websocket
             # print("batt requested")
+
+        if 'img' in msg.keys() and not oak:
+            await websocket.send(json.dumps({'img': None}))
 
         # if 'msg' in msg.keys():
         #     print("Ip connceted:", msg["msg"])
@@ -166,24 +123,77 @@ batt_requested = False
 
 current_websocket = None
 
+oak = True
+
 async def cameraBroadcast():
-    while True:
-        connections = list(server.websockets)
-        if oak and connections:
-            inDisparity = q.get() 
-            frame = inDisparity.getCvFrame()
-            frame = resize_percent(50, frame)
-            imgJPG_encoded = cv2.imencode('.jpg', frame)[1].tobytes()
-            imgBASE64 = b64encode(imgJPG_encoded)
-            imgBASE64_string = imgBASE64.decode('utf-8')
-            for index in range(len(connections)):
-                try:
-                    await connections[index].send(json.dumps({'img':imgBASE64_string}))
-                except websockets.exceptions.ConnectionClosedOK:
-                    pass
-            await asyncio.sleep(0.01)
-        else:
-            await asyncio.sleep(1)
+    global oak
+    # Create pipeline
+    pipeline = dai.Pipeline()
+
+    # Define sources and output
+    camRgb = pipeline.create(dai.node.ColorCamera)
+    videoEnc = pipeline.create(dai.node.VideoEncoder)
+    manip = pipeline.create(dai.node.ImageManip)
+    xout = pipeline.create(dai.node.XLinkOut)
+
+    xout.setStreamName('raw')
+
+    # Properties
+    camRgb.setBoardSocket(dai.CameraBoardSocket.RGB)
+    camRgb.setResolution(dai.ColorCameraProperties.SensorResolution.THE_1080_P)
+    camRgb.setPreviewSize(832, 480)
+    camRgb.setFps(20)
+
+    manip.initialConfig.setResize(832, 480)
+    manip.initialConfig.setFrameType(dai.ImgFrame.Type.NV12)
+    manip.setMaxOutputFrameSize(2000000)
+
+    videoEnc.setDefaultProfilePreset(20, dai.VideoEncoderProperties.Profile.MJPEG)
+    # videoEnc.setBitrateKbps(100)
+
+    # Linking
+    camRgb.preview.link(manip.inputImage)
+    manip.out.link(videoEnc.input)
+    videoEnc.bitstream.link(xout.input)
+
+    # Connect to device and start pipeline
+    try:
+        with dai.Device(pipeline) as device:
+            
+            # Output queue will be used to get the encoded data from the output defined above
+            q = device.getOutputQueue(name="raw", maxSize=30, blocking=False)
+
+            # stream_process = open_stream_process()
+
+            print("OAK Open")
+            try:
+                while True:
+                    connections = list(server.websockets)
+                    if connections:
+                        packet = q.get()  # Blocking call, will wait until a new data has arrived
+                        # stream_process.stdin.write(h265Packet.getData().tobytes())
+                        img_bytes = packet.getData().tobytes()
+                        imgBASE64 = b64encode(img_bytes)
+                        imgBASE64_string = imgBASE64.decode('utf-8')
+                        print(dai.Clock.now() - packet.getTimestamp(), end = '\r')
+                        # Have to iterate with index because the array changes size during iteration
+                        for index in range(len(connections)):
+                            try:
+                                await connections[index].send(json.dumps({'img':imgBASE64_string}))
+                                # print("sent frame %d to %s" % (packet.getSequenceNum(), str(connections[index])))
+                            except websockets.exceptions.ConnectionClosedOK:
+                                pass
+                            except IndexError:
+                                pass
+                        await asyncio.sleep(0.01)
+                    else:
+                        await asyncio.sleep(1)
+
+            except KeyboardInterrupt:
+                pass
+    except RuntimeError:
+        print("Unable to talk with oak camera")
+        oak = False
 
 #run websocket function
 async def main():

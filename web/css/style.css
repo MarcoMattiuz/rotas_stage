@@ -1,38 +1,37 @@
-*, *:before, *:after {
-
-    user-select: none;
-}
-/*.sidebar-container{
-  background-color: aqua;
-}
-
-.main-container{
-  background-color: red;
+* {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
-.gamepad-container{
-  background-color: yellow;
-}*/
+.side-menu 
+{
+  height: 100vh;
+  overflow-y: auto;
+}
+
+
+
 /*image properties*/
 .Logo_rotas
 {
 
   text-align: center;
-  max-width: 18rem;
+  background-color: rgb(241,242,243);
+  border-radius: 0.4rem;
+  transition: 0.3s;
 }
 .Logo_rotas:hover
 {
-  background-color: rgb(241,242,243);
-  border-radius: 0.4rem;
+  box-shadow: 0 0 1rem rgb(241,242,243);
   cursor: pointer;
 }
-
 .Logo_rotas img
 {
-  min-width: 1rem;
+  min-width: 0.5rem;
   max-width: 8rem;
 }
-
 
 /*status indicator*/
 .connection_indicator::before {
@@ -59,25 +58,23 @@
 {
   max-width: 15rem;
   height: 2rem;
-  border: 0.1rem solid #ccc;
-  
-  margin-top: 0.5rem;
+
   margin-bottom: 0.5rem;
 
   display: flex;
   flex-direction: column;
 }
-#progress 
+.progress 
 {
   height: 2rem;
   background-color: #4CAF50;
   display: flex;
   flex-direction: column;
 }
-#cent, #batt
+.cent, .batt
 {
   padding-left: 0;
-  font-size: 1.3rem;
+  font-size: 1rem;
 }
 
 /*error indicator for data receive*/
@@ -97,23 +94,10 @@
   display: inline-block;
 }
 
-/*frame settings*/
-.frame
-{
-  /*min-width: 45vmin;
-  min-height:45vmin;*/
-  background: rgb(227, 227, 227);
-  margin: 2rem 0;
-  border-radius:  0.4rem;
-  text-align: center;
-  justify-content: center; 
-  font-size: 1.3rem;   
-}
-
 .controller{
-  margin-top: 5vmin;
-  width: 30vmin;
-  height: 30vmin;
+  
+  width: 26vh;
+  height: 26vh;
 
 }
 
@@ -122,3 +106,37 @@
   height: 100%;
 }
 
+#joystick-draggable{
+  display:none;
+  width: 200px;
+  height: 200px;
+  position: absolute;
+  z-index: 900;
+
+}
+
+#drag-overlay {
+  display:none;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 30px;
+  height: 30px;
+  z-index: 900;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 0, 0.5); /* Colore giallo trasparente */
+  cursor: move;
+}
+
+#joystick {
+
+  display:none;
+  width: 200px;
+  height: 200px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 900;
+  transform: translate(-50%, -50%);
+  touch-action: none;
+}

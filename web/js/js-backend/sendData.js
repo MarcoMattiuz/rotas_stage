@@ -1,5 +1,3 @@
-var websocket;
-
 // invio msg al server.py
 function sendMessage(message) {
     if (message != undefined) {
@@ -7,7 +5,6 @@ function sendMessage(message) {
     }
 }
 
-var rqs=false;
 //richiesta info 
 function request(){
     if(rqs)

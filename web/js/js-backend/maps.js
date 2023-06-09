@@ -1,5 +1,8 @@
 var mapElement = document.getElementById('map');
+var loading_map = document.getElementById("loading_map");
 var frame = document.getElementById('frame');
+var posElement = document.getElementById('pos');
+  
 
 var zoom = 18;
 var map = null;
@@ -8,18 +11,24 @@ var firstPositionSet = false;
 
 function pos(pos_latitude, pos_longitude, pos_satellites) {
   if (pos_latitude === null || pos_longitude === null ) {
-    mapElement.innerHTML = '<div class="error-message">Impossibile recuperare la posizione</div>';
+    posElement.classList.add('error-message');
+    posElement.innerHTML = 'Impossibile recuperare la posizione';
     return;
-
   }else{
-
+    var latitude = pos_latitude;
+    var longitude = pos_longitude;
+    var satellites = pos_satellites;
+  
     if (!firstPositionSet) {
       mapElement.innerHTML = '';
-    
+      mapElement.style.maxWidth="100%";
+      mapElement.style.maxHeight="100%";
+      mapElement.style.minWidth="100%";
+      mapElement.style.minHeight="100%";
+
+      removeLoading();
+
       //mappa con prima pos
-      var latitude = pos_latitude;
-      var longitude = pos_longitude;
-      var satellites = pos_satellites;
 
       map = L.map(mapElement).setView([latitude, longitude], zoom);
       marker = L.marker([latitude, longitude], {
@@ -32,7 +41,6 @@ function pos(pos_latitude, pos_longitude, pos_satellites) {
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 30,
         //attribution: 'Mappa dati &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
-        attribution:'Latitude: '+latitude+' | Longitude: '+longitude+' | Satellites: '+satellites
       }).addTo(map);
 
       var satelliteLayer = L.tileLayer('http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
@@ -56,14 +64,20 @@ function pos(pos_latitude, pos_longitude, pos_satellites) {
     }
 
     //aggiorna marker
-    var newLatLng = new L.LatLng(pos_latitude, pos_longitude);
+    var newLatLng = new L.LatLng(latitude, longitude);
     marker.setLatLng(newLatLng); 
+    posElement.classList.remove('error-message');
+    if(satellites==0){
+      posElement.innerHTML='Ultima psozione: Latitude: '+latitude+', Longitude: '+longitude;
+    }else{
+      posElement.innerHTML='Latitude: '+latitude+', Longitude: '+longitude+', Satellites: '+satellites;
+    }
 
-    //centrea maooa
+    //centrea mappa
     //map.setView([pos_latitude, pos_longitude], zoom);
 
     marker.on('click', function() {
-      map.setView(newLatLng, zoom+2);
+      map.setView(newLatLng, zoom);
     });
 
   }
@@ -76,5 +90,17 @@ function reset_map() {
   map = null;
   marker = null;
   firstPositionSet = false;
-  mapElement.innerHTML = '<span class="error-message" style="font-size: medium;">Impossibile recuperare la posizione</span>';
+
+  loading_map.classList.remove("d-none");
+  mapElement.classList.add("d-none");
+
+  mapElement.classList.remove("leaflet-container")
+
+  posElement.classList.add('error-message');
+  posElement.innerHTML = 'Impossibile recuperare la posizione';
+}
+
+function removeLoading(){
+  loading_map.classList.add("d-none");
+  mapElement.classList.remove("d-none");
 }

@@ -1,0 +1,124 @@
+*, *:before, *:after {
+
+    user-select: none;
+}
+/*.sidebar-container{
+  background-color: aqua;
+}
+
+.main-container{
+  background-color: red;
+}
+
+.gamepad-container{
+  background-color: yellow;
+}*/
+/*image properties*/
+.Logo_rotas
+{
+
+  text-align: center;
+  max-width: 18rem;
+}
+.Logo_rotas:hover
+{
+  background-color: rgb(241,242,243);
+  border-radius: 0.4rem;
+  cursor: pointer;
+}
+
+.Logo_rotas img
+{
+  min-width: 1rem;
+  max-width: 8rem;
+}
+
+
+/*status indicator*/
+.connection_indicator::before {
+  content: "";
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  margin-right: 1rem;
+  margin-top: 0.2rem;
+  margin-bottom: 0.2rem;
+  vertical-align: -0.5rem;
+  display: inline-block;
+}
+.connection_indicator.on::before {
+  background-color: rgb(255, 0, 0);
+  box-shadow: 0 0 15px rgb(255, 0, 0);
+}
+.connection_indicator.off::before {
+  background-color: rgb(204, 204, 204);
+}
+
+/*battery level box*/
+.progress-bar 
+{
+  max-width: 15rem;
+  height: 2rem;
+  border: 0.1rem solid #ccc;
+  
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+
+  display: flex;
+  flex-direction: column;
+}
+#progress 
+{
+  height: 2rem;
+  background-color: #4CAF50;
+  display: flex;
+  flex-direction: column;
+}
+#cent, #batt
+{
+  padding-left: 0;
+  font-size: 1.3rem;
+}
+
+/*error indicator for data receive*/
+.error-message::before {
+  content: "!";
+  font-weight: bold;
+  font-size: medium;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background-color: #ff0000;
+  color: rgb(255, 255, 255);
+  text-align: center;
+  text-align: 1rem;
+  margin-right: 0.4rem;
+  vertical-align: 0.1rem;
+  display: inline-block;
+}
+
+/*frame settings*/
+.frame
+{
+  /*min-width: 45vmin;
+  min-height:45vmin;*/
+  background: rgb(227, 227, 227);
+  margin: 2rem 0;
+  border-radius:  0.4rem;
+  text-align: center;
+  justify-content: center; 
+  font-size: 1.3rem;   
+}
+
+.controller{
+  margin-top: 5vmin;
+  width: 30vmin;
+  height: 30vmin;
+
+}
+
+.controller svg{
+  width: 100%;
+  height: 100%;
+}
+
