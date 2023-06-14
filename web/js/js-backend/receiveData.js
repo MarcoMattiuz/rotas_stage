@@ -8,6 +8,7 @@ function connectPage() {
     connectWebSocket();
   }else {
 
+    sendMessage(JSON.stringify({"sound":"disconnesso"}));
     websocket.close();
     reset_all();
     
@@ -34,6 +35,7 @@ function connectWebSocket() {
         updateGamepadStatus();
         value();
         rqs=true;
+        
         sendMessage(JSON.stringify({"sound":"connesso"}));
     };
 
@@ -75,7 +77,6 @@ function connectWebSocket() {
         console.log('WebSocket connection closed');
         reset_all();
     
-        sendMessage(JSON.stringify({"sound":"disconnesso"}));
     };
 }
 
@@ -84,8 +85,10 @@ function reset_all(){
 
     off(on_sr);
     on(off_sr);
+
     add_d_none(document.getElementById("loading_cam"));
     add_d_none(document.getElementById("loading_map"));
+
     closeJoy();
     closeMic();
     checkNavServer();

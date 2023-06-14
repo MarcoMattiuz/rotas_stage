@@ -20,9 +20,6 @@ function updateCam(src) {
 }
 
 function reset_cam(){
-    //remove_d_none(loading_cam);
-    //add_d_none(camElement);
-
     camElement.innerHTML='';
     camconnect=false; 
 

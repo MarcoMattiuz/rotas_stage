@@ -171,6 +171,7 @@ function polyline(coord){
 }
 
 function reset_map() {
+  add_d_none(mapElement);
   firstPositionSet=false;
   if(map!=null){
     map.remove();
@@ -184,9 +185,6 @@ function reset_map() {
   geoCoordinatesReverse=[];
   newGeoJson = {};
   startCoord = null;
-
-  //remove_d_none(loading_map);
-  //add_d_none(mapElement);
 
   mapElement.classList.remove("leaflet-container")
 
