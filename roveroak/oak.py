@@ -1,81 +1,77 @@
 import depthai as dai
 
-pipe = dai.Pipeline()
+BLOB = './roveroak/mobilenet-ssd/mobilenet-ssd.blob'
 
-# Central camera setup
-cam = pipe.create(dai.node.ColorCamera)
-cam.setBoardSocket(dai.CameraBoardSocket.RGB)
-cam.setFps(20)
-cam.setPreviewSize(300, 300)
-cam.setInterleaved(False)
-cam.setColorOrder(dai.ColorCameraProperties.ColorOrder.RGB)
+async def create_pipeline(rgbOutputSize = (832, 480), confidence = .5, extended_disparity = True, subpixel = False, lr_check = True):
+    # Create pipeline
+    pipeline = dai.Pipeline()
 
-# Image manip setup
-manip = pipe.create(dai.node.ImageManip)
-manip.initialConfig.setResize(1440, 720)
-manip.initialConfig.setFrameType(dai.ImgFrame.Type.YUV400p)
-manip.setMaxOutputFrameSize(3500000)
+    # Camera settings
+    cam = pipeline.create(dai.node.ColorCamera)
+    cam.setBoardSocket(dai.CameraBoardSocket.RGB)
+    cam.setFps(20)
+    cam.setPreviewSize(300, 300)
+    cam.setInterleaved(False)
+    cam.setColorOrder(dai.ColorCameraProperties.ColorOrder.RGB)
 
-# Encoder setup
-encoder = pipe.create(dai.node.VideoEncoder)
-encoder.setDefaultProfilePreset(20, dai.VideoEncoderProperties.Profile.H264_BASELINE)
-encoder.setBitrate(1000)
+    monoLeft = pipeline.create(dai.node.MonoCamera)
+    monoLeft.setResolution(dai.MonoCameraProperties.resolution.THE_400_P)
+    monoRight = pipeline.create(dai.node.MonoCamera)
+    monoRight.setResolution(dai.MonoCameraProperties.resolution.THE_400_P)
 
-# Neural Network setup
-nn = pipe.create(dai.node.NeuralNetwork)
-nn.setBlobPath('./roveroak/mobilenet-ssd/mobilenet-ssd.blob')
-nn.setNumInferenceThreads(2)
-nn.input.setBlocking(False)
-
-# Links
-videoOut = pipe.create(dai.node.XLinkOut)
-nnOut = pipe.create(dai.node.XLinkOut)
-videoOut.setStreamName('video')
-nnOut.setStreamName('nn')
-
-# Linking
-cam.video.link(manip.inputImage)
-manip.out.link(encoder.input)
-encoder.bitstream.link(videoOut.input)
-
-cam.preview.link(nn.input)
-nn.out.link(nnOut.input)
+    # StereoDepth setup
+    stereo = pipeline.create(dai.node.StereoDepth)
+    # Setting node configs
+    stereo.setDefaultProfilePreset(dai.node.StereoDepth.PresetMode.HIGH_ACCURACY)
+    # Align depth map to the perspective of RGB camera, on which inference is done
+    stereo.setDepthAlign(dai.CameraBoardSocket.CENTER)
+    stereo.setSubpixel(subpixel)
+    stereo.setLeftRightCheck(lr_check)
+    stereo.setExtendedDisparity(extended_disparity)
+    stereo.setOutputSize(monoLeft.getResolutionWidth(), monoLeft.getResolutionHeight())
 
 
-async def main():
-    import websockets.server
-    from base64 import b64encode
-    
-    async def handle(ws):
-        print(ws)
+    # SpatialNN setup
+    mobilenetSpatial = pipeline.create(dai.node.MobileNetSpatialDetectionNetwork)
+    mobilenetSpatial.setNumInferenceThreads(2)
+    mobilenetSpatial.setBlobPath(BLOB)
+    # Will ingore all detections whose confidence is below 50%
+    mobilenetSpatial.setConfidenceThreshold(confidence)
+    mobilenetSpatial.input.setBlocking(False)
+    # How big the ROI will be (smaller value can provide a more stable reading)
+    mobilenetSpatial.setBoundingBoxScaleFactor(0.5)
+    # Min/Max threshold. Values out of range will be set to 0 (invalid)
+    mobilenetSpatial.setDepthLowerThreshold(100)
+    mobilenetSpatial.setDepthUpperThreshold(5000)
 
-    async def broadcast(server, payload: str):
-        connections = list(server.websockets)
 
-        for i in range(len(server.websockets)):
-            try:
-                await connections[i].send(payload)
-            except IndexError:
-                pass
+    # Resizer setup
+    manip = pipeline.create(dai.node.ImageManip)
+    # 480p 16:9 frames
+    manip.initialConfig.setResize(rgbOutputSize[0], rgbOutputSize[1])
+    # NV12 frames are supported by video encoder
+    manip.initialConfig.setFrameType(dai.ImgFrame.Type.NV12)
+    manip.setMaxOutputFrameSize(2000000)
 
-    server = await websockets.server.serve(handle, '0.0.0.0', 8000)
+    # Video Encoder setup
+    videoEnc = pipeline.create(dai.node.VideoEncoder)
+    videoEnc.setDefaultProfilePreset(20, dai.VideoEncoderProperties.Profile.MJPEG)
+    # videoEnc.setBitrateKbps(100)
 
-    with dai.Device(pipe) as device:
-        print(device.getChipTemperature().average)
-        
-        videoQ = device.getOutputQueue(name = 'video', maxSize = 4, blocking = False)
-        nnQ = device.getOutputQueue(name = 'nn', maxSize = 4, blocking = False)
+    # Links
+    videoOut = pipeline.create(dai.node.XLinkOut)
+    videoOut.setStreamName('video')
+    nnOut = pipeline.create(dai.node.XLinkOut)
+    nnOut.setStreamName('nn')
 
-        while True:
-            if server.websockets:
-                encodedPacket = videoQ.get()
-                encodedFrame = encodedPacket.getData().tobytes()
-                
-                frame_str = b64encode(encodedFrame).decode('utf-8')
-                print(frame_str, end = '\n\n')
-                await broadcast(server, frame_str)
-            await asyncio.sleep(0.01)
+    # Linking
+    cam.video.link(manip.inputImage)
+    cam.preview.link(mobilenetSpatial.input)
 
-if __name__ == '__main__':
-    import asyncio
-    asyncio.run(main())
+    monoLeft.out.link(stereo.left)
+    monoRight.out.link(stereo.right)
+    # manip.out.link(videoEnc.input)
+    # videoEnc.bitstream.link(videoOut.input)
+
+    # Link depth from the StereoDepth node
+    stereo.depth.link(mobilenetSpatial.inputDepth)

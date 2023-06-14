@@ -1,7 +1,7 @@
 from adafruit_motor.servo import Servo
 
-# Full dutycycle control limits
-DUTY_LIMITS = (0, 19988)
+# Full dutycycle control limits for 100 Hz
+DUTY_LIMITS = (0, 9994)
 
 class Motor:
     """
@@ -33,9 +33,8 @@ class Motor:
         elif power > 0:
             powers = (abs(power), 0)
 
-        # La libreria di Adafruit è buggata... si va di 0.5 max
-        self.motors["forward"].fraction = powers[0] * .5
-        self.motors["backward"].fraction = powers[1] * .5
+        self.motors["forward"].fraction = powers[0]
+        self.motors["backward"].fraction = powers[1]
 
 class MotorPair:
     """

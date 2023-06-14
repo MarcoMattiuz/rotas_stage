@@ -1,14 +1,15 @@
 import asyncio
 import json
 import websockets.server
+# import websockets.legacy.server.WebSocketServerProtocol
 from websockets.exceptions import ConnectionClosedError, ConnectionClosedOK
 from base64 import b64encode
-import cv2
 import numpy as np
 import depthai as dai
 from depthai import NNData
 from depthai_sdk.classes import Detections
 from os import listdir
+import logging
 
 from pigpio.config import *
 
@@ -17,13 +18,25 @@ BROADCAST_RATE = 3
 server = None
 
 oak = True
+"""
+This flag indicates if the oak camera is ready.\n
+It can be used to restart the camera
+"""
 
 granted = None
+"""
+Stores the websocket which has control rights
+"""
 
-active = True
+busato = True
+"""
+Busato is a guy who loves while True statements
+"""
 
 AUDIODIR = './web/audio/'
-AUDIOFORMAT = '%s.mp3'
+MP3_FORMAT = '%s.mp3'
+PLAYER = 'mpg321'
+PLAYCMD = PLAYER + ' ' + AUDIODIR + MP3_FORMAT + ' > /dev/null 2>&1'
 
 labels = [
     "background",
@@ -48,16 +61,23 @@ labels = [
     "train",
     "tvmonitor"
 ]
+"""
+mobilenet-ssd detection labels
+"""
 
-# WebSocket message receive and send
 async def on_message(websocket):
+    """
+    Websocket event handler
+    """
+    global oak, busato
+
     try:
         async for message in websocket:
-            print(message, websocket)
+            logging.info(message + ' from ' + str(websocket))
             try:
                 msg = json.loads(message)
             except json.decoder.JSONDecodeError:
-                print(message, "DECODE ERROR")
+                logging.warning("DECODE ERROR")
                 continue
 
             response = {}
@@ -80,15 +100,27 @@ async def on_message(websocket):
                         power = 0
                     
                     motors.steerPower(steer, power)
+
+                # Oak camera controls
+                if 'oak' in msg.keys():
+                    oak_command = msg['oak']
+                    if isinstance(oak_command, bool):
+                        oak = oak_command
+                    # TODO: Implement resize
+
+                # Server controls
+                if 'active' in msg.keys() and not msg['active']:
+                    # Stop the server
+                    busato = False
+
             else:
                 response['permission'] = None
 
             if 'sound' in msg.keys():
-                track = AUDIOFORMAT % msg['sound']
+                track = msg['sound']
 
-                if track in listdir(AUDIODIR):
-                    # This is blocking
-                    await asyncio.create_subprocess_shell("mpg321 " + AUDIODIR + track)
+                if MP3_FORMAT % track in listdir(AUDIODIR):
+                    await asyncio.create_subprocess_shell(PLAYCMD % track)
                 else:
                     # File doesn't exist
                     response['sound'] = None
@@ -117,8 +149,12 @@ async def broadcast(websockets, data_to_send):
 async def updater():
     global server
 
-    while active:
+    while busato:
         
+        if not server.websockets:
+            await asyncio.sleep(1)
+            continue
+
         if gps.get() != 0:
             await asyncio.sleep(.1)
             continue
@@ -140,8 +176,9 @@ async def updater():
         # display.updateOLED(data)
 
         # Send data over serial
-        print(response)
-        await broadcast(list(server.websockets), json.dumps(response))
+        if response:
+            logging.info("Sending data: " + str(response))
+            await broadcast(list(server.websockets), json.dumps(response))
 
         await asyncio.sleep(BROADCAST_RATE)
 
@@ -160,7 +197,7 @@ def decode(nn_data: NNData):
     return dets
 
 async def camera():
-    global oak, active
+    global oak, busato
 
     # Create pipeline
     pipeline = dai.Pipeline()
@@ -179,6 +216,19 @@ async def camera():
     nn.setNumInferenceThreads(2)
     nn.input.setBlocking(False)
 
+    # Resizer setup
+    manip = pipeline.create(dai.node.ImageManip)
+    # 480p 16:9 frames
+    manip.initialConfig.setResize(832, 480)
+    # NV12 frames are supported by video encoder
+    manip.initialConfig.setFrameType(dai.ImgFrame.Type.NV12)
+    manip.setMaxOutputFrameSize(2000000)
+
+    # Video Encoder setup
+    videoEnc = pipeline.create(dai.node.VideoEncoder)
+    videoEnc.setDefaultProfilePreset(20, dai.VideoEncoderProperties.Profile.MJPEG)
+    # videoEnc.setBitrateKbps(100)
+
     # Links
     videoOut = pipeline.create(dai.node.XLinkOut)
     videoOut.setStreamName('video')
@@ -186,77 +236,93 @@ async def camera():
     nnOut.setStreamName('nn')
 
     # Linking
-    cam.video.link(videoOut.input)
+    cam.video.link(manip.inputImage)
+    manip.out.link(videoEnc.input)
+    videoEnc.bitstream.link(videoOut.input)
+
     cam.preview.link(nn.input)
     nn.out.link(nnOut.input)
 
-    # Specific mxId for our oak camera
-    devinfo = dai.DeviceInfo("14442C1021D88FD000")
-
     # Connect to device and start pipeline
-    try:
-        with dai.Device(pipeline, devinfo) as device:
-            # Output queue will be used to get the encoded data from the output defined above
-            videoQ = device.getOutputQueue(name='video', maxSize=4, blocking=False)
-            nnQ = device.getOutputQueue(name='nn', maxSize=4, blocking=False)
+    while busato:
+        try:
+            # Specific mxId for our oak camera
+            with dai.Device(pipeline, dai.DeviceInfo("14442C1021D88FD000")) as device:
+                # Output queue will be used to get the encoded data from the output defined above
+                videoQ = device.getOutputQueue(name='video', maxSize=30, blocking=False)
+                nnQ = device.getOutputQueue(name='nn', maxSize=4, blocking=False)
 
-            # stream_process = open_stream_process()
+                # To do the stream with ffmpeg/vlc/rtmp server
+                # stream_process = open_stream_process()
 
-            print("OAK Open")
-            while active:
-                if server.websockets:
-                    # stream_process.stdin.write(h265Packet.getData().tobytes())
+                logging.info("OAK Open")
+                while busato and oak:
+                    if server.websockets:
+                        # Write data to the streaming process
+                        # stream_process.stdin.write(videoQ.get().getData().tobytes())
 
-                    nnData: NNData = nnQ.get()
-                    # print(dai.Clock.now() - nnData.getTimestamp(), end = '\r')
-                    dets: Detections = decode(nnData)
-                    
-                    videoFrame = videoQ.get().getCvFrame()
+                        # Get data from neural network
+                        nnData: NNData = nnQ.get()
+                        
+                        # Latency meter
+                        # logging.log(dai.Clock.now() - nnData.getTimestamp(), end = '\r')
+                        
+                        # THIS SHIT CAN BE DONE ONBOARD!!!
+                        dets: Detections = decode(nnData)
+                        
+                        objects = {}
 
-                    objects = {}
+                        if len(dets.detections) > 0:
+                            for det in dets.detections:
+                                det: dai.ImgDetection
+                                
+                                # TODO: serialize this stuff and 
+                                # send it along with mjpeg frame.
+                                # Draw the bounding boxes
+                                # on the client side.
 
-                    if len(dets.detections) > 0:
-                        for det in dets.detections:
-                            det: dai.ImgDetection
-                            label = labels[det.label]
-                            if label in objects.keys():
-                                objects[label] += 1
-                            else:
-                                objects[label] = 1
+                                # Continue if it is not so confident
+                                # This should be done during neuralnetwork setup
+                                # check if nn.setConfidenceThreshold(.5) exists
+                                if det.confidence < .5: continue
 
-                            # Get frame dimensions (videoFrame is ndarray)
-                            height, width, _ = videoFrame.shape
+                                label = labels[det.label]
+                                if label in objects.keys():
+                                    objects[label] += 1
+                                else:
+                                    objects[label] = 1
 
-                            # Calculate absolute position for the box
-                            box_min = (round(det.xmin * width), round(det.ymin * height))
-                            box_max = (round(det.xmax * width), round(det.ymax * height))
-                            
-                            # Draw the detection box
-                            # cv2.rectangle(videoFrame, box_min, box_max, (9,245,5), 2)
-                    
-                    # Encode image - slow: runs on rpi
-                    imgJPG_encoded = cv2.imencode('.jpg', videoFrame)[1].tobytes()
+                        # Get data from encoded bitstream
+                        videoPacket = videoQ.get()
+                        MJPEGFrame = videoPacket.getData().tobytes()
+                        
+                        imgBASE64 = b64encode(MJPEGFrame).decode('utf-8')
 
-                    imgBASE64 = b64encode(imgJPG_encoded)
-                    imgBASE64_string = imgBASE64.decode('utf-8')
+                        #   {"img": ..., "dets": {"person": 1, "bottle": 2}}
+                        data_to_send = {
+                            "img": imgBASE64
+                        }
 
+                        if objects:
+                            data_to_send["dets"] = objects
 
-                    #   {"img": ..., "dets": {"person": 1, "bottle": 2}}
-                    data_to_send = {
-                        "img": imgBASE64_string
-                    }
+                        await broadcast(list(server.websockets), json.dumps(data_to_send))
+                        await asyncio.sleep(0.01)
+                    else:
+                        await asyncio.sleep(1)
 
-                    if objects:
-                        data_to_send["dets"] = objects
+        except RuntimeError as e:
+            logging.warning("Unable to talk with oak camera: " + str(e))
+            
+            # Oak camera is not available
+            oak = False
 
-                    await broadcast(list(server.websockets), json.dumps(data_to_send))
-                    await asyncio.sleep(0.01)
-                else:
-                    await asyncio.sleep(1)
-
-    except RuntimeError as e:
-        print("Unable to talk with oak camera:\n\t", e)
-        oak = False
+            # Wait for reinitialization request
+            while not oak and busato:
+                await asyncio.sleep(1)
+            
+            logging.info("Restarting oak camera")
+    
 
 def controllerCheck(websocket):
     """
@@ -276,15 +342,31 @@ def controllerCheck(websocket):
     else:
         return False
 
-#run websocket function
 async def main():
-    global server, active
+    global server, busato
+    
+    # First, try connecting to the JBL
+    await asyncio.create_subprocess_shell("bluetoothctl connect 30:C0:1B:C8:DF:4B")
+
+    # Initialize server listening
     server = await websockets.server.serve(on_message, '0.0.0.0', 8000)
+    
+    # Start tasks
     asyncio.create_task(updater())
     asyncio.create_task(camera())
-    print("Ws started")
-    await asyncio.Future() # Run forever
+
+    # Ready to rock
+    logging.info("Rover started")
+    
+    # Say it's all ready
+    await asyncio.create_subprocess_shell(PLAYCMD % 'marco' + ' && ' + PLAYCMD % 'acceso')
+
+    while busato:
+        await asyncio.sleep(1)
+
     server.close()
+
+    # Say goodbye
 
 # Start the server
 asyncio.run(main())

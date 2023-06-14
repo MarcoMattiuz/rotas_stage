@@ -1,7 +1,7 @@
 var on_gp=document.getElementsByClassName("on_gp");
 var off_gp=document.getElementsByClassName("off_gp");
 var controllerSvg = document.getElementsByClassName("controller");
-
+var firstConncet=true;
 // Funzione per verificare lo stato del controller
 function checkControllerStatus() {
     let gamepads = navigator.getGamepads();
@@ -22,7 +22,10 @@ function checkControllerStatus() {
         remove_d_none(controllerSvg[0])
         closeJoy();
         closeMic();
-
+        if(firstConncet){
+            sendMessage(JSON.stringify({"sound":"controller_connesso"}));
+            firstConncet=false;
+        }
         if(manager){
             document.getElementById('joystick').style.display = 'none';
             manager.destroy();
@@ -31,7 +34,10 @@ function checkControllerStatus() {
         }
 
     } else {
-
+        if(!firstConncet){
+            sendMessage(JSON.stringify({"sound":"controller_disconnesso"}));
+            firstConncet=true;
+        }
         off(on_gp);
         on(off_gp);
         resetColor();

@@ -58,6 +58,7 @@ function connectWebSocket() {
         if (json.hasOwnProperty("dets")){
             if(camconnect){
                 read_dets(json.dets);
+                drawRectangle(10,10,100,100);
             }
         }else{
             read_dets(null);

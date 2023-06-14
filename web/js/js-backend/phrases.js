@@ -1,5 +1,5 @@
 const comandi= {};
-
+const speech= {};
 
 comandi["destra avanti veloce"] = {
     "left": 0,
@@ -73,6 +73,26 @@ comandi["entrambi indietro lento"] = {
     "sound": "i_e_l"
 }; // Ok vado indietro in modalità cingolato lento!
 
+comandi["gira veloce"] = {
+    "left": -1023,
+    "right": 1023,
+    "sound": "g_v"
+}; // Ok giro su me stesso veloc!
+
+comandi["gira lento"] = {
+    "left": -500,
+    "right": 500,
+    "sound": "g_l"
+}; // Ok giro su me stesso lento!
+
+speech["ciao"]={
+    "sound": "ciao"
+}
+
+/*speech["power off"]={
+    "active": false
+}*/
+
 /*
 var audio = document.getElementById("myAudio");
 var source = document.getElementById("audioSource");
@@ -92,6 +112,14 @@ function command(testo) {
             //console.log("Comando:", key);
             //console.log("Valore:", comandi[key]);
             return comandi[key];
+        }
+    }
+
+    for (var key in speech) {
+        if (testo === key) {
+            console.log("Comando:", key);
+            console.log("Valore:", comandi[key]);
+            return speech[key];
         }
     }
 }
