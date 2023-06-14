@@ -9,4 +9,6 @@ var camconnect=false;   // cam connection
 
 var manger; //joystick
 
+var recognition; //voice commands
+
 

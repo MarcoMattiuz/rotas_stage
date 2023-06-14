@@ -5,7 +5,11 @@ class RGB:
     Manage RGB Leds
     """
 
-    def __init__(self, rpin, gpin, bpin, freq = 50) -> None:
+    RED = (255,0,0)
+    GREEN = (0,255,0)
+    BLUE = (0,0,255)
+
+    def __init__(self, rpin, gpin, bpin, freq = 100) -> None:
         if not isinstance(rpin, Pin):
             rpin = Pin(int(rpin))
         if not isinstance(gpin, Pin):

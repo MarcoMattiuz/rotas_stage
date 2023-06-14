@@ -6,8 +6,6 @@ from base64 import b64encode
 import depthai as dai
 from time import perf_counter
 
-ser = Serial(port='/dev/ttyS0', baudrate=115200, timeout=.1)
-
 # WebSocket message receive and send
 async def on_message(websocket):
     global serial_available, gps_requested, batt_requested
@@ -17,39 +15,14 @@ async def on_message(websocket):
 
         print(msg, websocket)
 
-        # Send data to ESP32
-        ser.write(message.encode())
-
         if 'left' in msg.keys():
             print("left:", msg["left"])
         
         if 'right' in msg.keys():
             print("right:", msg["right"])
 
-        if 'gps' in msg.keys():
-            gps_requested = websocket
-            # print("gps requested")
-
-        if 'batt' in msg.keys():
-            batt_requested = websocket
-            # print("batt requested")
-
         if 'img' in msg.keys() and not oak:
             await websocket.send(json.dumps({'img': None}))
-
-        # if 'msg' in msg.keys():
-        #     print("Ip connceted:", msg["msg"])
-        
-async def getESPData(blocking = True):
-    data = ""
-    cont = True
-    while data == "" and cont:
-        try:
-            data = ser.readline().decode()
-        except AttributeError:
-            await asyncio.sleep(.1)
-        cont = blocking
-    return data
 
 async def sendESPData():
     global gps_requested, batt_requested, server

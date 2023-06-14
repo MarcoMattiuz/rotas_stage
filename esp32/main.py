@@ -4,23 +4,26 @@ import uasyncio
 from uos import dupterm
 from utime import sleep
 
+# Disable micropython REPL
 # dupterm(None)
 
 async def get_data(blocking = True) -> str:
     data = None
     while data == None and blocking:
-        if ser.in_waiting:
-            data = ser.readline().decode()        
+        try:
+            data = ser.readline().decode()
+        except AttributeError:
+            await uasyncio.sleep_ms(100)
     return data
 
 async def mainloop():
     while True:
         # get data from serial
         
-        print("Awaiting serial data...")
+        # print("Awaiting serial data...")
         data = await get_data()
         
-        print("Raw data:", data)
+        # print("Raw data:", data)
         
         d = '}'
 
@@ -28,33 +31,18 @@ async def mainloop():
             if toco:
                 toco += d
                 
-                print("Req:", toco)
+                # print("Req:", toco)
 
                 # parse json
                 try:
                     doc = ujson.loads(toco)
                 except:
-                    
                     continue
                 
                 parsePayload(doc)
 
 def parsePayload(doc: dict):
     response = dict()
-
-    # check if any data is requested
-    if 'batt' in doc.keys():
-        response['batt'] = {
-            "level": batt.level(),
-            "volts": batt.voltage()
-        }
-
-    if 'gps' in doc.keys():
-        response['gps'] = {
-            "latitude": gps.latitude,
-            "longitude": gps.longitude,
-            "satellites": gps.satellites
-        }
     
     if 'left' in doc.keys():
         left = doc['left']
@@ -62,7 +50,7 @@ def parsePayload(doc: dict):
         if left is None:
             response['left'] = leftMotor.power()
         else:
-            leftMotor.power(int(left))
+            uasyncio.create_task(leftMotor.asyncPower(int(left)))
             
     if 'right' in doc.keys():
         right = doc['right']
@@ -70,7 +58,17 @@ def parsePayload(doc: dict):
         if right is None:
             response['right'] = rightMotor.power()
         else:
-            rightMotor.power(int(right))
+            uasyncio.create_task(rightMotor.asyncPower(int(right)))
+
+    if 'steer' in doc.keys():
+        steer = doc['steer']
+
+        try:
+            power = doc['accel']
+        except KeyError:
+            power = 0
+
+        uasyncio.create_task(motors.steerPower(steer, power))
 
     # if 'oled' in doc.keys():
     #     display.fill(0)
@@ -81,14 +79,36 @@ def parsePayload(doc: dict):
         print("Res:", response)
         ser.write(ujson.dumps(response).encode())
 
-async def gps_coro():
+async def update_coro():
     while True:
+        # Update all folks
         gps.get()
-        await uasyncio.sleep_ms(100)
+        batt.updateLed()
+
+        # Build response json
+        response = {
+            "batt": {
+                "level": batt.lvl,
+                "volts": batt.volts
+            },
+            "gps": {
+                "latitude": gps.latitude,
+                "longitude": gps.longitude,
+                "satellites": gps.satellites
+            }
+        }
+
+        # Here we could write some data to the OLED
+        # display.updateOLED(data)
+
+        # Send data over serial
+        print(response)
+        ser.write(ujson.dumps(response).encode())
+        await uasyncio.sleep_ms(BROADCAST_RATE)
 
 async def main():
     uasyncio.create_task(mainloop())
-    uasyncio.create_task(gps_coro())
+    uasyncio.create_task(update_coro())
     print("Started")
     while 1:
         await uasyncio.sleep_ms(10_000)

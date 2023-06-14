@@ -1,14 +1,29 @@
 import asyncio
 import json
 import websockets.server
-from serial import Serial
+from websockets.exceptions import ConnectionClosedError, ConnectionClosedOK
 from base64 import b64encode
-from time import perf_counter
 import cv2
 import numpy as np
 import depthai as dai
 from depthai import NNData
 from depthai_sdk.classes import Detections
+from os import listdir
+
+from pigpio.config import *
+
+BROADCAST_RATE = 3
+
+server = None
+
+oak = True
+
+granted = None
+
+active = True
+
+AUDIODIR = './web/audio/'
+AUDIOFORMAT = '%s.mp3'
 
 labels = [
     "background",
@@ -34,125 +49,104 @@ labels = [
     "tvmonitor"
 ]
 
-ser = Serial(port='/dev/ttyS0', baudrate=115200, timeout=.1)
-
 # WebSocket message receive and send
 async def on_message(websocket):
-    global serial_available, gps_requested, batt_requested
+    try:
+        async for message in websocket:
+            print(message, websocket)
+            try:
+                msg = json.loads(message)
+            except json.decoder.JSONDecodeError:
+                print(message, "DECODE ERROR")
+                continue
 
-    async for message in websocket:
-        msg = json.loads(message)
+            response = {}
 
-        print(msg, websocket)
+            if controllerCheck(websocket):
+                if 'left' in msg.keys():
+                    p = int(msg['left']) / 1023
+                    leftMotor.power(p)
+                
+                if 'right' in msg.keys():
+                    p = int(msg['right']) / 1023
+                    rightMotor.power(p)
 
-        # Send data to ESP32
-        ser.write(message.encode())
+                if 'steer' in msg.keys():
+                    steer = int(msg['steer']) / 1023
 
-        if 'left' in msg.keys():
-            print("left:", msg["left"])
+                    try:
+                        power = int(msg['accel']) / 1023
+                    except KeyError:
+                        power = 0
+                    
+                    motors.steerPower(steer, power)
+            else:
+                response['permission'] = None
+
+            if 'sound' in msg.keys():
+                track = AUDIOFORMAT % msg['sound']
+
+                if track in listdir(AUDIODIR):
+                    # This is blocking
+                    await asyncio.create_subprocess_shell("mpg321 " + AUDIODIR + track)
+                else:
+                    # File doesn't exist
+                    response['sound'] = None
+
+            if 'img' in msg.keys() and not oak:
+                response['img'] = None
+            
+            if response:
+                await websocket.send(json.dumps(response))
+
+    except ConnectionClosedError:
+        pass
+
+async def broadcast(websockets, data_to_send):
+    if websockets:
+        # Have to iterate with index because the array changes size during iteration
+        for index in range(len(websockets)):
+            try:
+                await websockets[index].send(data_to_send)
+            except ConnectionClosedOK:
+                pass
+            except IndexError:
+                pass
+
+# Update
+async def updater():
+    global server
+
+    while active:
         
-        if 'right' in msg.keys():
-            print("right:", msg["right"])
-
-        if 'gps' in msg.keys():
-            gps_requested = websocket
-            # print("gps requested")
-
-        if 'batt' in msg.keys():
-            batt_requested = websocket
-            # print("batt requested")
-
-        if 'img' in msg.keys() and not oak:
-            await websocket.send(json.dumps({'img': None}))
-
-        # if 'msg' in msg.keys():
-        #     print("Ip connceted:", msg["msg"])
-        
-async def getESPData(blocking = True):
-    data = ""
-    cont = True
-    while data == "" and cont:
-        try:
-            data = ser.readline().decode()
-        except AttributeError:
+        if gps.get() != 0:
             await asyncio.sleep(.1)
-        cont = blocking
-    return data
-
-async def sendESPData():
-    global gps_requested, batt_requested, server
-
-    data = ''
-
-    while True:
-        await asyncio.sleep(.1)
-
-        if not server.websockets:
             continue
 
-        if gps_requested and batt_requested:
-            data = await getESPData(False)
-            if data:
-                print(data)
-                try:
-                    await gps_requested.send(data)
-                except websockets.exceptions.ConnectionClosedOK:
-                    pass
-                try:
-                    await batt_requested.send(data)
-                except websockets.exceptions.ConnectionClosedOK:
-                    pass
-                gps_requested = False
-                batt_requested = False
-            
-        elif batt_requested:
-            data = await getESPData(False)
-            if data:
-                print(data)
-                await batt_requested.send(data)
-                batt_requested = False
-        
-        elif gps_requested:
-            data = await getESPData(False)
-            if data:
-                print(data)
-                try:
-                    await gps_requested.send(data)
-                except websockets.exceptions.ConnectionClosedOK:
-                    pass
-                gps_requested = False
+        # Build response json
+        response = {
+            # "batt": {
+            #     "level": batt.lvl,
+            #     "volts": batt.volts
+            # },
+            "gps": {
+                "latitude": gps.latitude,
+                "longitude": gps.longitude,
+                "satellites": gps.satellites
+            }
+        }
 
-async def checkSerial(event: asyncio.Event, wait_for_flush = False):
-    while True:
-        if ser.in_waiting:
-            await event.set()
+        # Here we could write some data to the OLED
+        # display.updateOLED(data)
 
-            # Ensure fresh data
-            timeout = await perf_counter() + SERIAL_TIMEOUT
+        # Send data over serial
+        print(response)
+        await broadcast(list(server.websockets), json.dumps(response))
 
-            # Wait for the buffer to flush
-            while ser.in_waiting and timeout > await perf_counter() and wait_for_flush:
-                await asyncio.sleep(.1)
-            
-            await event.clear()
-            
-            if wait_for_flush: await ser.reset_input_buffer()
-        else:
-            await asyncio.sleep(.1)
+        await asyncio.sleep(BROADCAST_RATE)
 
-SERIAL_TIMEOUT = 10
 
-serial_available = asyncio.Event()
-
-server = None
-
-gps_requested = False
-batt_requested = False
-
-current_websocket = None
-
-oak = True
-
+### CAMERA COROUTINES ###
 def decode(nn_data: NNData):
     dets = Detections(nn_data)
 
@@ -165,8 +159,8 @@ def decode(nn_data: NNData):
 
     return dets
 
-async def cameraBroadcast():
-    global oak
+async def camera():
+    global oak, active
 
     # Create pipeline
     pipeline = dai.Pipeline()
@@ -181,7 +175,7 @@ async def cameraBroadcast():
 
     # NeuralNetwork setup
     nn = pipeline.create(dai.node.NeuralNetwork)
-    nn.setBlobPath('./mobilenet-ssd/mobilenet-ssd.blob')
+    nn.setBlobPath('./roveroak/mobilenet-ssd/mobilenet-ssd.blob')
     nn.setNumInferenceThreads(2)
     nn.input.setBlocking(False)
 
@@ -196,10 +190,12 @@ async def cameraBroadcast():
     cam.preview.link(nn.input)
     nn.out.link(nnOut.input)
 
+    # Specific mxId for our oak camera
+    devinfo = dai.DeviceInfo("14442C1021D88FD000")
+
     # Connect to device and start pipeline
     try:
-        with dai.Device(pipeline) as device:
-            
+        with dai.Device(pipeline, devinfo) as device:
             # Output queue will be used to get the encoded data from the output defined above
             videoQ = device.getOutputQueue(name='video', maxSize=4, blocking=False)
             nnQ = device.getOutputQueue(name='nn', maxSize=4, blocking=False)
@@ -207,9 +203,8 @@ async def cameraBroadcast():
             # stream_process = open_stream_process()
 
             print("OAK Open")
-            while True:
-                connections = list(server.websockets)
-                if connections:
+            while active:
+                if server.websockets:
                     # stream_process.stdin.write(h265Packet.getData().tobytes())
 
                     nnData: NNData = nnQ.get()
@@ -239,30 +234,22 @@ async def cameraBroadcast():
                             # Draw the detection box
                             # cv2.rectangle(videoFrame, box_min, box_max, (9,245,5), 2)
                     
-                    # Encode image
+                    # Encode image - slow: runs on rpi
                     imgJPG_encoded = cv2.imencode('.jpg', videoFrame)[1].tobytes()
 
                     imgBASE64 = b64encode(imgJPG_encoded)
                     imgBASE64_string = imgBASE64.decode('utf-8')
 
 
-                    """{"img": ..., "dets": {"person": 1, "bottle": 2}}"""
+                    #   {"img": ..., "dets": {"person": 1, "bottle": 2}}
                     data_to_send = {
                         "img": imgBASE64_string
                     }
 
-                    if objects: 
+                    if objects:
                         data_to_send["dets"] = objects
 
-                    # Have to iterate with index because the array changes size during iteration
-                    for index in range(len(connections)):
-                        try:
-                            await connections[index].send(json.dumps(data_to_send))
-                            # print("sent frame %d to %s" % (packet.getSequenceNum(), str(connections[index])))
-                        except websockets.exceptions.ConnectionClosedOK:
-                            pass
-                        except IndexError:
-                            pass
+                    await broadcast(list(server.websockets), json.dumps(data_to_send))
                     await asyncio.sleep(0.01)
                 else:
                     await asyncio.sleep(1)
@@ -271,12 +258,30 @@ async def cameraBroadcast():
         print("Unable to talk with oak camera:\n\t", e)
         oak = False
 
+def controllerCheck(websocket):
+    """
+    Grants access to the motors only
+    to the first websocket that asks for it.
+    If that ws disconnects, access will be granted
+    to the next websocket that asks for it.
+    """
+
+    global granted
+
+    if websocket is granted:
+        return True
+    elif server.websockets and not granted in server.websockets:
+        granted = websocket
+        return True
+    else:
+        return False
+
 #run websocket function
 async def main():
-    global server
+    global server, active
     server = await websockets.server.serve(on_message, '0.0.0.0', 8000)
-    asyncio.create_task(sendESPData())
-    asyncio.create_task(cameraBroadcast())
+    asyncio.create_task(updater())
+    asyncio.create_task(camera())
     print("Ws started")
     await asyncio.Future() # Run forever
     server.close()

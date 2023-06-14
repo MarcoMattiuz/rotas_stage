@@ -1,23 +1,25 @@
-var toggleButton = document.getElementById('toggle-joystick'); // Bottone per aprire e chiudere il joystick
+var toggleButton = document.getElementsByClassName('toggle-joystick'); // Bottone per aprire e chiudere il joystick
 var controller = document.getElementById('joystick'); // Div contenente il joystick
 
 controller.style.display = 'none';
 
 
-toggleButton.addEventListener('click', function() {
-    if(connect&&!controllerConnect){
-        controller = document.getElementById('joystick');
-        if (!manager) 
-        {
-            createJoystick();
-            listenJoystick();
+for (let i = 0; i < toggleButton.length; i++) {
+    toggleButton[i].addEventListener('click', function() {
+        if(connect&&!controllerConnect){
+            controller = document.getElementById('joystick');
+            if (!manager) 
+            {
+                createJoystick();
+                listenJoystick();
+            }
+            else 
+            {
+                destroyJoystick();
+            }
         }
-        else 
-        {
-            destroyJoystick();
-        }
-    }
-});
+    });
+}
 
 function createJoystick(){
     controller.style.display = 'block';
@@ -38,11 +40,14 @@ function listenJoystick(){
             
             x = Math.max(Math.min(x, 1023), -1023);
             y = Math.max(Math.min(y, 1023), -1023);
-
+            
             setStearing(x, y);
+            
         });
     });
-    
+    manager.on('end', function (event, data) {
+        setStearing(0,0);
+    });
 }
 
 function destroyJoystick()

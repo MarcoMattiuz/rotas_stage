@@ -10,6 +10,11 @@
         <title>Rover Rotas</title>
     </head>
     <body>
+        <audio class="d-none" id="myAudio" controls>
+            <source id="audioSource" src="" type="audio/mp3">
+            Il tuo browser non supporta la riproduzione audio.
+        </audio>
+
         <div class="container-fluid">
             <!-- Top Menu -->
             <nav class="navbar py-1 navbar-expand-bg navbar-dark bg-dark d-xl-none border border-top-0 border-light-subtle border-3 rounded-bottom">
@@ -76,11 +81,16 @@
                             <!--<li class="nav-item align-self-center">
                                 <button id="toggle-joystick"><img src="images/svg/controller.svg" alt="joystick"> touch-pad</button>
                             </li>-->
-                            <li class="nav-item">
-                                <div class="card text-bg-light mx-auto mb-3" >
-                                    <div class="card-header"><h5 class="card-title">Gamepad Touch</h5></div>
-                                    <div class="card-body d-felx align-items-center ">
-                                        <span class="badge bg-primary d-flex justify-content-center mx-4 py-2" id="toggle-joystick"><img src="images/svg/controller.svg" alt="joystick" style="scale: 1.5;"/></span>
+                            <li class="nav-item align-self-md-center">
+                                <div class="card text-bg-light mx-auto mb-3 " >
+                                    <div class="card-header"><h5 class="card-title">Touch Commands</h5></div>
+                                    <div class="card">
+                                        
+                                        <ul class="list-group list-group-flush">
+                                            <li class="list-group-item "><span class="badge bg-secondary d-flex justify-content-center toggle-joystick" ><img src="images/svg/controller.svg" alt="joystick" style="scale: 1.5;"/></span></li>
+                                            <li class="list-group-item"><span class="badge bg-secondary d-flex justify-content-center  toggle-microphone"><img src="images/svg/mic.svg" alt="mic" style="width: 2rem;"/></span></li>
+                                        </ul>
+                                        
                                     </div>
                                 </div>
                             </li>
@@ -129,7 +139,7 @@
                             </div>
                         </li>  
                     </ul>
-                    <div class="mt-auto">
+                    <div class="mn-auto d-flex justify-content-between">
                         <div class="btn-group dropup">
                             <button class="btn btn-primary dropdown-toggle" id="bd-theme" type="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-display="static" aria-label="Toggle theme (light)">
                                 <span  id="bd-theme-text"><img class="mb-1" src="images/svg/auto.svg" alt="tema" id="theme-image-1"></span>
@@ -139,7 +149,13 @@
                                 <li><button class="dropdown-item" data-bs-theme-value="light" type="button">Light</button></li>
                                 <li><button class="dropdown-item" data-bs-theme-value="dark" type="button">Dark</button></li>
                             </ul>
-                        </div>                         
+                        </div> 
+                        <div>
+                            <span class="badge bg-secondary toggle-microphone" style="width: 3rem;"><img src="images/svg/mic.svg" alt="mic" style="width: 2rem;"/></span>
+                        </div>
+                        <div >
+                            <span class="badge bg-secondary toggle-joystick "  style="width: 3rem;"><img src="images/svg/controller.svg" alt="joystick" style="width: 2rem;"/></span>
+                        </div>                        
                     </div>
                 </div>
                 
@@ -276,6 +292,8 @@
             </div>
         
         <!--SCRIPT-->
+        
+        <script src="js/funz-general.js"></script>
             <!-- BACKEND -->
         <script src="js/js-backend/receiveData.js"></script>
         <script src="js/js-backend/sendData.js"></script>
@@ -290,10 +308,16 @@
     
         <script src="js/js-backend/cam.js"></script>
 
+        <script src="js/js-backend/phrases.js"></script>
+        <script src="js/js-backend/voice_commands.js"></script>
+        
         <script src="js/js-backend/controller.js"></script>
         <script src="js/js-backend/stearingJoystick.js"></script>
 
+        
+
             <!-- FRONTEND-->
+        
         <script src="js/js-frontend/controllerIcon.js"></script>
         <script src="js/js-frontend/resize.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js" integrity="sha384-zYPOMqeu1DAVkHiLqWBUTcbYfZ8osu1Nd6Z89ify25QV9guujx43ITvfi12/QExE" crossorigin="anonymous"></script>
@@ -301,5 +325,7 @@
         <script src="js/js-frontend/color-mode.js"></script>
         <script src="js/js-frontend/joystick-draggable.js"></script>
         <script src="js/js-frontend/main-joystick.js"></script>
+
+
     </body>
 </html>

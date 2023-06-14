@@ -2,20 +2,6 @@ var on_gp=document.getElementsByClassName("on_gp");
 var off_gp=document.getElementsByClassName("off_gp");
 var controllerSvg = document.getElementsByClassName("controller");
 
-function on(element){
-    for (let i = 0; i < element.length; i++) {
-        element[i].classList.add('on');
-        element[i].classList.remove('off');
-    }
-}
-
-function off(element){
-    for (let i = 0; i < element.length; i++) {
-        element[i].classList.add('off');
-        element[i].classList.remove('on');
-    }
-}
-
 // Funzione per verificare lo stato del controller
 function checkControllerStatus() {
     let gamepads = navigator.getGamepads();
@@ -33,8 +19,9 @@ function checkControllerStatus() {
     if (controllerConnect) {
         on(on_gp);
         off(off_gp);
-        
-        controllerSvg[0].classList.remove("d-none");
+        remove_d_none(controllerSvg[0])
+        closeJoy();
+        closeMic();
 
         if(manager){
             document.getElementById('joystick').style.display = 'none';
@@ -44,11 +31,15 @@ function checkControllerStatus() {
         }
 
     } else {
+
         off(on_gp);
         on(off_gp);
         resetColor();
-        
-        controllerSvg[0].classList.add("d-none");
+        add_d_none(controllerSvg[0]);
+        if(connect){
+            openJoy();
+            openMic();
+        }
     }
 
     checkNavPad();
@@ -56,19 +47,11 @@ function checkControllerStatus() {
 setInterval(checkControllerStatus, 50);
 
 var gamepad;
-
 var controller_prec="";
 var controller="";
-
-/*
-const data = new Date()
-var prevTime = data.getTime();
-var prevR=0, prevL=0;*/
-
 var triggerR;
 var triggerL;
 
-//___CONTROLLER___
 function value() {
     let gamepads = navigator.getGamepads();
 
@@ -84,6 +67,14 @@ function value() {
                 cingolato(buttons);
                 vibration();
                  
+            }else if(buttons[1].pressed){
+                if(!rec){
+                    rec=true;
+                    openMic();
+                    openRec();
+                    voice_commands();
+                    recognition.start();
+                }
             }else{
                 controller=JSON.stringify({"left": 0,"right": 0,});
                 stearing(axes);
@@ -111,26 +102,9 @@ function cingolato(buttons){
         triggerL=-triggerL;
     }
 
-    //console.log("d L:"+derivata(triggerL,prevL)+" d R:"+derivata(triggerR,prevR));
-    /*prevL=triggerL;
-    prevR=triggerR;
-    const data=new Date();
-    dL=derivata(triggerL,prevL);
-    dR=derivata(triggerR,prevR);
-    prevTime = data.getTime();
-    */
-
     controller = JSON.stringify({
         "left": triggerL,
         "right": triggerR,
-
-        /*buttonR: buttons[5].value,
-        buttonL: buttons[4].value,
-
-        axesXR:axesVal(axes[2]),
-        axesYR:axesVal(axes[3]),
-        axesXL:axesVal(axes[0]),
-        axesYL:axesVal(axes[1])*/
     });
 
 }
@@ -217,14 +191,6 @@ function triggerLVal(buttons){
     }else{
         return 0;
     }
-}
-
-function derivata(val, prev){
-    const d = new Date();
-    dTime = d.getTime() - prevTime;
-    dVal = val - prev;
-
-    return dVal/dTime;
 }
 
 function axesVal(val){

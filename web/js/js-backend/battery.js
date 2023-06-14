@@ -1,22 +1,6 @@
 var progressBar = document.getElementsByClassName("progress");
 var cent = document.getElementsByClassName("cent");
 
-function on(element){
-    for (let i = 0; i < element.length; i++) {
-        element[i].classList.add('on');
-        element[i].classList.remove('off');
-    }
-}
-
-function off(element){
-    for (let i = 0; i < element.length; i++) {
-        element[i].classList.add('off');
-        element[i].classList.remove('on');
-    }
-}
-
-
-
 function updateBattery(batteryLevel) {
     for (let i = 0; i < progressBar.length && i < cent.length; i++) {
         progressBar[i].style.width = batteryLevel + "%";

@@ -14,10 +14,9 @@ function setStearing(x, y){
     });
 
     if (stearing_val === stearing_prec) {
-
+        
     } else {
         stearing_prec = stearing_val;
-        
         sendMessage(stearing_val);
     }
 }

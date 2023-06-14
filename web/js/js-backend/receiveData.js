@@ -1,63 +1,46 @@
-// connection indicator
 var on_sr=document.getElementsByClassName("on_sr");
 var off_sr=document.getElementsByClassName("off_sr");
 
-function on(element){
-    for (let i = 0; i < element.length; i++) {
-        element[i].classList.add('on');
-        element[i].classList.remove('off');
-    }
-}
-
-function off(element){
-    for (let i = 0; i < element.length; i++) {
-        element[i].classList.add('off');
-        element[i].classList.remove('on');
-    }
-}
-
-
-//check connetion ws
 function connectPage() {
   if (!connect) {
+
     connect = true;
     connectWebSocket();
-    
-    loading_cam.classList.remove("d-none");
-    loading_map.classList.remove("d-none");
-
   }else {
+
     websocket.close();
     reset_all();
+    
   }
 }
 
 function connectWebSocket() {
     
     const wsURL = 'wss://wsstage.rotas.eu';
-
     websocket = new WebSocket(wsURL);
     // Connessione WebSocket aperta
+
     websocket.onopen = function () {
         console.log('WebSocket connection opened');
 
-        //ip();
-        //pos(10, 10, 05);
-        
         on(on_sr);
         off(off_sr);
-        
-        value(); 
-        updateGamepadStatus();
-
+        remove_d_none(document.getElementById("loading_cam"));
+        remove_d_none(document.getElementById("loading_map"));
+        openJoy();
+        openMic();
         checkNavServer();
+        
+        updateGamepadStatus();
+        value();
         rqs=true;
+        sendMessage(JSON.stringify({"sound":"connesso"}));
     };
 
     // Messaggio ricevuto dal server
     websocket.onmessage = function (event) {
         receivedMessage = event.data;
-        //console.log("ricevuto: "+receivedMessage);
+        console.log("ricevuto: "+receivedMessage);
         var json = JSON.parse(receivedMessage);
 
         if (json.hasOwnProperty("img")) {
@@ -72,17 +55,14 @@ function connectWebSocket() {
 
         if (json.hasOwnProperty("dets")){
             if(camconnect){
-                
                 read_dets(json.dets);
             }
         }else{
-            var json_null=null;
-            read_dets(json_null);
+            read_dets(null);
         }
 
         if (json.hasOwnProperty("gps")) {
-            pos(json.gps.latitude, json.gps.longitude, json.gps.satellites);
-            //pos(10, 10, 05);
+            pos(json.gps.longitude, json.gps.latitude, json.gps.satellites);
         }
 
         if (json.hasOwnProperty("batt")) {
@@ -94,24 +74,26 @@ function connectWebSocket() {
     websocket.onclose = function () {
         console.log('WebSocket connection closed');
         reset_all();
+    
+        sendMessage(JSON.stringify({"sound":"disconnesso"}));
     };
 }
 
 function reset_all(){
     connect=false;
 
-    on(off_sr);
     off(on_sr);
+    on(off_sr);
+    add_d_none(document.getElementById("loading_cam"));
+    add_d_none(document.getElementById("loading_map"));
+    closeJoy();
+    closeMic();
+    checkNavServer();
+    resetColor();
 
     reset_battery();
     reset_map();
     reset_cam();
-
-    loading_cam.classList.add("d-none");
-    loading_map.classList.add("d-none");
-
-    checkNavServer();
-    resetColor();
 
     if(manager){
         destroyJoystick();
@@ -120,7 +102,9 @@ function reset_all(){
 
     rqs=false;
 }
+
 // lettura ip connesso al ws
+/*
 function ip(){
     fetch('https://api.ipify.org?format=json')
     .then(response => response.json())
@@ -132,5 +116,5 @@ function ip(){
         console.error('Error retrieving IP address:', error);
         sendMessage(JSON.stringify({"ip": "Ip error"}));
     });
-}
+}*/
 

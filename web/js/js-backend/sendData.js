@@ -5,6 +5,7 @@ function sendMessage(message) {
     }
 }
 
+/*
 //richiesta info 
 function request(){
     if(rqs)
@@ -15,4 +16,4 @@ function request(){
     sendMessage(data);
 }
 
-setInterval(request, 3000);
+setInterval(request, 3000);*/

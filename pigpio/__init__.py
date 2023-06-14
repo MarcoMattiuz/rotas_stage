@@ -1,0 +1,1 @@
+from pigpio.config import *

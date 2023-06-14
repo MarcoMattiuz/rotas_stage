@@ -123,3 +123,8 @@ class SSD1306_I2C(SSD1306):
         # Blast out the frame buffer using a single I2C transaction to support
         # hardware I2C interfaces.
         self.i2c.writeto(self.addr, self.buffer)
+
+    def updateOLED(self, data: str, fill = 0, show = True, **kwargs):
+        self.fill(fill)
+        self.text(data, **kwargs)
+        if show: self.show()
