@@ -1,8 +1,8 @@
 import asyncio
 import json
 import websockets.server
-# import websockets.legacy.server.WebSocketServerProtocol
 from websockets.exceptions import ConnectionClosedError, ConnectionClosedOK
+from websockets.legacy.server import WebSocketServerProtocol
 from base64 import b64encode
 import numpy as np
 import depthai as dai
@@ -11,6 +11,7 @@ from depthai_sdk.classes import Detections
 from os import listdir
 import logging
 
+from roveroak.oak import create_pipeline
 from pigpio.config import *
 
 BROADCAST_RATE = 3
@@ -65,7 +66,7 @@ labels = [
 mobilenet-ssd detection labels
 """
 
-async def on_message(websocket):
+async def on_message(websocket: WebSocketServerProtocol):
     """
     Websocket event handler
     """
@@ -73,7 +74,8 @@ async def on_message(websocket):
 
     try:
         async for message in websocket:
-            logging.info(message + ' from ' + str(websocket))
+            logging.info(message + ' from ' + str(websocket.remote_address))
+
             try:
                 msg = json.loads(message)
             except json.decoder.JSONDecodeError:

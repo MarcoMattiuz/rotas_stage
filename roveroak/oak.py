@@ -1,8 +1,9 @@
 import depthai as dai
 
-BLOB = './roveroak/mobilenet-ssd/mobilenet-ssd.blob'
+def getNV12Size(width, height):
+    return width * height * 1.5
 
-async def create_pipeline(rgbOutputSize = (832, 480), confidence = .5, extended_disparity = True, subpixel = False, lr_check = True):
+async def create_pipeline(rgbOutputSize = (832, 480), blobpath = './roveroak/mobilenet-ssd/mobilenet-ssd-5-shaves.blob', confidence = .5, extended_disparity = True, subpixel = False, lr_check = True, codec = dai.VideoEncoderProperties.Profile.MJPEG):
     # Create pipeline
     pipeline = dai.Pipeline()
 
@@ -30,11 +31,10 @@ async def create_pipeline(rgbOutputSize = (832, 480), confidence = .5, extended_
     stereo.setExtendedDisparity(extended_disparity)
     stereo.setOutputSize(monoLeft.getResolutionWidth(), monoLeft.getResolutionHeight())
 
-
     # SpatialNN setup
     mobilenetSpatial = pipeline.create(dai.node.MobileNetSpatialDetectionNetwork)
     mobilenetSpatial.setNumInferenceThreads(2)
-    mobilenetSpatial.setBlobPath(BLOB)
+    mobilenetSpatial.setBlobPath(blobpath)
     # Will ingore all detections whose confidence is below 50%
     mobilenetSpatial.setConfidenceThreshold(confidence)
     mobilenetSpatial.input.setBlocking(False)
@@ -44,18 +44,17 @@ async def create_pipeline(rgbOutputSize = (832, 480), confidence = .5, extended_
     mobilenetSpatial.setDepthLowerThreshold(100)
     mobilenetSpatial.setDepthUpperThreshold(5000)
 
-
     # Resizer setup
     manip = pipeline.create(dai.node.ImageManip)
     # 480p 16:9 frames
     manip.initialConfig.setResize(rgbOutputSize[0], rgbOutputSize[1])
     # NV12 frames are supported by video encoder
     manip.initialConfig.setFrameType(dai.ImgFrame.Type.NV12)
-    manip.setMaxOutputFrameSize(2000000)
+    manip.setMaxOutputFrameSize(getNV12Size(rgbOutputSize[0], rgbOutputSize[1]))
 
     # Video Encoder setup
     videoEnc = pipeline.create(dai.node.VideoEncoder)
-    videoEnc.setDefaultProfilePreset(20, dai.VideoEncoderProperties.Profile.MJPEG)
+    videoEnc.setDefaultProfilePreset(20, codec)
     # videoEnc.setBitrateKbps(100)
 
     # Links
@@ -70,8 +69,12 @@ async def create_pipeline(rgbOutputSize = (832, 480), confidence = .5, extended_
 
     monoLeft.out.link(stereo.left)
     monoRight.out.link(stereo.right)
-    # manip.out.link(videoEnc.input)
-    # videoEnc.bitstream.link(videoOut.input)
+    manip.out.link(videoEnc.input)
+    videoEnc.bitstream.link(videoOut.input)
 
     # Link depth from the StereoDepth node
     stereo.depth.link(mobilenetSpatial.inputDepth)
+
+    mobilenetSpatial.out.link(nnOut.input)
+
+    return pipeline, videoOut.getStreamName(), nnOut.getStreamName()
