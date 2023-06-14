@@ -21,6 +21,10 @@ Altrimenti si può connettere in questo modo. Rimuovere il dispositivo:
 
 `[bluetooth]# remove 30:C0:1B:C8:DF:4B`
 
+Rieffettuare il pairing:
+
 `[bluetooth]# pair 30:C0:1B:C8:DF:4B`
+
+Connessione:
 
 `[bluetooth]# connect 30:C0:1B:C8:DF:4B`
